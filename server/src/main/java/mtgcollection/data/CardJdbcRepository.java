@@ -7,11 +7,11 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public class CollectionJdbcRepository implements CollectionRepository{
+public class CardJdbcRepository implements CardRepository {
 
     private JdbcClient jdbcClient;
 
-    public CollectionJdbcRepository(JdbcClient jdbcClient) {
+    public CardJdbcRepository(JdbcClient jdbcClient) {
         this.jdbcClient = jdbcClient;
     }
 

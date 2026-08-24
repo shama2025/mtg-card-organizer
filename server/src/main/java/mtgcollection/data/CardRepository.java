@@ -4,7 +4,7 @@ import mtgcollection.model.Card;
 
 import java.util.List;
 
-public interface CollectionRepository {
+public interface CardRepository {
 
     List<Card> fetchAllCards(int userId);
 
