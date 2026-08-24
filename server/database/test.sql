@@ -15,7 +15,8 @@ create table if not EXISTS `user` (
 );
 
 CREATE table if not exists card(
-    card_id int PRIMARY key auto_increment,
+	card_id int PRIMARY key auto_increment,
+    card_uuid UUID not null,
     name varchar(250) not null,
     img_path text not null,
     mana_color JSON null, # if null then color is colorless
@@ -81,9 +82,10 @@ BEGIN
         ('a@a.com', 'a'),
         ('b@b.com', 'b');
 
-    -- 2. Seed Cards
-    insert into card (name, img_path, mana_color, mana_cost, sets, legalities, artist,quantity) values
+    -- 2. Seed Cards (Includes card_uuid)
+    insert into card (card_uuid, name, img_path, mana_color, mana_cost, sets, legalities, artist, quantity) values
         (
+            'f29ba16f-c8fb-42fe-aabf-87089cb214a7',
             'Lightning Bolt',
             'https://cards.scryfall.io/large/front/f/2/f29ba16f-c8fb-42fe-aabf-87089cb214a7.jpg',
             JSON_ARRAY('R'),
@@ -94,16 +96,18 @@ BEGIN
             1
         ),
         (
+            'a97f330d-6823-4337-a7d1-e9c522d08a5c',
             'Counterspell',
             'https://cards.scryfall.io/large/front/a/9/a97f330d-6823-4337-a7d1-e9c522d08a5c.jpg',
             JSON_ARRAY('U'),
             JSON_OBJECT('cmc', 2, 'mana_string', '{U}{U}'),
-           'Modern Horizons 2',
+            'Modern Horizons 2',
             JSON_ARRAY('modern', 'legacy', 'vintage', 'commander', 'pauper'),
             'Mark Poole',
             1
         ),
         (
+            'ab851e3a-7f61-464a-9520-21a4f02a3a10',
             'Sol Ring',
             'https://cards.scryfall.io/large/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.jpg',
             null, -- Colorless card
@@ -114,6 +118,7 @@ BEGIN
             3
         ),
         (
+            'fe0a79f6-e0b3-4705-894c-e83cb41c18ca',
             'Birds of Paradise',
             'https://cards.scryfall.io/large/front/f/e/fe0a79f6-e0b3-4705-894c-e83cb41c18ca.jpg',
             JSON_ARRAY('G'),
@@ -126,8 +131,8 @@ BEGIN
 
     -- 3. Seed Decks
     insert into deck (name, card_count, date_created, date_updated) values
-        ('Izzet Spellslinger', 60, '2026-08-01 10:00:00', '2026-08-20'),
-        ('Mono Green Ramp', 100, '2026-08-15 09:15:00', '2026-08-24');
+        ('Izzet Spellslinger', 60, '2026-08-01', '2026-08-20'),
+        ('Mono Green Ramp', 100, '2026-08-15', '2026-08-24');
 
     -- 4. Seed Card-Deck Bridge (Links cards to decks)
     insert into card_deck (card_id, deck_id) values
