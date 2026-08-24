@@ -13,13 +13,13 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
-class CollectionJdbcRepositoryTest {
+class CardJdbcRepositoryTest {
 
     @Autowired
     JdbcClient jdbcClient;
 
     @Autowired
-    CollectionJdbcRepository repository;
+    CardJdbcRepository repository;
 
     @BeforeEach
     void runSetKnownGoodState(){
