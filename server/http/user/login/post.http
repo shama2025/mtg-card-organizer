@@ -1,0 +1,26 @@
+@base_url = http://localhost:8080/api/user
+
+### Login User
+
+### Happy Path
+POST {{base_url}}/login HTTP/1.1
+Authorization: { "email": "c@c.com","password": "password"}
+
+### Missing Email
+POST {{base_url}}/login HTTP/1.1
+Authorization: { "email": "","password": "password"}
+
+### Missing Password
+POST {{base_url}}/login HTTP/1.1
+Authorization: { "email": "c@c.com","password": ""}
+
+### Missing authorization header
+POST {{base_url}}/login HTTP/1.1
+
+### Wrong Email
+POST {{base_url}}/login HTTP/1.1
+Authorization: { "email": "b@b.com","password": ""}
+
+### Wrong password
+POST {{base_url}}/login HTTP/1.1
+Authorization: { "email": "c@c.com","password": "blah blah"}
