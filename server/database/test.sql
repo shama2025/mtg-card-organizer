@@ -22,7 +22,8 @@ CREATE table if not exists card(
     mana_cost JSON not null,
     sets text NOT null,
     legalities JSON not null, # Only holds legal formats
-    artist varchar(250) not null
+    artist varchar(250) not null,
+    quantity int not null
 );
 
 create table if not EXISTS deck(
@@ -81,7 +82,7 @@ BEGIN
         ('b@b.com', 'b');
 
     -- 2. Seed Cards
-    insert into card (name, img_path, mana_color, mana_cost, sets, legalities, artist) values
+    insert into card (name, img_path, mana_color, mana_cost, sets, legalities, artist,quantity) values
         (
             'Lightning Bolt',
             'https://cards.scryfall.io/large/front/f/2/f29ba16f-c8fb-42fe-aabf-87089cb214a7.jpg',
@@ -89,7 +90,8 @@ BEGIN
             JSON_OBJECT('cmc', 1, 'mana_string', '{R}'),
             'Double Masters 2022',
             JSON_ARRAY('modern', 'legacy', 'vintage', 'commander', 'pauper'),
-            'Christopher Rush'
+            'Christopher Rush',
+            1
         ),
         (
             'Counterspell',
@@ -98,7 +100,8 @@ BEGIN
             JSON_OBJECT('cmc', 2, 'mana_string', '{U}{U}'),
            'Modern Horizons 2',
             JSON_ARRAY('modern', 'legacy', 'vintage', 'commander', 'pauper'),
-            'Mark Poole'
+            'Mark Poole',
+            1
         ),
         (
             'Sol Ring',
@@ -107,7 +110,8 @@ BEGIN
             JSON_OBJECT('cmc', 1, 'mana_string', '{1}'),
             'Commander 2021',
             JSON_ARRAY('vintage', 'commander'),
-            'Mark Tedin'
+            'Mark Tedin',
+            3
         ),
         (
             'Birds of Paradise',
@@ -116,7 +120,8 @@ BEGIN
             JSON_OBJECT('cmc', 1, 'mana_string', '{G}'),
             'Dominaria Remastered',
             JSON_ARRAY('modern', 'legacy', 'vintage', 'commander'),
-            'Edward P. Beard, Jr.'
+            'Edward P. Beard, Jr.',
+            2
         );
 
     -- 3. Seed Decks

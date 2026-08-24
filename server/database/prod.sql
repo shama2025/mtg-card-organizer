@@ -20,8 +20,8 @@ CREATE table if not exists card(
 	mana_cost JSON not null,
 	sets text NOT null,
 	legalities JSON not null, #Only holds legal formats
-	artist varchar(250) not null
-	
+	artist varchar(250) not null,
+	quantity int not null
 );
 
 create table if not EXISTS deck(
