@@ -1,0 +1,44 @@
+@base_url = http://localhost:8080/api/user
+
+### Sign Up User
+
+### Happy Path
+POST {{base_url}}/add HTTP/1.1
+Content-Type: application/json
+
+{
+    "id": 0,
+    "email": "c@c.com",
+    "password": "password"
+}
+
+### Email Blank/Null
+POST {{base_url}}/add HTTP/1.1
+Content-Type: application/json
+
+{
+    "id": 0,
+    "email": "",
+    "password": "password"
+}
+### Password Blank/Null
+
+POST {{base_url}}/add HTTP/1.1
+Content-Type: application/json
+
+{
+    "id": 0,
+    "email": "c@c.com",
+    "password": ""
+}
+
+### Duplicate Email
+
+POST {{base_url}}/add HTTP/1.1
+Content-Type: application/json
+
+{
+    "id": 0,
+    "email": "a@a.com",
+    "password": "password"
+}
