@@ -15,13 +15,13 @@ create table if not EXISTS `user` (
 );
 
 CREATE table if not exists card(
-	card_id int PRIMARY key auto_increment,
-    card_uuid UUID not null,
+    card_id int PRIMARY key auto_increment,
+    card_uuid varchar(36) not null,
     name varchar(250) not null,
     img_path text not null,
     mana_color JSON null, # if null then color is colorless
     mana_cost JSON not null,
-    sets text NOT null,
+    sets JSON NOT null,
     legalities JSON not null, # Only holds legal formats
     artist varchar(250) not null,
     quantity int not null
@@ -90,7 +90,7 @@ BEGIN
             'https://cards.scryfall.io/large/front/f/2/f29ba16f-c8fb-42fe-aabf-87089cb214a7.jpg',
             JSON_ARRAY('R'),
             JSON_OBJECT('cmc', 1, 'mana_string', '{R}'),
-            'Double Masters 2022',
+            JSON_OBJECT('code','2XM','name','Double Masters 2022'),
             JSON_ARRAY('modern', 'legacy', 'vintage', 'commander', 'pauper'),
             'Christopher Rush',
             1
@@ -101,7 +101,7 @@ BEGIN
             'https://cards.scryfall.io/large/front/a/9/a97f330d-6823-4337-a7d1-e9c522d08a5c.jpg',
             JSON_ARRAY('U'),
             JSON_OBJECT('cmc', 2, 'mana_string', '{U}{U}'),
-            'Modern Horizons 2',
+            JSON_OBJECT('code','MH2','name','Modern Horizons 2'),
             JSON_ARRAY('modern', 'legacy', 'vintage', 'commander', 'pauper'),
             'Mark Poole',
             1
@@ -112,7 +112,7 @@ BEGIN
             'https://cards.scryfall.io/large/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.jpg',
             null, -- Colorless card
             JSON_OBJECT('cmc', 1, 'mana_string', '{1}'),
-            'Commander 2021',
+            JSON_OBJECT('code','C11','name','Commander 2011'),
             JSON_ARRAY('vintage', 'commander'),
             'Mark Tedin',
             3
@@ -123,7 +123,7 @@ BEGIN
             'https://cards.scryfall.io/large/front/f/e/fe0a79f6-e0b3-4705-894c-e83cb41c18ca.jpg',
             JSON_ARRAY('G'),
             JSON_OBJECT('cmc', 1, 'mana_string', '{G}'),
-            'Dominaria Remastered',
+            JSON_OBJECT('code','DMR','name','Dominaria Remastered'),
             JSON_ARRAY('modern', 'legacy', 'vintage', 'commander'),
             'Edward P. Beard, Jr.',
             2

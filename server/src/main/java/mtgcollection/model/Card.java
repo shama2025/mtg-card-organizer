@@ -5,22 +5,22 @@ import java.util.Objects;
 import java.util.UUID;
 
 public class Card {
-    private int id;
-    private UUID cardId;
+    private int cardId;
+    private UUID cardUuid;
     private String name;
-    private List<Legality> legalities;
-    private Set set;
+    private String legalities;
+    private String sets;
     private String imgPath;
     private String manaColor;
     private String manaCost;
     private String artistName;
     private int quantity;
 
-    public Card(int id,UUID cardId, String name, Set set, List<Legality> legalities, String imgPath, String manaColor, String manaCost, String artistName, int quantity) {
-        this.id = id;
+    public Card(int cardId,UUID cardUuid, String name, String sets, String legalities, String imgPath, String manaColor, String manaCost, String artistName, int quantity) {
         this.cardId = cardId;
+        this.cardUuid = cardUuid;
         this.name = name;
-        this.set = set;
+        this.sets = sets;
         this.legalities = legalities;
         this.imgPath = imgPath;
         this.manaColor = manaColor;
@@ -30,19 +30,19 @@ public class Card {
     }
 
     public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public UUID getCardId() {
         return cardId;
     }
 
+    public void setId(int id) {
+            this.cardId = id;
+    }
+
+    public UUID getCardId() {
+        return cardUuid;
+    }
+
     public void setCardId(UUID cardId) {
-        this.cardId = cardId;
+        this.cardUuid = cardId;
     }
 
     public String getName() {
@@ -53,11 +53,11 @@ public class Card {
         this.name = name;
     }
 
-    public List<Legality> getLegalities() {
+    public String getLegalities() {
         return legalities;
     }
 
-    public void setLegalities(List<Legality> legalities) {
+    public void setLegalities(String legalities) {
         this.legalities = legalities;
     }
 
@@ -69,12 +69,12 @@ public class Card {
         this.imgPath = imgPath;
     }
 
-    public Set getSet() {
-        return set;
+    public String getSet() {
+        return sets;
     }
 
-    public void setSet(Set set) {
-        this.set = set;
+    public void setSet(String sets) {
+        this.sets = sets;
     }
 
     public String getManaColor() {
@@ -113,11 +113,11 @@ public class Card {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Card card = (Card) o;
-        return id == card.id && quantity == card.quantity && Objects.equals(cardId, card.cardId) && Objects.equals(name, card.name) && Objects.equals(legalities, card.legalities) && Objects.equals(set, card.set) && Objects.equals(imgPath, card.imgPath) && Objects.equals(manaColor, card.manaColor) && Objects.equals(manaCost, card.manaCost) && Objects.equals(artistName, card.artistName);
+        return cardId == card.cardId && quantity == card.quantity && Objects.equals(cardUuid, card.cardUuid) && Objects.equals(name, card.name) && Objects.equals(legalities, card.legalities) && Objects.equals(sets, card.sets) && Objects.equals(imgPath, card.imgPath) && Objects.equals(manaColor, card.manaColor) && Objects.equals(manaCost, card.manaCost) && Objects.equals(artistName, card.artistName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, cardId, name, legalities, set, imgPath, manaColor, manaCost, artistName, quantity);
+        return Objects.hash(cardId, cardUuid, name, legalities, sets, imgPath, manaColor, manaCost, artistName, quantity);
     }
 }

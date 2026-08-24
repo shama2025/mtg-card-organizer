@@ -13,16 +13,16 @@ create table if not EXISTS `user` (
 );
 
 CREATE table if not exists card(
-	card_id int PRIMARY key auto_increment,
-    card_uuid UUID not null,
-	name varchar(250) not null,
-	img_path text not null,
-	mana_color JSON null, # if null then color is colorless
-	mana_cost JSON not null,
-	sets text NOT null,
-	legalities JSON not null, #Only holds legal formats
-	artist varchar(250) not null,
-	quantity int not null
+    card_id int PRIMARY key auto_increment,
+    card_uuid varchar(36) not null,
+    name varchar(250) not null,
+    img_path text not null,
+    mana_color JSON null, # if null then color is colorless
+    mana_cost JSON not null,
+    sets JSON NOT null,
+    legalities JSON not null, # Only holds legal formats
+    artist varchar(250) not null,
+    quantity int not null
 );
 
 create table if not EXISTS deck(
@@ -55,10 +55,3 @@ create table if not EXISTS collection (
 	FOREIGN key(card_id)
 	references card(card_id)
 );
-
-
-select * from card
-inner join collection on collection.card_id = card.card_id
-inner join `user` on `user`.user_id = collection.user_id
-where `user`.user_id = ?;
-;
