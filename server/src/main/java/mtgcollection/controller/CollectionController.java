@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import mtgcollection.domain.CollectionService;
 import mtgcollection.dto.LoggedInUser;
+import mtgcollection.model.Collection;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,6 +34,7 @@ public class CollectionController {
 
         ObjectMapper mapper = new ObjectMapper();
         LoggedInUser user = mapper.readValue(userAuthJson,LoggedInUser.class);
-        return new ResponseEntity<>(collectionService.fetchAllCardsByUserId(user.id()),HttpStatus.OK);
+        Collection collection = collectionService.findCollectionByUserId(user.id());
+        return new ResponseEntity<>(collectionService.fetchAllCardsByCollection(collection.getCollectionId()),HttpStatus.OK);
     }
 }

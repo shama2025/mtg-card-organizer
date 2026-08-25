@@ -18,6 +18,10 @@ public class TestHelper {
         return new User(0,"c@c.com","c");
     }
 
+    public static Collection collection(){
+        return new Collection(1,userToFind().getUserId());
+    }
+
     public static LoggedInUser loggedInUser(){return new LoggedInUser(1,"a@a.com");}
 
     public static Card solRing(){return new Card(

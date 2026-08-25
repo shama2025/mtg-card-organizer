@@ -30,7 +30,7 @@ class CollectionControllerTest {
         @Test
         void shouldReturnBadRequestResponse() throws Exception {
             // Act
-            when(collectionService.fetchAllCardsByUserId(1)).thenReturn(TestHelper.cardList());
+            when(collectionService.fetchAllCardsByCollection(1)).thenReturn(TestHelper.cardList());
             MockHttpServletRequestBuilder request = get("/api/collection");
             // assert
             mvc.perform(request).andExpect(status().isBadRequest());
@@ -42,7 +42,8 @@ class CollectionControllerTest {
         @Test
         void shouldFetchCollectionByUserID() throws Exception {
             // Act
-            when(collectionService.fetchAllCardsByUserId(1)).thenReturn(TestHelper.cardList());
+            when(collectionService.findCollectionByUserId(1)).thenReturn(TestHelper.collection());
+            when(collectionService.fetchAllCardsByCollection(1)).thenReturn(TestHelper.cardList());
             MockHttpServletRequestBuilder request = get("/api/collection")
                     .header("authorization", "{\"id\": \"1\",\"email\": \"a@a.com\"}");            // assert
             mvc.perform(request).andExpect(status().isOk());

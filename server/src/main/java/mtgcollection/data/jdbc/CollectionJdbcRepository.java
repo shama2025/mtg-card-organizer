@@ -15,6 +15,17 @@ public class CollectionJdbcRepository implements CollectionRepository {
         this.jdbcClient = jdbcClient;
     }
 
+    public Collection fetchUserCollection(int userId){
+        final String sql = """
+                select * from collection
+                where user_id = :userId;
+                """;
+        return jdbcClient.sql(sql)
+                .param("userId", userId)
+                .query(Collection.class)
+                .single();
+    }
+
     public Collection createCollection(int userId){
         final String sql = """
                 insert into collection (user_id)

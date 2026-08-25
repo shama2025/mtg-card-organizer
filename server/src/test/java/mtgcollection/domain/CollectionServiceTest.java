@@ -28,7 +28,7 @@ class CollectionServiceTest {
         @Test
         void shouldFetchAllUsers(){
             when(cardRepository.fetchAllCards(1)).thenReturn(TestHelper.cardList());
-            List<Card> cardList = collectionService.fetchAllCardsByUserId(1);
+            List<Card> cardList = collectionService.fetchAllCardsByCollection(1);
             assertEquals(3,cardList.size());
         }
     }
