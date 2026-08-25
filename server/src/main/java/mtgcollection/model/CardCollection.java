@@ -1,4 +1,4 @@
 package mtgcollection.model;
 
-public record CardCollection(int cardId, int collectionId, int quantity) {
+public record CardCollection(Card card, Collection collection, int quantity) {
 }
