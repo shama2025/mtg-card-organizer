@@ -5,12 +5,10 @@ import java.util.Objects;
 
 public class Collection {
     private int collectionId;
-    private List<Card> cardList;
     private int ownerId;
 
-    public Collection(int collectionId, List<Card> cardList, int ownerId) {
+    public Collection(int collectionId, int ownerId) {
         this.collectionId = collectionId;
-        this.cardList = cardList;
         this.ownerId = ownerId;
     }
 
@@ -20,14 +18,6 @@ public class Collection {
 
     public void setCollectionId(int collectionId) {
         this.collectionId = collectionId;
-    }
-
-    public List<Card> getCardList() {
-        return cardList;
-    }
-
-    public void setCardList(List<Card> cardList) {
-        this.cardList = cardList;
     }
 
     public int getOwner() {
@@ -42,11 +32,11 @@ public class Collection {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Collection that = (Collection) o;
-        return collectionId == that.collectionId && Objects.equals(cardList, that.cardList) && Objects.equals(ownerId, that.ownerId);
+        return collectionId == that.collectionId && Objects.equals(ownerId, that.ownerId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(collectionId, cardList, ownerId);
+        return Objects.hash(collectionId, ownerId);
     }
 }
