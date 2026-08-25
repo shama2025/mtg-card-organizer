@@ -1,4 +1,4 @@
-package mtgcollection.data.mapper;
+package mtgcollection.data.jdbc.mapper;
 
 import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.type.TypeReference;

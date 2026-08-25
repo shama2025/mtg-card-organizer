@@ -1,6 +1,7 @@
-package mtgcollection.data;
+package mtgcollection.data.jdbc;
 
-import mtgcollection.data.mapper.CardMapper;
+import mtgcollection.data.interfaces.CardRepository;
+import mtgcollection.data.jdbc.mapper.CardMapper;
 import mtgcollection.model.Card;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.jdbc.support.GeneratedKeyHolder;

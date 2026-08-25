@@ -1,6 +1,9 @@
 package mtgcollection.data;
 
 import mtgcollection.TestHelper;
+import mtgcollection.data.jdbc.CardCollectionJdbcRepository;
+import mtgcollection.data.jdbc.CardJdbcRepository;
+import mtgcollection.data.jdbc.CollectionJdbcRepository;
 import mtgcollection.model.Card;
 import mtgcollection.model.CardCollection;
 import mtgcollection.model.Collection;

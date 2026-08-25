@@ -1,5 +1,6 @@
-package mtgcollection.data;
+package mtgcollection.data.jdbc;
 
+import mtgcollection.data.interfaces.CardCollectionRepository;
 import mtgcollection.model.Card;
 import mtgcollection.model.CardCollection;
 import mtgcollection.model.Collection;
@@ -7,7 +8,7 @@ import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class CardCollectionJdbcRepository implements CardCollectionRepository{
+public class CardCollectionJdbcRepository implements CardCollectionRepository {
 
     private JdbcClient jdbcClient;
 

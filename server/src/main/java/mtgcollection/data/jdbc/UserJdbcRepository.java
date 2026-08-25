@@ -1,12 +1,13 @@
-package mtgcollection.data;
+package mtgcollection.data.jdbc;
 
+import mtgcollection.data.interfaces.UserRepository;
 import mtgcollection.model.User;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class UserJdbcRepository implements UserRepository{
+public class UserJdbcRepository implements UserRepository {
 
     private static JdbcClient jdbcClient;
 

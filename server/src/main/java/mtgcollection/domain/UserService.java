@@ -6,7 +6,7 @@ import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-import mtgcollection.data.UserRepository;
+import mtgcollection.data.interfaces.UserRepository;
 import mtgcollection.dto.LoggedInUser;
 import mtgcollection.model.Result;
 import mtgcollection.model.ResultType;

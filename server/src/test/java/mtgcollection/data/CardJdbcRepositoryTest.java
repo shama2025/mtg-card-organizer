@@ -1,7 +1,7 @@
 package mtgcollection.data;
 
-import jakarta.validation.constraints.Null;
 import mtgcollection.TestHelper;
+import mtgcollection.data.jdbc.CardJdbcRepository;
 import mtgcollection.model.Card;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;

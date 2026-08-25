@@ -1,6 +1,6 @@
 package mtgcollection.domain;
 
-import mtgcollection.data.CardRepository;
+import mtgcollection.data.interfaces.CardRepository;
 import mtgcollection.model.Card;
 import org.springframework.stereotype.Service;
 

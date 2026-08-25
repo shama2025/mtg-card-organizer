@@ -1,4 +1,4 @@
-package mtgcollection.data;
+package mtgcollection.data.interfaces;
 
 import mtgcollection.model.Collection;
 
