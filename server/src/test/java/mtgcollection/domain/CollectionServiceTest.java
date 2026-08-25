@@ -1,5 +1,6 @@
 package mtgcollection.domain;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import mtgcollection.TestHelper;
 import mtgcollection.data.CardRepository;
 import mtgcollection.model.Card;
