@@ -40,8 +40,8 @@ class CardCollectionJdbcRepositoryTest {
             Card card = cardJdbcRepository.addCard(TestHelper.lightningBolt());
             Collection collection = new Collection(1,1);
             CardCollection cardCollection = cardCollectionJdbcRepository.addCardToCollection(card,collection);
-            assertEquals(card.getId(),cardCollection.cardId());
-            assertEquals(collection.getCollectionId(),cardCollection.collectionId());
+            assertEquals(card,cardCollection);
+            assertEquals(collection.getCollectionId(),cardCollection);
         }
     }
 
