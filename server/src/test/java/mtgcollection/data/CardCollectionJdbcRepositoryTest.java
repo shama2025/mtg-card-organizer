@@ -1,0 +1,48 @@
+package mtgcollection.data;
+
+import mtgcollection.TestHelper;
+import mtgcollection.model.Card;
+import mtgcollection.model.CardCollection;
+import mtgcollection.model.Collection;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.jdbc.core.simple.JdbcClient;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
+class CardCollectionJdbcRepositoryTest {
+
+    @Autowired
+    JdbcClient jdbcClient;
+
+    @Autowired
+    CardCollectionJdbcRepository cardCollectionJdbcRepository;
+
+    @Autowired
+    CollectionJdbcRepository collectionJdbcRepository;
+
+    @Autowired
+    CardJdbcRepository cardJdbcRepository;
+
+    @BeforeEach
+    void runSetKnownGoodState(){
+        jdbcClient.sql("call set_known_good_state();").update();
+    }
+
+    @Nested
+    class AddCardToCardCollectionTest{
+        @Test
+        void shouldAddCardToCollection(){
+            Card card = cardJdbcRepository.addCard(TestHelper.lightningBolt());
+            Collection collection = new Collection(1,1);
+            CardCollection cardCollection = cardCollectionJdbcRepository.addCardToCollection(card,collection);
+            assertEquals(card.getId(),cardCollection.cardId());
+            assertEquals(collection.getCollectionId(),cardCollection.collectionId());
+        }
+    }
+
+}
