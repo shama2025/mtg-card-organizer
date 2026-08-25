@@ -2,6 +2,7 @@ create database if not exists mtg_collection_test;
 
 use mtg_collection_test;
 
+DROP TABLE IF EXISTS collection_card;
 DROP TABLE IF EXISTS collection;
 DROP TABLE IF EXISTS card_deck;
 DROP TABLE IF EXISTS deck;
@@ -48,15 +49,23 @@ create table if not exists card_deck(
 
 create table if not EXISTS collection (
     collection_id int primary key auto_increment,
-    card_id int not null,
-    user_id int not null,
+    user_id int not null unique,
     constraint fk_user_collection
     FOREIGN key(user_id)
-    REFERENCES `user`(user_id),
-    constraint fk_card_collection
-    FOREIGN key(card_id)
-    references card(card_id)
+    REFERENCES `user`(user_id)
 );
+	
+create table if not exists collection_card(
+	collection_id int not null,
+	card_id int not NULL,
+	quantity int not null,
+	constraint fk_collection_collection_id
+	foreign key(collection_id)
+	references collection(collection_id),
+	constraint fk_collection_user_id
+	FOREIGN key(card_id)
+	REFERENCES card(card_id)
+	);
 
 DELIMITER //
 
@@ -65,12 +74,14 @@ DROP PROCEDURE IF EXISTS set_known_good_state //
 CREATE PROCEDURE set_known_good_state()
 BEGIN
     -- Delete bridge/child tables first to satisfy foreign key constraints
-    delete from collection;
+    delete from collection_card;
+	delete from collection;
     delete from card_deck;
     delete from deck;
     delete from card;
     delete from `user`;
     
+	alter table collection_card auto_increment = 1;
     alter table collection auto_increment = 1;
     alter table card_deck auto_increment = 1;
     alter table deck auto_increment = 1;
@@ -142,13 +153,17 @@ BEGIN
         (3, 2), -- Sol Ring -> Mono Green Ramp
         (4, 2); -- Birds of Paradise -> Mono Green Ramp
 
-    -- 5. Seed Collections (Links cards to users)
-    insert into collection (card_id, user_id) values
-        (1, 1), -- User a owns Lightning Bolt
-        (2, 1), -- User a owns Counterspell
-        (3, 2), -- User b owns a Sol Ring
-        (3, 1), -- User a owns Sol Ring
-        (4, 2); -- User b owns Birds of Paradise
+	   insert into collection (user_id) values
+	    (1), -- collection_id 1 for User 1
+	    (2); -- collection_id 2 for User 2
+
+	-- 6. Seed Collection Cards (Join table)
+	insert into collection_card (collection_id, card_id, quantity) values
+	    (1, 1, 1), -- User 1 owns Lightning Bolt
+	    (1, 2, 1), -- User 1 owns Counterspell
+	    (1, 3, 1), -- User 1 owns Sol Ring
+	    (2, 3, 3), -- User 2 owns 3 Sol Rings
+	    (2, 4, 2); -- User 2 owns 2 Birds of Paradise
 
 END //
 
