@@ -1,4 +1,4 @@
-package mtgcollection.model;
+package mtgcollection.model.card;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -9,9 +9,9 @@ public class Card {
     private int cardId;
     private UUID cardUuid;
     private String name;
-    private List<Formats> legalities;
+    private List<String> legalities;
     private Set sets;
-    private List<ImagePaths> imagePaths;
+    private Map<String,String> imagePaths;
     private ManaColor manaColor;
     private ManaCost manaCost;
     private String artistName;
@@ -19,7 +19,7 @@ public class Card {
 
     public Card(){}
 
-    public Card(int cardId,UUID cardUuid, String name, Set sets, List<Formats> legalities, List<ImagePaths> imagePaths, ManaColor manaColor, ManaCost manaCost, String artistName, int quantity){
+    public Card(int cardId, UUID cardUuid, String name, Set sets, List<String> legalities, Map<String,String> imagePaths, ManaColor manaColor, ManaCost manaCost, String artistName, int quantity){
         this.cardId = cardId;
         this.cardUuid = cardUuid;
         this.name = name;
@@ -56,19 +56,19 @@ public class Card {
         this.name = name;
     }
 
-    public List<Formats> getLegalities() {
+    public List<String> getLegalities() {
         return legalities;
     }
 
-    public void setLegalities(List<Formats> legalities) {
+    public void setLegalities(List<String> legalities) {
         this.legalities = legalities;
     }
 
-    public List<ImagePaths> getImgPath() {
+    public Map<String,String> getImgPath() {
         return imagePaths;
     }
 
-    public void setImgPath(List<ImagePaths> imagePaths) {
+    public void setImgPath(Map<String,String> imagePaths) {
         this.imagePaths = imagePaths;
     }
 
@@ -131,16 +131,18 @@ public class Card {
     public void parseLegalities(HashMap<String,String> formats){
          this.legalities = formats.entrySet().stream()
                 .filter(entry -> entry.getValue().equalsIgnoreCase("legal"))
-                .map(entry -> Formats.valueOf(entry.getValue()))
-                .collect(Collectors.toList());
+                .map(Map.Entry::getKey)
+                 .collect(Collectors.toList());
     }
 
     public void parseCardImages(HashMap<String, String> imageUris){
-        for(Map.Entry<String, String> imageUri : imageUris.entrySet()){
-            String type = imageUri.getKey();
-            String uri = imageUri.getValue();
-            this.imagePaths.add(new ImagePaths(type,uri));
-        }
+//        HashMap<String,String> paths = new ArrayList<>();
+//        for(Map.Entry<String, String> imageUri : imageUris.entrySet()){
+//            String type = imageUri.getKey();
+//            String uri = imageUri.getValue();
+//            paths.add(new ImagePaths(type,uri));
+//        }
+        this.imagePaths = imageUris;
     }
 
     public void parseCardManaCost(String manaCost){

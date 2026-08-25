@@ -1,4 +1,4 @@
-package mtgcollection.model;
+package mtgcollection.model.card;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 
 public record ManaCost(
         @JsonProperty("cmc")
-        int convertedManaCost,
+        int cmc,
         @JsonProperty("mana_string")
         String manaString) {
 

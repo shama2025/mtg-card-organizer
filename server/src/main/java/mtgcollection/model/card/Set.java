@@ -1,4 +1,4 @@
-package mtgcollection.model;
+package mtgcollection.model.card;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
