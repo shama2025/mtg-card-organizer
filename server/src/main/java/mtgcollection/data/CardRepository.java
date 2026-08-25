@@ -8,4 +8,5 @@ public interface CardRepository {
 
     List<Card> fetchAllCards(int userId);
 
+    Card addCard(Card card);
 }
