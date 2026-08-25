@@ -1,10 +1,11 @@
 package mtgcollection.data;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import mtgcollection.TestHelper;
 import mtgcollection.data.jdbc.CardCollectionJdbcRepository;
 import mtgcollection.data.jdbc.CardJdbcRepository;
 import mtgcollection.data.jdbc.CollectionJdbcRepository;
-import mtgcollection.model.Card;
+import mtgcollection.model.card.Card;
 import mtgcollection.model.CardCollection;
 import mtgcollection.model.Collection;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,7 +40,7 @@ class CardCollectionJdbcRepositoryTest {
     @Nested
     class AddCardToCardCollectionTest{
         @Test
-        void shouldAddCardToCollection(){
+        void shouldAddCardToCollection() throws JsonProcessingException {
             Card card = cardJdbcRepository.addCard(TestHelper.lightningBolt());
             Collection collection = new Collection(1,1);
             CardCollection cardCollection = cardCollectionJdbcRepository.addCardToCollection(card,collection);

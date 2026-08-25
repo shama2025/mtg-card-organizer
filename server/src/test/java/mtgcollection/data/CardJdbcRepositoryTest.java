@@ -1,8 +1,9 @@
 package mtgcollection.data;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import mtgcollection.TestHelper;
 import mtgcollection.data.jdbc.CardJdbcRepository;
-import mtgcollection.model.Card;
+import mtgcollection.model.card.Card;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -42,7 +43,7 @@ class CardJdbcRepositoryTest {
     class AddCardTests{
         // Should Add Card
         @Test
-        void shouldAddCardWithPopulatedValues(){
+        void shouldAddCardWithPopulatedValues() throws JsonProcessingException {
             Card cardToAdd = TestHelper.lightningBolt();
             Card createdCard = repository.addCard(cardToAdd);
             createdCard.setId(5);
@@ -51,7 +52,7 @@ class CardJdbcRepositoryTest {
 
         // Should add card with empty manaColor
         @Test
-        void shouldAddCardWithEmptyManaColor(){
+        void shouldAddCardWithEmptyManaColor() throws JsonProcessingException{
             Card cardToAdd = TestHelper.lightningBolt();
             cardToAdd.setManaColor(null);
             Card createdCard = repository.addCard(cardToAdd);

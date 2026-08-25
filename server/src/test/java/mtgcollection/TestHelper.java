@@ -1,11 +1,14 @@
 package mtgcollection;
 
 
+import mtgcollection.data.http.response.model.CardResponse;
 import mtgcollection.dto.LoggedInUser;
 import mtgcollection.model.*;
+import mtgcollection.model.card.*;
 
-import java.text.Format;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public class TestHelper {
@@ -24,51 +27,208 @@ public class TestHelper {
 
     public static LoggedInUser loggedInUser(){return new LoggedInUser(1,"a@a.com");}
 
-    public static Card solRing(){return new Card(
-            0,
-            UUID.fromString("ab851e3a-7f61-464a-9520-21a4f02a3a10"),
-            "Sol Ring",
-            new Set("C11","Commander 2011"),
-            List.of(Formats.VINTAGE,Formats.COMMANDER),
-            "https://cards.scryfall.io/large/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.jpg",
-            null, // manaColor is null for colorless
-            new ManaCost(1,"{1}"),
-            "Mark Tedin",
-            3
-    );}
-
-    public static Card counterspell(){
+    public static Card solRing() {
         return new Card(
-            0,
-            UUID.fromString("a97f330d-6823-4337-a7d1-e9c522d08a5c"),
-            "Counterspell",
-            new Set("MH2","Modern Horizons 2"),
-            List.of(Formats.MODERN,Formats.LEGACY,
-                        Formats.VINTAGE,Formats.COMMANDER,Formats.PAUPER),
-            "https://cards.scryfall.io/large/front/a/9/a97f330d-6823-4337-a7d1-e9c522d08a5c.jpg",
-            new ManaColor(List.of("U").toArray(new String[0])),
-            new ManaCost(2,"{U}{U}"),
-            "Mark Poole",
-            1
-    );}
-
-    public static Card lightningBolt(){
-        return new Card (
                 0,
-                UUID.fromString("f29ba16f-c8fb-42fe-aabf-87089cb214a7"), // cardUuid
-                "Lightning Bolt", // name
-                new Set("2XM", "Double Masters 2022"), // sets (JSON String)
-                List.of(Formats.MODERN,Formats.LEGACY,
-                        Formats.VINTAGE,Formats.COMMANDER,Formats.PAUPER), // legalities (JSON String)
-                "https://cards.scryfall.io/large/front/f/2/f29ba16f-c8fb-42fe-aabf-87089cb214a7.jpg", // imgPath
-                new ManaColor(List.of("R").toArray(new String[0])), // manaColor (JSON String)
-                new ManaCost(1,"{R}"), // manaCost (JSON String)
-                "Christopher Rush", // artistName
-                1 // quantity
+                UUID.fromString("ab851e3a-7f61-464a-9520-21a4f02a3a10"),
+                "Sol Ring",
+                new Set("C11", "Commander 2011"),
+                List.of("Vintage","Commander"),
+                Map.of(
+                        "small", "https://cards.scryfall.io/small/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.jpg",
+                        "normal", "https://cards.scryfall.io/normal/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.jpg",
+                        "large", "https://cards.scryfall.io/large/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.jpg",
+                        "png", "https://cards.scryfall.io/png/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.png",
+                        "art_crop", "https://cards.scryfall.io/art_crop/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.jpg"
+                ),
+                null, // colorless
+                new ManaCost(1, "{1}"),
+                "Mark Tedin",
+                3
+        );
+    }
+
+    public static Card counterspell() {
+        return new Card(
+                0,
+                UUID.fromString("a97f330d-6823-4337-a7d1-e9c522d08a5c"),
+                "Counterspell",
+                new Set("MH2", "Modern Horizons 2"),
+                List.of("Modern", "Legacy", "Vintage", "Commander", "Pauper"),
+                Map.of(
+                        "small", "https://cards.scryfall.io/small/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.jpg",
+                        "normal", "https://cards.scryfall.io/normal/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.jpg",
+                        "large", "https://cards.scryfall.io/large/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.jpg",
+                        "png", "https://cards.scryfall.io/png/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.png",
+                        "art_crop", "https://cards.scryfall.io/art_crop/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.jpg"
+                ),
+                new ManaColor(new String[]{"U"}),
+                new ManaCost(2, "{U}{U}"),
+                "Mark Poole",
+                1
+        );
+    }
+
+    public static Card lightningBolt() {
+        return new Card(
+                0,
+                UUID.fromString("f29ba16f-c8fb-42fe-aabf-87089cb214a7"),
+                "Lightning Bolt",
+                new Set("2XM", "Double Masters 2022"),
+                List.of("Modern", "Legacy", "Vintage", "Commander", "Pauper"),
+                Map.of(
+                        "small", "https://cards.scryfall.io/small/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.jpg",
+                        "normal", "https://cards.scryfall.io/normal/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.jpg",
+                        "large", "https://cards.scryfall.io/large/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.jpg",
+                        "png", "https://cards.scryfall.io/png/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.png",
+                        "art_crop", "https://cards.scryfall.io/art_crop/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.jpg"
+                ),
+                new ManaColor(new String[]{"R"}),
+                new ManaCost(1, "{R}"),
+                "Christopher Rush",
+                1
+        );
+    }
+
+    public static Card birdsOfParadise() {
+        return new Card(
+                0,
+                UUID.fromString("fe0a79f6-e0b3-4705-894c-e83cb41c18ca"),
+                "Birds of Paradise",
+                new Set("DMR", "Dominaria Remastered"),
+                List.of("Modern", "Legacy", "Vintage", "Commander"),
+                Map.of(
+                        "small", "https://cards.scryfall.io/small/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.jpg",
+                        "normal", "https://cards.scryfall.io/normal/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.jpg",
+                        "large", "https://cards.scryfall.io/large/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.jpg",
+                        "png", "https://cards.scryfall.io/png/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.png",
+                        "art_crop", "https://cards.scryfall.io/art_crop/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.jpg"
+                ),
+                new ManaColor(new String[]{"G"}),
+                new ManaCost(1, "{G}"),
+                "Edward P. Beard, Jr.",
+                2
+        );
+    }
+
+    public static Card blackLotus() {
+        return new Card(
+                0,
+                UUID.fromString("bd8fa327-dd41-4737-8f19-2cf5eb1f7cdd"),
+                "Black Lotus",
+                new Set("vma", "Vintage Masters"),
+                null, // Banned in all formats
+                Map.of(
+                        "small", "https://cards.scryfall.io/small/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.jpg",
+                        "normal", "https://cards.scryfall.io/normal/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.jpg",
+                        "large", "https://cards.scryfall.io/large/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.jpg",
+                        "png", "https://cards.scryfall.io/png/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.png",
+                        "art_crop", "https://cards.scryfall.io/art_crop/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.jpg"
+                ),
+                new ManaColor(null),
+                new ManaCost(0, "{0}"),
+                "Christopher Rush",
+                1
         );
     }
 
     public static List<Card> cardList() {
         return List.of(lightningBolt(), counterspell(), solRing());
+    }
+
+    public static CardResponse blackLotusCardResponse() {
+        // Image URIs matching the Scryfall paths used in TestHelper.blackLotus()
+        HashMap<String, String> imageUris = new HashMap<>();
+        imageUris.put("small", "https://cards.scryfall.io/small/front/b/d/bd8fa327-dd41-4737-8f19-2cf5eb1f7cdd.jpg");
+        imageUris.put("normal", "https://cards.scryfall.io/small/front/b/d/bd8fa327-dd41-4737-8f19-2cf5eb1f7cdd.jpg");
+        imageUris.put("large", "https://cards.scryfall.io/small/front/b/d/bd8fa327-dd41-4737-8f19-2cf5eb1f7cdd.jpg");
+        imageUris.put("png", "https://cards.scryfall.io/small/front/b/d/bd8fa327-dd41-4737-8f19-2cf5eb1f7cdd.jpg");
+        imageUris.put("art_crop", "https://cards.scryfall.io/small/front/b/d/bd8fa327-dd41-4737-8f19-2cf5eb1f7cdd.jpg");
+
+        // Legalities set to not_legal / banned across formats
+        HashMap<String, String> legalities = new HashMap<>();
+        legalities.put("standard", "not_legal");
+        legalities.put("modern", "not_legal");
+        legalities.put("legacy", "banned");
+        legalities.put("vintage", "restricted");
+        legalities.put("commander", "banned");
+
+        return new CardResponse(
+                "card",                                                                // object
+                UUID.fromString("bd8fa327-dd41-4737-8f19-2cf5eb1f7cdd"),               // cardId
+                UUID.fromString("6a0429f2-2b3f-4e00-8800-000000000000"),               // oracleId
+                new int[]{382866},                                                     // multiverseIds
+                "",                                                                    // resourceId
+                0,                                                                     // mtgoId
+                0,                                                                     // arenaId
+                0,                                                                     // tcgPlayerId
+                0,                                                                     // cardMarkId
+                "Black Lotus",                                                         // name
+                "en",                                                                  // language
+                "2014-06-16",                                                          // releasedAt
+                "https://api.scryfall.com/cards/bd8fa327-dd41-4737-8f19-2cf5eb1f7cdd",   // uri
+                "https://scryfall.com/card/vma/4/black-lotus",                        // scryfallUri
+                "normal",                                                              // layout
+                true,                                                                  // highResImage
+                "highres_scan",                                                        // imageStatus
+                "",                                                                    // imageUpdatedAt
+                imageUris,                                                             // imageUris
+                "{0}",                                                                 // manaCost
+                0.0,                                                                   // cmc
+                "Artifact",                                                            // typeLine
+                "{T}, Sacrifice Black Lotus: Add three mana of any one color.",        // oracleText
+                null,                                                                  // power
+                null,                                                                  // toughness
+                new String[]{},                                                        // colors (colorless)
+                new String[]{},                                                        // colorIdentity
+                new String[]{},                                                        // keywords
+                new String[]{"W", "U", "B", "R", "G"},                                 // producedMana
+                legalities,                                                            // legalities
+                new String[]{"mtgo"},                                                  // games
+                true,                                                                  // reserved
+                false,                                                                 // gameChanger
+                true,                                                                  // foil
+                false,                                                                 // nonfoil
+                new String[]{"foil"},                                                  // finishes
+                false,                                                                 // oversized
+                false,                                                                 // promo
+                true,                                                                  // reprint
+                false,                                                                 // variation
+                UUID.randomUUID(),                                                     // setId
+                "vma",                                                                 // set
+                "Vintage Masters",                                                     // setName
+                "masters",                                                             // setType
+                "",                                                                    // setUri
+                "",                                                                    // setSearchUri
+                "",                                                                    // scryFallSetUri
+                "",                                                                    // rulingsUri
+                "",                                                                    // printsSearchUri
+                null,                                                                  // watermark
+                new String[]{},                                                        // frameEffects
+                null,                                                                  // securityStamp
+                "4",                                                                   // collectorNumber
+                true,                                                                  // digital
+                "rare",                                                                // rarity
+                "",                                                                    // flavorText
+                null,                                                                  // cardBackId
+                "Christopher Rush",                                                    // artist
+                new UUID[]{},                                                          // artistId
+                null,                                                                  // illustrationId
+                "black",                                                               // borderColor
+                "2015",                                                                // frame
+                false,                                                                 // fullArt
+                false,                                                                 // textless
+                true,                                                                  // booster
+                false,                                                                 // storySpotlight
+                new String[]{},                                                        // promoTypes
+                0,                                                                     // edhrecRank
+                new HashMap<>(),                                                       // prices
+                new HashMap<>(),                                                       // relatedUris
+                new HashMap<>(),                                                       // purchaseUris
+                0,                                                                     // pennyRank
+                List.of(),                                                             // cardFaces
+                List.of(),                                                             // allParts
+                new HashMap<>()                                                        // preview
+        );
     }
 }
