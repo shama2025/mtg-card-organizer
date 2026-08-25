@@ -20,7 +20,7 @@ public class CardJdbcRepository implements CardRepository {
     public List<Card> fetchAllCards(int userId){
         final String sql = """
                 select card.card_id ,card.card_uuid, card.name, card.img_path,
-                card.mana_color, card.mana_cost, card.sets, card.legalities, card.artist, quantity from card
+                card.mana_color, card.mana_cost, card.sets, card.legalities, card.artist, card_collection.quantity from card
                 inner join collection on collection.card_id = card.card_id
                 inner join `user` on `user`.user_id = collection.user_id
                 where `user`.user_id = :userId

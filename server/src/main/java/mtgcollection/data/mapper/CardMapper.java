@@ -60,7 +60,7 @@ public class CardMapper implements RowMapper<Card> {
         card.setCardId(UUID.fromString(rs.getString("card.card_uuid")));
         card.setId(rs.getInt("card.card_id"));
         card.setName(rs.getString("card.name"));
-        card.setQuantity(rs.getInt("card.quantity"));
+        card.setQuantity(rs.getInt("collection_card.quantity"));
         card.setImgPath(rs.getString("card.img_path"));
         card.setArtistName(rs.getString("card.artist"));
 
