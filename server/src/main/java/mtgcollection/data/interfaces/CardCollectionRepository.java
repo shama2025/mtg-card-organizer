@@ -1,6 +1,6 @@
 package mtgcollection.data.interfaces;
 
-import mtgcollection.model.Card;
+import mtgcollection.model.card.Card;
 import mtgcollection.model.CardCollection;
 import mtgcollection.model.Collection;
 

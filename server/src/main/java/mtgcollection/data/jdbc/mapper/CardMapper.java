@@ -3,12 +3,14 @@ package mtgcollection.data.jdbc.mapper;
 import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import mtgcollection.model.*;
+import mtgcollection.model.card.*;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public class CardMapper implements RowMapper<Card> {
@@ -21,7 +23,7 @@ public class CardMapper implements RowMapper<Card> {
         if(legalities != null && !legalities.isBlank()){
             // Format it
             try{
-                card.setLegalities(mapper.readValue(legalities, new TypeReference<List<Formats>>() {}));
+                card.setLegalities(mapper.readValue(legalities, new TypeReference<List<String>>() {}));
             }catch (JacksonException ex){
                 throw new SQLException("Error parsing mana cost column",ex);
             }
@@ -57,11 +59,19 @@ public class CardMapper implements RowMapper<Card> {
             }
         }
 
+        String imageUri = rs.getString("c.img_path");
+        if(imageUri != null && !imageUri.isBlank()){
+            try{
+                card.setImgPath(mapper.readValue(imageUri, new TypeReference<Map<String,String>>() {}));
+            }catch (JacksonException ex){
+                throw new SQLException("Error parsing mana cost column",ex);
+            }
+        }
+
         card.setCardId(UUID.fromString(rs.getString("c.card_uuid")));
         card.setId(rs.getInt("c.card_id"));
         card.setName(rs.getString("c.name"));
         card.setQuantity(rs.getInt("cc.quantity"));
-        card.setImgPath(rs.getString("c.img_path"));
         card.setArtistName(rs.getString("c.artist"));
 
         return card;
