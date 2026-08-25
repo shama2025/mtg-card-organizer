@@ -24,7 +24,7 @@ CREATE table if not exists card(
     card_id int PRIMARY key auto_increment,
     card_uuid varchar(36) not null,
     name varchar(250) not null,
-    img_path text not null,
+    img_path JSON not null,
     mana_color JSON null, # if null then color is colorless
     mana_cost JSON not null,
     sets JSON NOT null,
@@ -38,7 +38,7 @@ create table if not EXISTS deck(
     name varchar(100) not null,
     card_count int not null,
     date_created date not null,
-    date_updated date not nul
+    date_updated date not null
 );
 
 create table if not exists card_deck(
