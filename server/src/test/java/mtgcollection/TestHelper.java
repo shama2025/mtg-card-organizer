@@ -2,9 +2,9 @@ package mtgcollection;
 
 
 import mtgcollection.dto.LoggedInUser;
-import mtgcollection.model.Card;
-import mtgcollection.model.User;
+import mtgcollection.model.*;
 
+import java.text.Format;
 import java.util.List;
 import java.util.UUID;
 
@@ -24,45 +24,47 @@ public class TestHelper {
             0,
             UUID.fromString("ab851e3a-7f61-464a-9520-21a4f02a3a10"),
             "Sol Ring",
-            "{\"code\":\"C11\",\"name\":\"Commander 2011\"}",
-            "[\"vintage\",\"commander\"]",
+            new Set("C11","Commander 2011"),
+            List.of(Formats.VINTAGE,Formats.COMMANDER),
             "https://cards.scryfall.io/large/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.jpg",
             null, // manaColor is null for colorless
-            "{\"cmc\":1,\"mana_string\":\"{1}\"}",
+            new ManaCost(1,"{1}"),
             "Mark Tedin",
             3
     );}
 
-    public static Card counterspell(){return new Card(
+    public static Card counterspell(){
+        return new Card(
             0,
             UUID.fromString("a97f330d-6823-4337-a7d1-e9c522d08a5c"),
             "Counterspell",
-            "{\"code\":\"MH2\",\"name\":\"Modern Horizons 2\"}",
-            "[\"modern\",\"legacy\",\"vintage\",\"commander\",\"pauper\"]",
+            new Set("MH2","Modern Horizons 2"),
+            List.of(Formats.MODERN,Formats.LEGACY,
+                        Formats.VINTAGE,Formats.COMMANDER,Formats.PAUPER),
             "https://cards.scryfall.io/large/front/a/9/a97f330d-6823-4337-a7d1-e9c522d08a5c.jpg",
-            "[\"U\"]",
-            "{\"cmc\":2,\"mana_string\":\"{U}{U}\"}",
+            new ManaColor(List.of("U").toArray(new String[0])),
+            new ManaCost(2,"{U}{U}"),
             "Mark Poole",
             1
     );}
 
     public static Card lightningBolt(){
-        return new Card(
+        return new Card (
                 0,
                 UUID.fromString("f29ba16f-c8fb-42fe-aabf-87089cb214a7"), // cardUuid
                 "Lightning Bolt", // name
-                "{\"code\":\"2XM\",\"name\":\"Double Masters 2022\"}", // sets (JSON String)
-                "[\"modern\",\"legacy\",\"vintage\",\"commander\",\"pauper\"]", // legalities (JSON String)
+                new Set("2XM", "Double Masters 2022"), // sets (JSON String)
+                List.of(Formats.MODERN,Formats.LEGACY,
+                        Formats.VINTAGE,Formats.COMMANDER,Formats.PAUPER), // legalities (JSON String)
                 "https://cards.scryfall.io/large/front/f/2/f29ba16f-c8fb-42fe-aabf-87089cb214a7.jpg", // imgPath
-                "[\"R\"]", // manaColor (JSON String)
-                "{\"cmc\":1,\"mana_string\":\"{R}\"}", // manaCost (JSON String)
+                new ManaColor(List.of("R").toArray(new String[0])), // manaColor (JSON String)
+                new ManaCost(1,"{R}"), // manaCost (JSON String)
                 "Christopher Rush", // artistName
                 1 // quantity
         );
     }
 
-    public static List<Card> cardList(){
+    public static List<Card> cardList() {
         return List.of(lightningBolt(), counterspell(), solRing());
     }
-
 }
