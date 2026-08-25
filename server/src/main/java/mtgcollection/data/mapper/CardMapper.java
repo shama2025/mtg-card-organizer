@@ -17,7 +17,7 @@ public class CardMapper implements RowMapper<Card> {
         Card card = new Card();
         ObjectMapper mapper = new ObjectMapper();
 
-        String legalities = rs.getString("card.legalities");
+        String legalities = rs.getString("c.legalities");
         if(legalities != null && !legalities.isBlank()){
             // Format it
             try{
@@ -27,7 +27,7 @@ public class CardMapper implements RowMapper<Card> {
             }
         }
 
-        String sets = rs.getString("card.sets");
+        String sets = rs.getString("c.sets");
         if(sets != null && !sets.isBlank()){
             // Format it
             try{
@@ -37,7 +37,7 @@ public class CardMapper implements RowMapper<Card> {
             }
         }
 
-        String manaColor = rs.getString("card.mana_color");
+        String manaColor = rs.getString("c.mana_color");
         if(manaColor != null && !manaColor.isBlank()){
             // Format it
             try{
@@ -47,7 +47,7 @@ public class CardMapper implements RowMapper<Card> {
             }
         }
 
-        String manaCost = rs.getString("card.mana_cost");
+        String manaCost = rs.getString("c.mana_cost");
         if(manaCost != null && !manaCost.isBlank()){
             // Format it
             try{
@@ -57,12 +57,12 @@ public class CardMapper implements RowMapper<Card> {
             }
         }
 
-        card.setCardId(UUID.fromString(rs.getString("card.card_uuid")));
-        card.setId(rs.getInt("card.card_id"));
-        card.setName(rs.getString("card.name"));
-        card.setQuantity(rs.getInt("collection_card.quantity"));
-        card.setImgPath(rs.getString("card.img_path"));
-        card.setArtistName(rs.getString("card.artist"));
+        card.setCardId(UUID.fromString(rs.getString("c.card_uuid")));
+        card.setId(rs.getInt("c.card_id"));
+        card.setName(rs.getString("c.name"));
+        card.setQuantity(rs.getInt("cc.quantity"));
+        card.setImgPath(rs.getString("c.img_path"));
+        card.setArtistName(rs.getString("c.artist"));
 
         return card;
     }

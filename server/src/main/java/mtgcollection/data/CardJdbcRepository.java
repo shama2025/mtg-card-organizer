@@ -17,16 +17,18 @@ public class CardJdbcRepository implements CardRepository {
         this.jdbcClient = jdbcClient;
     }
 
-    public List<Card> fetchAllCards(int userId){
+    public List<Card> fetchAllCards(int collectionId){
         final String sql = """
-                select card.card_id ,card.card_uuid, card.name, card.img_path,
-                card.mana_color, card.mana_cost, card.sets, card.legalities, card.artist, card_collection.quantity from card
-                inner join collection on collection.card_id = card.card_id
-                inner join `user` on `user`.user_id = collection.user_id
-                where `user`.user_id = :userId
+                select c.card_id ,c.card_uuid, c.name, c.img_path,
+                c.mana_color, c.mana_cost, c.sets,\s
+                c.legalities, c.artist, cc.quantity from card c
+                inner join collection_card cc on cc.card_id = c.card_id\s
+                inner join collection c2 on c2.collection_id = cc.collection_id\s
+                inner join `user` u on u.user_id = c2.user_id
+                where c2.collection_id = :collectionId;
                 """;
         return jdbcClient.sql(sql)
-                .param("userId", userId)
+                .param("collectionId", collectionId)
                 .query(new CardMapper())
                 .list();
     }

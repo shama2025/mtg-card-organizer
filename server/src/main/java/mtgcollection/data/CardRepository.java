@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface CardRepository {
 
-    List<Card> fetchAllCards(int userId);
+    List<Card> fetchAllCards(int collectionId);
 
     Card addCard(Card card);
 }
