@@ -8,15 +8,17 @@ public class Card {
     private int cardId;
     private UUID cardUuid;
     private String name;
-    private String legalities;
-    private String sets;
+    private List<Formats> legalities;
+    private Set sets;
     private String imgPath;
-    private String manaColor;
-    private String manaCost;
+    private ManaColor manaColor;
+    private ManaCost manaCost;
     private String artistName;
     private int quantity;
 
-    public Card(int cardId,UUID cardUuid, String name, String sets, String legalities, String imgPath, String manaColor, String manaCost, String artistName, int quantity) {
+    public Card(){}
+
+    public Card(int cardId,UUID cardUuid, String name, Set sets, List<Formats> legalities, String imgPath, ManaColor manaColor, ManaCost manaCost, String artistName, int quantity){
         this.cardId = cardId;
         this.cardUuid = cardUuid;
         this.name = name;
@@ -53,11 +55,11 @@ public class Card {
         this.name = name;
     }
 
-    public String getLegalities() {
+    public List<Formats> getLegalities() {
         return legalities;
     }
 
-    public void setLegalities(String legalities) {
+    public void setLegalities(List<Formats> legalities) {
         this.legalities = legalities;
     }
 
@@ -69,27 +71,27 @@ public class Card {
         this.imgPath = imgPath;
     }
 
-    public String getSet() {
+    public Set getSet() {
         return sets;
     }
 
-    public void setSet(String sets) {
+    public void setSet(Set sets) {
         this.sets = sets;
     }
 
-    public String getManaColor() {
+    public ManaColor getManaColor() {
         return manaColor;
     }
 
-    public void setManaColor(String manaColor) {
+    public void setManaColor(ManaColor manaColor) {
         this.manaColor = manaColor;
     }
 
-    public String getManaCost() {
+    public ManaCost getManaCost() {
         return manaCost;
     }
 
-    public void setManaCost(String manaCost) {
+    public void setManaCost(ManaCost manaCost) {
         this.manaCost = manaCost;
     }
 
