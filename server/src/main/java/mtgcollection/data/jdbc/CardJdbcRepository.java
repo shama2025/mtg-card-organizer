@@ -21,6 +21,23 @@ public class CardJdbcRepository implements CardRepository {
     }
 
     @Override
+    public Card fetchCardById(int cardId) {
+        final String sql = """
+                select c.card_id ,c.card_uuid, c.name, c.img_path,
+                c.mana_color, c.mana_cost, c.sets,\s
+                c.legalities, c.artist, cc.quantity from card c
+                inner join collection_card cc on cc.card_id = c.card_id\s
+                inner join collection c2 on c2.collection_id = cc.collection_id\s
+                inner join `user` u on u.user_id = c2.user_id
+                where c.card_id = :cardId;
+                """;
+        return jdbcClient.sql(sql)
+                .param("cardId", cardId)
+                .query(Card.class)
+                .single();
+    }
+
+    @Override
     public Card fetchCardByName(String cardName) {
         final String sql = """
                  select c.card_id ,c.card_uuid, c.name, c.img_path,
