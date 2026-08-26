@@ -2,6 +2,7 @@ create database if not exists mtg_collection_test;
 
 use mtg_collection_test;
 
+DROP TABLE IF EXISTS collection_deck;
 DROP TABLE IF EXISTS collection_card;
 DROP TABLE IF EXISTS collection;
 DROP TABLE IF EXISTS card_deck;
@@ -48,7 +49,6 @@ create table if not exists card_deck(
     FOREIGN key(card_id)
     references card(card_id)
 );
-
 create table if not EXISTS collection (
     collection_id int primary key auto_increment,
     user_id int not null unique,
@@ -70,12 +70,25 @@ create table if not exists collection_card(
     REFERENCES card(card_id)
 );
 
+create table if not exists collection_deck(
+	deck_id int not null,
+	collection_id int not null,
+	constraint fk_collection_deck_id
+	FOREIGN key(deck_id)
+	references deck(deck_id),
+	constraint fk_deck_collection_id
+	FOREIGN key(collection_id)
+	REFERENCES collection (collection_id)
+);
+
 DELIMITER //
 
 DROP PROCEDURE IF EXISTS set_known_good_state //
 
 CREATE PROCEDURE set_known_good_state()
 BEGIN
+    -- Delete order clears dependent bridge tables before parent entities
+    delete from collection_deck;
     delete from collection_card;
     delete from collection;
     delete from card_deck;
@@ -83,6 +96,7 @@ BEGIN
     delete from card;
     delete from `user`;
     
+    alter table collection_deck auto_increment = 1;
     alter table collection_card auto_increment = 1;
     alter table collection auto_increment = 1;
     alter table card_deck auto_increment = 1;
@@ -184,7 +198,12 @@ BEGIN
         (1), -- collection_id 1 for User 1
         (2); -- collection_id 2 for User 2
 
-    -- 6. Seed Collection Cards (Join table)
+    -- 6. Seed Collection Decks (Links decks to collections)
+    insert into collection_deck (collection_id, deck_id) values
+        (1, 1), -- User 1 collection owns Izzet Spellslinger
+        (2, 2); -- User 2 collection owns Mono Green Ramp
+
+    -- 7. Seed Collection Cards (Join table)
     insert into collection_card (collection_id, card_id, quantity) values
         (1, 1, 1), -- User 1 owns Lightning Bolt
         (1, 2, 1), -- User 1 owns Counterspell
