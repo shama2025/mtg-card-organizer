@@ -31,6 +31,20 @@ public class CardCollectionJdbcRepository implements CardCollectionRepository {
     }
 
     @Override
+    public boolean updateCardInCollection(int cardId, int collectionId,int quantity) {
+        final String sql = """
+                update collection_card
+                set quantity = :quantity
+                where card_id = :cardId and collection_id = :collectionId;
+                """;
+        return jdbcClient.sql(sql)
+                .param("quantity", quantity)
+                .param("cardId", cardId)
+                .param("collectionId",collectionId)
+                .update() == 1;
+    }
+
+    @Override
     public boolean removeCardFromCollection(int cardId, int collectionId) {
         final String sql = """
                 delete from collection_card where card_id = :cardId and collection_id = :collectionId;
