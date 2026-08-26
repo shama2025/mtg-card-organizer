@@ -1,0 +1,16 @@
+@base_url = http://localhost:8080/api/collection
+
+### Happy Path
+DELETE {{base_url}}/1 HTTP/1.1
+Authorization: { "id": "1","email": "a@a.com"}
+
+### Bad Request missing Auth Header
+DELETE {{base_url}}/1 HTTP/1.1
+
+### Bad Path User does not correspond to collection
+DELETE  {{base_url}}/1 HTTP/1.1
+Authorization: { "id": "999","email": "a@a.com"}
+
+### Bad Path card does not exist
+DELETE  {{base_url}}/999 HTTP/1.1
+Authorization: { "id": "1","email": "a@a.com"}

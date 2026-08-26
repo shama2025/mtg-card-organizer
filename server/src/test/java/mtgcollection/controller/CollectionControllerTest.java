@@ -17,8 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -146,6 +145,54 @@ class CollectionControllerTest {
                     .header("authorization", "{\"id\": \"1\",\"email\": \"a@a.com\"}")
                     .content("");
             mvc.perform(request).andExpect(status().isBadRequest());
+        }
+    }
+
+    @Nested
+    class RemoveCardFromCollectionTest{
+        // Should remove card
+        @Test
+        void shouldRemoveCardFromCollection() throws Exception{
+            Result<Integer> expected = new Result<>();
+            int cardThatDoesExist = TestHelper.lightningBolt().getId();
+            int collectionThatDoesExist = TestHelper.collection().getCollectionId();
+            LoggedInUser user = TestHelper.loggedInUser();
+            expected.setpayload(cardThatDoesExist);
+            when(collectionService.findCollectionByUserId(user.id())).thenReturn(TestHelper.collection());
+            when(collectionService.removeCardFromCollection(cardThatDoesExist,collectionThatDoesExist)).thenReturn(expected);
+            MockHttpServletRequestBuilder request = delete("/api/collection/{cardId}",cardThatDoesExist)
+                    .header("authorization", "{\"id\": \"1\",\"email\": \"a@a.com\"}");
+            mvc.perform(request).andExpect(status().isNoContent());
+        }
+
+        // Should not remove card when collection does not exist
+        @Test
+        void shouldNotRemoveCardFromCollectionWhenCollectionDoesNotExist() throws Exception{
+            Result<Integer> expected = new Result<>();
+            int cardThatDoesExist = TestHelper.lightningBolt().getId();
+            int collectionThatDoesNotExist = Integer.MAX_VALUE;
+            LoggedInUser user = TestHelper.loggedInUser();
+            expected.addErrorMessage("Collection was not found.", ResultType.NOT_FOUND);
+            when(collectionService.findCollectionByUserId(user.id())).thenReturn(null);
+            when(collectionService.removeCardFromCollection(cardThatDoesExist,collectionThatDoesNotExist)).thenReturn(expected);
+            MockHttpServletRequestBuilder request = delete("/api/collection/{cardId}",cardThatDoesExist)
+                    .header("authorization", "{\"id\": \"1\",\"email\": \"a@a.com\"}");
+            mvc.perform(request).andExpect(status().isNotFound());
+        }
+
+        // Should not remove card when card does not exist
+        @Test
+        void shouldNotRemoveCardFromCollectionWhenCardDoesNotExist() throws Exception {
+            Result<Integer> expected = new Result<>();
+            int cardThatDoesNotExist = Integer.MAX_VALUE;
+            Collection collection = TestHelper.collection();
+            LoggedInUser user = TestHelper.loggedInUser();
+            expected.addErrorMessage("Card was not found.", ResultType.NOT_FOUND);
+            when(collectionService.findCollectionByUserId(user.id())).thenReturn(collection);
+            when(collectionService.removeCardFromCollection(cardThatDoesNotExist,collection.getCollectionId())).thenReturn(expected);
+            MockHttpServletRequestBuilder request = delete("/api/collection/{cardId}",cardThatDoesNotExist)
+                    .header("authorization", "{\"id\": \"1\",\"email\": \"a@a.com\"}");
+            mvc.perform(request).andExpect(status().isNotFound());
         }
     }
 
