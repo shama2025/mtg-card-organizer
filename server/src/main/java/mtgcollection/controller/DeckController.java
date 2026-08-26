@@ -6,6 +6,8 @@ import mtgcollection.domain.CollectionService;
 import mtgcollection.domain.DeckService;
 import mtgcollection.dto.LoggedInUser;
 import mtgcollection.model.Collection;
+import mtgcollection.model.Deck;
+import mtgcollection.model.Result;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -40,5 +42,14 @@ public class DeckController {
         LoggedInUser user = mapper.readValue(userAuthJson,LoggedInUser.class);
         Collection collection = collectionService.findCollectionByUserId(user.id());
         return new ResponseEntity<>(deckService.fetchAllDecksByCollectionId(collection.getCollectionId()),HttpStatus.OK);
+    }
+
+    @GetMapping("/{deckId}")
+    public ResponseEntity<?> fetchDeckByDeckId(@PathVariable int deckId){
+        Result<Deck> result = deckService.fetchDeckByDeckId(deckId);
+        if(result.isSuccess()){
+            return new ResponseEntity<>(result.getpayload(),HttpStatus.OK);
+        }
+        return ErrorResponse.build(result);
     }
 }
