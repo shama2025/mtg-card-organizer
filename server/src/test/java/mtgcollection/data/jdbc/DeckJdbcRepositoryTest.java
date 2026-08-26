@@ -35,4 +35,14 @@ class DeckJdbcRepositoryTest {
             assertTrue(decks.contains(TestHelper.user2Deck()));
         }
     }
+
+    @Nested
+    class FetchOneDeckByDeckId{
+        @Test
+        void shouldFetchOneDeckByID(){
+            int deckId = 2;
+            Deck deck = deckJdbcRepository.fetchDeckByDeckId(deckId);
+            assertEquals(TestHelper.user2Deck(),deck);
+        }
+    }
 }
