@@ -1,6 +1,5 @@
-package mtgcollection.data;
+package mtgcollection.data.jdbc;
 
-import mtgcollection.data.jdbc.UserJdbcRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

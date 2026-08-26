@@ -1,10 +1,7 @@
-package mtgcollection.data;
+package mtgcollection.data.jdbc;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import mtgcollection.TestHelper;
-import mtgcollection.data.jdbc.CardCollectionJdbcRepository;
-import mtgcollection.data.jdbc.CardJdbcRepository;
-import mtgcollection.data.jdbc.CollectionJdbcRepository;
 import mtgcollection.model.card.Card;
 import mtgcollection.model.CardCollection;
 import mtgcollection.model.Collection;
