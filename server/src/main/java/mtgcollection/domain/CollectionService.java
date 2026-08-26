@@ -74,9 +74,40 @@ public class CollectionService {
         return result;
     }
 
+    public Result<Integer> removeCardFromCollection(int cardId, int collectionId){
+        Result<Integer> result = new Result<>();
+        validate(result,cardId,collectionId);
+        if(!result.isSuccess()){
+            return result;
+        }
+        boolean isRemoved = cardCollectionRepository.removeCardFromCollection(cardId,collectionId);
+        if(!isRemoved){
+            result.addErrorMessage("Error removing card from collection.", ResultType.INVALID);
+            return result;
+        }
+        return result;
+    }
+
     private void validate(Result<Card> result, String cardName, int collectionId){
         if(cardName == null || cardName.isBlank()){
             result.addErrorMessage("Card name cannot be empty.", ResultType.INVALID);
+        }
+        try{
+            if(collectionRepository.fetchCollectionByCollectionId(collectionId) == null){
+                result.addErrorMessage("Collection was not found.", ResultType.NOT_FOUND);
+            }
+        }catch (EmptyResultDataAccessException ex){
+            result.addErrorMessage("Collection was not found.", ResultType.NOT_FOUND);
+        }
+    }
+
+    private void validate(Result<Integer> result, int cardId, int collectionId){
+        try{
+            if(cardRepository.fetchCardById(cardId) == null){
+                result.addErrorMessage("Card was not found.", ResultType.NOT_FOUND);
+            }
+        }catch (EmptyResultDataAccessException ex){
+            result.addErrorMessage("Collection was not found.", ResultType.NOT_FOUND);
         }
         try{
             if(collectionRepository.fetchCollectionByCollectionId(collectionId) == null){
