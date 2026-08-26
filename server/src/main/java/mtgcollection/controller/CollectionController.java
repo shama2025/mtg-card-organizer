@@ -6,6 +6,7 @@ import mtgcollection.domain.CollectionService;
 import mtgcollection.dto.LoggedInUser;
 import mtgcollection.model.Collection;
 import mtgcollection.model.Result;
+import mtgcollection.model.ResultType;
 import mtgcollection.model.card.Card;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -57,6 +58,27 @@ public class CollectionController {
         Result<Card> result = collectionService.addCardToCollection(cardName,collection);
         if(result.isSuccess()){
             return new ResponseEntity<>(result.getpayload(),HttpStatus.CREATED);
+        }
+        return ErrorResponse.build(result);
+    }
+
+    @PutMapping("/{cardId}")
+    public ResponseEntity<?> updateCardFromCollection(@RequestHeader Map<String,String> headers, @PathVariable int cardId, @RequestBody int quantity) throws JsonProcessingException {
+        if(headers.get("authorization") == null){
+            // Missing auth header
+            return new ResponseEntity<>(List.of("Missing authorization header"), HttpStatus.BAD_REQUEST);
+        }
+        // Extract json from string
+        String userAuthJson = headers.get("authorization");
+        ObjectMapper mapper = new ObjectMapper();
+        LoggedInUser user = mapper.readValue(userAuthJson,LoggedInUser.class);
+        Collection collection = collectionService.findCollectionByUserId(user.id());
+        if(collection == null){
+            return new ResponseEntity<>(List.of("Collection does not correspond to user"),HttpStatus.NOT_FOUND);
+        }
+        Result<Integer> result = collectionService.updateCardInCollection(cardId,collection.getCollectionId(),quantity);
+        if(result.isSuccess()){
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         return ErrorResponse.build(result);
     }
