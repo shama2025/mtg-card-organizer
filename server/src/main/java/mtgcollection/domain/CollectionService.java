@@ -74,6 +74,26 @@ public class CollectionService {
         return result;
     }
 
+    public Result<Integer> updateCardInCollection(int cardId, int collectionId, int quantity){
+        Result<Integer> result = new Result<>();
+        validate(result,cardId,collectionId);
+        if(!result.isSuccess()){
+            return result;
+        }
+        if(quantity < 0){
+            result.addErrorMessage("Quantity cannot be below 0.", ResultType.INVALID);
+            return result;
+        }
+        // Add check for if quantity is 0??
+        boolean isUpdated = cardCollectionRepository.updateCardInCollection(cardId,collectionId,quantity);
+        if(!isUpdated){
+            result.addErrorMessage("Error updating card quantity.", ResultType.INVALID);
+            return result;
+        }
+        result.setpayload(cardId);
+        return result;
+    }
+
     public Result<Integer> removeCardFromCollection(int cardId, int collectionId){
         Result<Integer> result = new Result<>();
         validate(result,cardId,collectionId);

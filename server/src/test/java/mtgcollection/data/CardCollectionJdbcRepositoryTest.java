@@ -76,4 +76,47 @@ class CardCollectionJdbcRepositoryTest {
         }
     }
 
+    @Nested
+    class UpdateCardFromCollection{
+        // Should Update
+        @Test
+        void shouldUpdateCardQuantity(){
+            int cardQuantity = 5;
+            int collectionThatDoesExists = TestHelper.collection().getCollectionId();
+            Card cardThatDoesExists = TestHelper.lightningBolt();
+            cardThatDoesExists.setId(1);
+            boolean isUpdated = cardCollectionJdbcRepository.updateCardInCollection(cardThatDoesExists.getId(),collectionThatDoesExists,cardQuantity);
+            assertTrue(isUpdated);
+        }
+
+        // Should not update where card does not exist
+        @Test
+        void shouldNotUpdateCardWhereCardDoesNotExist(){
+            int cardQuantity = 5;
+            int collectionThatDoesExists = TestHelper.collection().getCollectionId();
+            int cardThatDoesNotExists = Integer.MAX_VALUE;
+            boolean isUpdated = cardCollectionJdbcRepository.updateCardInCollection(cardThatDoesNotExists,collectionThatDoesExists,cardQuantity);
+            assertFalse(isUpdated);
+        }
+        // Should not update where collection does not exist
+        @Test
+        void shouldNotUpdateCardWhereCollectionDoesNotExist(){
+            int cardQuantity = 5;
+            int collectionThatDoesNotExists = Integer.MAX_VALUE;
+            int cardThatExists = TestHelper.lightningBolt().getId();
+            boolean isUpdated = cardCollectionJdbcRepository.updateCardInCollection(cardThatExists,collectionThatDoesNotExists,cardQuantity);
+            assertFalse(isUpdated);
+        }
+
+        // Should not edit card below 0
+        @Test
+        void shouldNotUpdateCardQuantityBelow0(){
+            int cardQuantity = -5;
+            int collectionThatExists = TestHelper.collection().getCollectionId();
+            int cardThatExists = TestHelper.lightningBolt().getId();
+            boolean isUpdated = cardCollectionJdbcRepository.updateCardInCollection(cardThatExists,collectionThatExists,cardQuantity);
+            assertFalse(isUpdated);
+        }
+    }
+
 }

@@ -71,7 +71,7 @@ public class TestHelper {
 
     public static Card lightningBolt() {
         return new Card(
-                0,
+                1,
                 UUID.fromString("f29ba16f-c8fb-42fe-aabf-87089cb214a7"),
                 "Lightning Bolt",
                 new Set("2XM", "Double Masters 2022"),

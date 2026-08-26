@@ -175,4 +175,73 @@ class CollectionServiceTest {
             assertEquals(expected,result);
         }
     }
+
+    @Nested
+    class UpdateCardFromCollectionTest{
+        // Should update card quantity
+        @Test
+        void shouldUpdateCard(){
+            int validQuantity = 4;
+            Card cardThatExists = TestHelper.lightningBolt();
+            cardThatExists.setId(1);
+            int collectionThatDoesExist = TestHelper.collection().getCollectionId();
+            Result<Integer> expected = new Result<>();
+            expected.setpayload(cardThatExists.getId());
+            when(cardRepository.fetchCardById(cardThatExists.getId())).thenReturn(cardThatExists);
+            when(collectionRepository.fetchCollectionByCollectionId(collectionThatDoesExist)).thenReturn(TestHelper.collection());
+            when(cardCollectionRepository.updateCardInCollection(cardThatExists.getId(),collectionThatDoesExist,validQuantity)).thenReturn(true);
+            Result<Integer> result = collectionService.updateCardInCollection(cardThatExists.getId(),collectionThatDoesExist,validQuantity);
+            assertTrue(result.isSuccess());
+            assertEquals(expected,result);
+        }
+
+        // Should not update quantity if less than 0
+        @Test
+        void shouldNotUpdateCardWhenQuantityIsBelow0(){
+            int invalidQuantity = -4;
+            Card cardThatExists = TestHelper.lightningBolt();
+            cardThatExists.setId(1);
+            int collectionThatDoesExist = TestHelper.collection().getCollectionId();
+            Result<Integer> expected = new Result<>();
+            expected.addErrorMessage("Quantity cannot be below 0.", ResultType.INVALID);
+            when(cardRepository.fetchCardById(cardThatExists.getId())).thenReturn(cardThatExists);
+            when(collectionRepository.fetchCollectionByCollectionId(collectionThatDoesExist)).thenReturn(TestHelper.collection());
+            Result<Integer> result = collectionService.updateCardInCollection(cardThatExists.getId(),collectionThatDoesExist,invalidQuantity);
+            assertFalse(result.isSuccess());
+            assertEquals(ResultType.INVALID,result.getResultType());
+            assertEquals(expected,result);
+        }
+
+        // should not update quantity if collection is not found
+        @Test
+        void shouldNotUpdateCardWhenCollectionDoesNotExist(){
+            int validQuantity = 4;
+            Card cardThatExists = TestHelper.lightningBolt();
+            cardThatExists.setId(1);
+            int collectionThatDoesNotExist = Integer.MAX_VALUE;
+            Result<Integer> expected = new Result<>();
+            expected.addErrorMessage("Collection was not found.",ResultType.NOT_FOUND);
+            when(cardRepository.fetchCardById(cardThatExists.getId())).thenReturn(cardThatExists);
+            when(collectionRepository.fetchCollectionByCollectionId(collectionThatDoesNotExist)).thenReturn(null);
+            Result<Integer> result = collectionService.updateCardInCollection(cardThatExists.getId(),collectionThatDoesNotExist,validQuantity);
+            assertFalse(result.isSuccess());
+            assertEquals(ResultType.NOT_FOUND,result.getResultType());
+            assertEquals(expected,result);
+        }
+
+        // Should not update quanityt if card is not found
+        @Test
+        void shouldNotUpdateCardWhenCardDoesNotExist(){
+            int validQuantity = 4;
+            int cardThatDoesNotExists = Integer.MAX_VALUE;
+            int collectionThatExist = TestHelper.collection().getCollectionId();
+            Result<Integer> expected = new Result<>();
+            expected.addErrorMessage("Card was not found.",ResultType.NOT_FOUND);
+            when(collectionRepository.fetchCollectionByCollectionId(collectionThatExist)).thenReturn(TestHelper.collection());
+            Result<Integer> result = collectionService.updateCardInCollection(cardThatDoesNotExists,collectionThatExist,validQuantity);
+            assertFalse(result.isSuccess());
+            assertEquals(ResultType.NOT_FOUND,result.getResultType());
+            assertEquals(expected,result);
+        }
+    }
 }
