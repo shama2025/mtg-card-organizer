@@ -60,4 +60,25 @@ public class CollectionController {
         }
         return ErrorResponse.build(result);
     }
+
+    @DeleteMapping("/{cardId}")
+    public ResponseEntity<?> removeCardFromCollection(@RequestHeader Map<String,String> headers, @PathVariable int cardId) throws JsonProcessingException {
+        if(headers.get("authorization") == null){
+            // Missing auth header
+            return new ResponseEntity<>(List.of("Missing authorization header"), HttpStatus.BAD_REQUEST);
+        }
+        // Extract json from string
+        String userAuthJson = headers.get("authorization");
+        ObjectMapper mapper = new ObjectMapper();
+        LoggedInUser user = mapper.readValue(userAuthJson,LoggedInUser.class);
+        Collection collection = collectionService.findCollectionByUserId(user.id());
+        if(collection == null){
+            return new ResponseEntity<>(List.of("Collection does not correspond to user"),HttpStatus.NOT_FOUND);
+        }
+        Result<Integer> result = collectionService.removeCardFromCollection(cardId,collection.getCollectionId());
+        if(result.isSuccess()){
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return ErrorResponse.build(result);
+    }
 }

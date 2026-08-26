@@ -85,6 +85,7 @@ public class CollectionService {
             result.addErrorMessage("Error removing card from collection.", ResultType.INVALID);
             return result;
         }
+        result.setpayload(cardId);
         return result;
     }
 
