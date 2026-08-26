@@ -29,4 +29,15 @@ public class CardCollectionJdbcRepository implements CardCollectionRepository {
                 .update();
         return new CardCollection(cardToAdd,collection,1);
     }
+
+    @Override
+    public boolean removeCardFromCollection(int cardId, int collectionId) {
+        final String sql = """
+                delete from collection_card where card_id = :cardId and collection_id = :collectionId;
+                """;
+        return jdbcClient.sql(sql)
+                .param("cardId", cardId)
+                .param("collectionId", collectionId)
+                .update() == 1;
+    }
 }
