@@ -1,0 +1,10 @@
+@base_url = http://localhost:8080/api/deck
+
+### GET All cards from collection
+
+### Bad Request missing Auth Header
+GET {{base_url}} HTTP/1.1
+
+### Good Request
+GET {{base_url}} HTTP/1.1
+Authorization: { "id": "1","email": "a@a.com"}
