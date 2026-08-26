@@ -136,4 +136,43 @@ class CollectionServiceTest {
         }
     }
 
+    @Nested
+    class DeleteCardFromCollectionTest{
+        @Test
+        void shouldDeleteCardFromCollection(){
+            int cardThatExists = TestHelper.lightningBolt().getId();
+            int collectionThatExists = TestHelper.collection().getCollectionId();
+            when(cardRepository.fetchCardById(cardThatExists)).thenReturn(TestHelper.lightningBolt());
+            when(collectionRepository.fetchCollectionByCollectionId(collectionThatExists)).thenReturn(TestHelper.collection());
+            when(cardCollectionRepository.removeCardFromCollection(cardThatExists,collectionThatExists)).thenReturn(true);
+            Result<Integer> result = collectionService.removeCardFromCollection(cardThatExists,collectionThatExists);
+            assertTrue(result.isSuccess());
+        }
+
+        @Test
+        void shouldNotDeleteCardFromCollectionWhenCardDoesNotExist(){
+            int cardThatExists = TestHelper.lightningBolt().getId();
+            int collectionThatDoesNotExist = Integer.MAX_VALUE;
+            Result<Integer> expected = new Result<>();
+            expected.addErrorMessage("Collection was not found.",ResultType.NOT_FOUND);
+            when(collectionRepository.fetchCollectionByCollectionId(collectionThatDoesNotExist)).thenReturn(null);
+            Result<Integer> result = collectionService.removeCardFromCollection(cardThatExists,collectionThatDoesNotExist);
+            assertFalse(result.isSuccess());
+            assertEquals(ResultType.NOT_FOUND,result.getResultType());
+            assertEquals(expected,result);
+        }
+
+        @Test
+        void shouldNotDeleteCardFromCollectionWhenCollectionDoesNotExist(){
+            int cardThatDoesNotExists = Integer.MAX_VALUE;
+            int collectionThatExist = TestHelper.collection().getCollectionId();
+            Result<Integer> expected = new Result<>();
+            expected.addErrorMessage("Card was not found.",ResultType.NOT_FOUND);
+            when(collectionRepository.fetchCollectionByCollectionId(collectionThatExist)).thenReturn(TestHelper.collection());
+            Result<Integer> result = collectionService.removeCardFromCollection(cardThatDoesNotExists,collectionThatExist);
+            assertFalse(result.isSuccess());
+            assertEquals(ResultType.NOT_FOUND,result.getResultType());
+            assertEquals(expected,result);
+        }
+    }
 }

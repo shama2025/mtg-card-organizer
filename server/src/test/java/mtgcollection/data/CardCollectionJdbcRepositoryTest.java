@@ -49,4 +49,31 @@ class CardCollectionJdbcRepositoryTest {
         }
     }
 
+    @Nested
+    class DeleteCardFromCollection{
+        // Should delete
+        @Test
+        void shouldDeleteCard(){
+            int cardThatExistId = 1;
+            int collectionDoesExist = 1;
+            assertTrue(cardCollectionJdbcRepository.removeCardFromCollection(cardThatExistId,collectionDoesExist));
+        }
+
+        // Should not delete when collection does not exist
+        @Test
+        void shouldNotDeleteWhenCollectionDoesNotExist(){
+            int cardThatExistId = 1;
+            int collectionDoesNotExist = Integer.MAX_VALUE;
+            assertFalse(cardCollectionJdbcRepository.removeCardFromCollection(cardThatExistId,collectionDoesNotExist));
+        }
+
+        // Should not delete when card does not exist
+        @Test
+        void shouldNotDeleteWhenCardDoesNotExist(){
+            int collectionDoesExist = 1;
+            int cardThatDoesNotExistId = Integer.MAX_VALUE;
+            assertFalse(cardCollectionJdbcRepository.removeCardFromCollection(cardThatDoesNotExistId,collectionDoesExist));
+        }
+    }
+
 }

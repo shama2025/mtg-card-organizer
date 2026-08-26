@@ -7,6 +7,8 @@ import java.util.List;
 
 public interface CardRepository {
 
+    Card fetchCardById(int cardId);
+
     Card fetchCardByName(String cardName);
 
     List<Card> fetchAllCards(int collectionId);
