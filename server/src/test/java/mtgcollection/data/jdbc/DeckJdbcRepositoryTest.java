@@ -7,8 +7,10 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.simple.JdbcClient;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -45,4 +47,33 @@ class DeckJdbcRepositoryTest {
             assertEquals(TestHelper.user2Deck(),deck);
         }
     }
+
+    @Nested
+    class CreateDeckTest{
+        @Test
+        void shouldCreateDeck(){
+            Deck deckToCreate = TestHelper.deckToCreate();
+            Deck createdDeck = deckJdbcRepository.createDeck(deckToCreate);
+            deckToCreate.setDeckId(3);
+            deckToCreate.setDateCreated(LocalDate.now());
+            assertEquals(deckToCreate,createdDeck);
+        }
+        @Test
+        void shouldNotCreatDeckWithNullName(){
+            Deck deckToCreate = TestHelper.deckToCreate();
+            deckToCreate.setName(null);
+            assertThrows(DataIntegrityViolationException.class,()->{
+                deckJdbcRepository.createDeck(deckToCreate);
+            });
+        }
+        @Test
+        void shouldNotCreateDeckWithNullCreatedDate(){
+            Deck deckToCreate = TestHelper.deckToCreate();
+            deckToCreate.setDateCreated(null);
+            assertThrows(DataIntegrityViolationException.class,()->{
+                deckJdbcRepository.createDeck(deckToCreate);
+            });
+        }
+    }
+
 }
