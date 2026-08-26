@@ -196,4 +196,77 @@ class CollectionControllerTest {
         }
     }
 
+    @Nested
+    class UpdateCardFromCollectionTest{
+        // Should update card
+        @Test
+        void shouldUpdateCardFromCollection() throws Exception{
+            int validQuantity = 5;
+            Result<Integer> expected = new Result<>();
+            int cardThatDoesExist = TestHelper.lightningBolt().getId();
+            int collectionThatDoesExist = TestHelper.collection().getCollectionId();
+            LoggedInUser user = TestHelper.loggedInUser();
+            expected.setpayload(cardThatDoesExist);
+            when(collectionService.findCollectionByUserId(user.id())).thenReturn(TestHelper.collection());
+            when(collectionService.updateCardInCollection(cardThatDoesExist,collectionThatDoesExist,validQuantity)).thenReturn(expected);
+            MockHttpServletRequestBuilder request = put("/api/collection/{cardId}",cardThatDoesExist)
+                    .header("authorization", "{\"id\": \"1\",\"email\": \"a@a.com\"}")
+                    .contentType("application/json")
+                    .content(String.format("%d",validQuantity));
+            mvc.perform(request).andExpect(status().isNoContent());
+        }
+
+        // should not update card when collection does not exist
+        @Test
+        void shouldNotUpdateCardFromCollectionWhenCollectionDoesNotExist() throws Exception{
+            int validQuantity = 5;
+            Result<Integer> expected = new Result<>();
+            int cardThatDoesExist = TestHelper.lightningBolt().getId();
+            int collectionThatDoesNotExist = Integer.MAX_VALUE;
+            LoggedInUser user = TestHelper.loggedInUser();
+            expected.addErrorMessage("Collection was not found.", ResultType.NOT_FOUND);
+            when(collectionService.findCollectionByUserId(user.id())).thenReturn(null);
+            when(collectionService.updateCardInCollection(cardThatDoesExist,collectionThatDoesNotExist,validQuantity)).thenReturn(expected);
+            MockHttpServletRequestBuilder request = put("/api/collection/{cardId}",cardThatDoesExist)
+                    .header("authorization", "{\"id\": \"1\",\"email\": \"a@a.com\"}")
+                    .contentType("application/json")
+                    .content(String.format("%d",validQuantity));
+            mvc.perform(request).andExpect(status().isNotFound());
+        }
+        // should not update card when card does not exist
+        @Test
+        void shouldNotUpdateCardFromCollectionWhenCardDoesNotExist() throws Exception {
+            int validQuantity = 5;
+            Result<Integer> expected = new Result<>();
+            int cardThatDoesNotExist = Integer.MAX_VALUE;
+            Collection collection = TestHelper.collection();
+            LoggedInUser user = TestHelper.loggedInUser();
+            expected.addErrorMessage("Card was not found.", ResultType.NOT_FOUND);
+            when(collectionService.findCollectionByUserId(user.id())).thenReturn(collection);
+            when(collectionService.updateCardInCollection(cardThatDoesNotExist,collection.getCollectionId(),validQuantity)).thenReturn(expected);
+            MockHttpServletRequestBuilder request = put("/api/collection/{cardId}",cardThatDoesNotExist)
+                    .header("authorization", "{\"id\": \"1\",\"email\": \"a@a.com\"}")
+                    .contentType("application/json")
+                    .content(String.format("%d",validQuantity));
+            mvc.perform(request).andExpect(status().isNotFound());
+        }
+        // should not update card when quantity is below 0
+        @Test
+        void shouldNotUpdateCardWhenQuantityIsBelowZero() throws Exception{
+            int invalidQuantity = -10;
+            int cardThatExist = TestHelper.lightningBolt().getId();
+            Collection collection = TestHelper.collection();
+            LoggedInUser user = TestHelper.loggedInUser();
+            Result<Integer> expected = new Result<>();
+            expected.addErrorMessage("Quantity cannot be below 0.", ResultType.INVALID);
+            when(collectionService.findCollectionByUserId(user.id())).thenReturn(collection);
+            when(collectionService.updateCardInCollection(cardThatExist,collection.getCollectionId(),invalidQuantity)).thenReturn(expected);
+            MockHttpServletRequestBuilder request = put("/api/collection/{cardId}",cardThatExist)
+                    .header("authorization", "{\"id\": \"1\",\"email\": \"a@a.com\"}")
+                    .contentType("application/json")
+                    .content(String.format("%d",invalidQuantity));
+            mvc.perform(request).andExpect(status().isBadRequest());
+        }
+    }
+
 }
