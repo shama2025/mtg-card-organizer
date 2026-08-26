@@ -9,7 +9,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import mtgcollection.TestHelper;
-import mtgcollection.data.UserRepository;
+import mtgcollection.data.interfaces.UserRepository;
 import mtgcollection.dto.LoggedInUser;
 import mtgcollection.model.Result;
 import mtgcollection.model.ResultType;

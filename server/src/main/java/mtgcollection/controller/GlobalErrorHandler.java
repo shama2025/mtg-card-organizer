@@ -1,5 +1,6 @@
 package mtgcollection.controller;
 
+import mtgcollection.data.http.exceptions.DownstreamProvider;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -11,6 +12,16 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class GlobalErrorHandler {
 
     // TODO: Add additional exception handlers here
+
+    @ExceptionHandler(DownstreamProvider.class)
+    public ResponseEntity<ErrorResponse> handleException(DownstreamProvider ex){
+        return new ResponseEntity<>(new ErrorResponse("Sorry, something went wrong with the Scryfall API."),HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InterruptedException.class)
+    public ResponseEntity<ErrorResponse> handleException(InterruptedException ex){
+        return new ResponseEntity<>(new ErrorResponse("Error parsing scryfall response."),HttpStatus.UNPROCESSABLE_ENTITY);
+    }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ErrorResponse> handleException(HttpMessageNotReadableException ex){
