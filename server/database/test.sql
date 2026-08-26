@@ -59,6 +59,7 @@ create table if not exists collection_card(
 	collection_id int not null,
 	card_id int not NULL,
 	quantity int not null,
+	constraint chk_card_quantity check(quantity>=0),
 	constraint fk_collection_collection_id
 	foreign key(collection_id)
 	references collection(collection_id),
