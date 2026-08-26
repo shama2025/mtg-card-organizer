@@ -6,6 +6,7 @@ import mtgcollection.dto.LoggedInUser;
 import mtgcollection.model.*;
 import mtgcollection.model.card.*;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -230,5 +231,10 @@ public class TestHelper {
                 List.of(),                                                             // allParts
                 new HashMap<>()                                                        // preview
         );
+    }
+
+    public static Deck user2Deck(){
+        return new Deck(2,"Mono Green Ramp",5,
+                LocalDate.of(2026,8,15),LocalDate.of(2026,8,24));
     }
 }

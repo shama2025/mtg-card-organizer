@@ -1,8 +1,6 @@
-package mtgcollection.data;
+package mtgcollection.data.jdbc;
 
 import mtgcollection.TestHelper;
-import mtgcollection.data.jdbc.CollectionJdbcRepository;
-import mtgcollection.data.jdbc.UserJdbcRepository;
 import mtgcollection.model.Collection;
 import mtgcollection.model.User;
 import org.junit.jupiter.api.BeforeEach;

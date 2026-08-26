@@ -2,6 +2,7 @@ create database if not exists mtg_collection_test;
 
 use mtg_collection_test;
 
+DROP TABLE IF EXISTS collection_deck;
 DROP TABLE IF EXISTS collection_card;
 DROP TABLE IF EXISTS collection;
 DROP TABLE IF EXISTS card_deck;
@@ -39,14 +40,15 @@ create table if not EXISTS deck(
 create table if not exists card_deck(
     card_id int not null,
     deck_id int not null,
-    constraint fk_deck_deck
+    quantity int not null,
+    constraint chk_card_deck_quantity check(quantity >= 0),
+    constraint fk_deck_deck_id
     FOREIGN key(deck_id)
-    REFERENCES deck(deck_id),
-    constraint fk_deck_card
+    references deck(deck_id),
+    constraint fk_deck_card_id
     FOREIGN key(card_id)
     references card(card_id)
 );
-
 create table if not EXISTS collection (
     collection_id int primary key auto_increment,
     user_id int not null unique,
@@ -56,17 +58,28 @@ create table if not EXISTS collection (
 );
 	
 create table if not exists collection_card(
+    collection_id int not null,
+    card_id int not NULL,
+    quantity int not null,
+    constraint chk_card_quantity check(quantity >= 0),
+    constraint fk_collection_collection_id
+    foreign key(collection_id)
+    references collection(collection_id),
+    constraint fk_collection_user_id
+    FOREIGN key(card_id)
+    REFERENCES card(card_id)
+);
+
+create table if not exists collection_deck(
+	deck_id int not null,
 	collection_id int not null,
-	card_id int not NULL,
-	quantity int not null,
-	constraint chk_card_quantity check(quantity>=0),
-	constraint fk_collection_collection_id
-	foreign key(collection_id)
-	references collection(collection_id),
-	constraint fk_collection_user_id
-	FOREIGN key(card_id)
-	REFERENCES card(card_id)
-	);
+	constraint fk_collection_deck_id
+	FOREIGN key(deck_id)
+	references deck(deck_id),
+	constraint fk_deck_collection_id
+	FOREIGN key(collection_id)
+	REFERENCES collection (collection_id)
+);
 
 DELIMITER //
 
@@ -74,7 +87,8 @@ DROP PROCEDURE IF EXISTS set_known_good_state //
 
 CREATE PROCEDURE set_known_good_state()
 BEGIN
-    -- Delete bridge/child tables first to satisfy foreign key constraints
+    -- Delete order clears dependent bridge tables before parent entities
+    delete from collection_deck;
     delete from collection_card;
     delete from collection;
     delete from card_deck;
@@ -82,6 +96,7 @@ BEGIN
     delete from card;
     delete from `user`;
     
+    alter table collection_deck auto_increment = 1;
     alter table collection_card auto_increment = 1;
     alter table collection auto_increment = 1;
     alter table card_deck auto_increment = 1;
@@ -94,12 +109,12 @@ BEGIN
         ('a@a.com', 'a'),
         ('b@b.com', 'b');
 
-    -- 2. Seed Cards (Includes JSON_OBJECT for img_path)
+    -- 2. Seed Cards
     insert into card (card_uuid, name, img_path, mana_color, mana_cost, sets, legalities, artist, quantity) values
         (
             'f29ba16f-c8fb-42fe-aabf-87089cb214a7',
             'LIGHTNING BOLT',
-            JSON_ARRAY(
+            JSON_OBJECT(
                 'small', 'https://cards.scryfall.io/small/front/f/2/f29ba16f-c8fb-42fe-aabf-87089cb214a7.jpg',
                 'normal', 'https://cards.scryfall.io/normal/front/f/2/f29ba16f-c8fb-42fe-aabf-87089cb214a7.jpg',
                 'large', 'https://cards.scryfall.io/large/front/f/2/f29ba16f-c8fb-42fe-aabf-87089cb214a7.jpg',
@@ -116,7 +131,7 @@ BEGIN
         (
             'a97f330d-6823-4337-a7d1-e9c522d08a5c',
             'COUNTERSPELL',
-            JSON_ARRAY(
+            JSON_OBJECT(
                 'small', 'https://cards.scryfall.io/small/front/a/9/a97f330d-6823-4337-a7d1-e9c522d08a5c.jpg',
                 'normal', 'https://cards.scryfall.io/normal/front/a/9/a97f330d-6823-4337-a7d1-e9c522d08a5c.jpg',
                 'large', 'https://cards.scryfall.io/large/front/a/9/a97f330d-6823-4337-a7d1-e9c522d08a5c.jpg',
@@ -133,7 +148,7 @@ BEGIN
         (
             'ab851e3a-7f61-464a-9520-21a4f02a3a10',
             'SOL RING',
-            JSON_ARRAY(
+            JSON_OBJECT(
                 'small', 'https://cards.scryfall.io/small/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.jpg',
                 'normal', 'https://cards.scryfall.io/normal/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.jpg',
                 'large', 'https://cards.scryfall.io/large/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.jpg',
@@ -150,7 +165,7 @@ BEGIN
         (
             'fe0a79f6-e0b3-4705-894c-e83cb41c18ca',
             'BIRDS OF PARADISE',
-            JSON_ARRAY(
+            JSON_OBJECT(
                 'small', 'https://cards.scryfall.io/small/front/f/e/fe0a79f6-e0b3-4705-894c-e83cb41c18ca.jpg',
                 'normal', 'https://cards.scryfall.io/normal/front/f/e/fe0a79f6-e0b3-4705-894c-e83cb41c18ca.jpg',
                 'large', 'https://cards.scryfall.io/large/front/f/e/fe0a79f6-e0b3-4705-894c-e83cb41c18ca.jpg',
@@ -170,20 +185,25 @@ BEGIN
         ('Izzet Spellslinger', 60, '2026-08-01', '2026-08-20'),
         ('Mono Green Ramp', 100, '2026-08-15', '2026-08-24');
 
-    -- 4. Seed Card-Deck Bridge (Links cards to decks)
-    insert into card_deck (card_id, deck_id) values
-        (1, 1), -- Lightning Bolt -> Izzet Spellslinger
-        (2, 1), -- Counterspell -> Izzet Spellslinger
-        (3, 1), -- Sol Ring -> Izzet Spellslinger
-        (3, 2), -- Sol Ring -> Mono Green Ramp
-        (4, 2); -- Birds of Paradise -> Mono Green Ramp
+    -- 4. Seed Card-Deck Bridge (Links cards to decks with quantities)
+    insert into card_deck (card_id, deck_id, quantity) values
+        (1, 1, 4), -- 4x Lightning Bolt -> Izzet Spellslinger
+        (2, 1, 4), -- 4x Counterspell -> Izzet Spellslinger
+        (3, 1, 1), -- 1x Sol Ring -> Izzet Spellslinger
+        (3, 2, 1), -- 1x Sol Ring -> Mono Green Ramp
+        (4, 2, 4); -- 4x Birds of Paradise -> Mono Green Ramp
 
     -- 5. Seed Collections
     insert into collection (user_id) values
         (1), -- collection_id 1 for User 1
         (2); -- collection_id 2 for User 2
 
-    -- 6. Seed Collection Cards (Join table)
+    -- 6. Seed Collection Decks (Links decks to collections)
+    insert into collection_deck (collection_id, deck_id) values
+        (1, 1), -- User 1 collection owns Izzet Spellslinger
+        (2, 2); -- User 2 collection owns Mono Green Ramp
+
+    -- 7. Seed Collection Cards (Join table)
     insert into collection_card (collection_id, card_id, quantity) values
         (1, 1, 1), -- User 1 owns Lightning Bolt
         (1, 2, 1), -- User 1 owns Counterspell

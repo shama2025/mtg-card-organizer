@@ -1,8 +1,7 @@
-package mtgcollection.data;
+package mtgcollection.data.jdbc;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import mtgcollection.TestHelper;
-import mtgcollection.data.jdbc.CardJdbcRepository;
 import mtgcollection.model.card.Card;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;

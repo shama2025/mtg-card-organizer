@@ -1,12 +1,6 @@
 use mtg_collection;
 
-DROP TABLE IF EXISTS collection_card;
-DROP TABLE IF EXISTS collection;
-DROP TABLE IF EXISTS card_deck;
-DROP TABLE IF EXISTS deck;
-DROP TABLE IF EXISTS card;
-DROP TABLE IF EXISTS `user`;
-
+DROP TABLE IF EXISTS collection_deck;
 DROP TABLE IF EXISTS collection_card;
 DROP TABLE IF EXISTS collection;
 DROP TABLE IF EXISTS card_deck;
@@ -42,14 +36,16 @@ create table if not EXISTS deck(
 );
 
 create table if not exists card_deck(
-    card_id int not null,
-    deck_id int not null,
-    constraint fk_deck_deck
-    FOREIGN key(deck_id)
-    REFERENCES deck(deck_id),
-    constraint fk_deck_card
-    FOREIGN key(card_id)
-    references card(card_id)
+  	card_id int not null,
+	deck_id int not null,
+	quantity int not null,
+	constraint chk_card_deck_quantity check(quantity >=0),
+	constraint fk_deck_deck_id
+	FOREIGN key(deck_id)
+	references deck(deck_id),
+	constraint fk_deck_card_id
+	FOREIGN key(card_id)
+	references card(card_id)
 );
 
 create table if not EXISTS collection (
@@ -71,4 +67,15 @@ create table if not exists collection_card(
 	constraint fk_collection_user_id
 	FOREIGN key(card_id)
 	REFERENCES card(card_id)
-	);
+);
+
+create table if not exists collection_deck(
+	deck_id int not null,
+	collection_id int not null,
+	constraint fk_collection_deck_id
+	FOREIGN key(deck_id)
+	references deck(deck_id),
+	constraint fk_deck_collection_id
+	FOREIGN key(collection_id)
+	REFERENCES collection (collection_id)
+);
