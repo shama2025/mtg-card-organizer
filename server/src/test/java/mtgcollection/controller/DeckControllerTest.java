@@ -3,6 +3,9 @@ package mtgcollection.controller;
 import mtgcollection.TestHelper;
 import mtgcollection.domain.CollectionService;
 import mtgcollection.domain.DeckService;
+import mtgcollection.model.Deck;
+import mtgcollection.model.Result;
+import mtgcollection.model.ResultType;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +57,28 @@ class DeckControllerTest {
             MockHttpServletRequestBuilder request = get("/api/deck")
                     .header("authorization", "{\"id\": \"1\",\"email\": \"a@a.com\"}");            // assert
             mvc.perform(request).andExpect(status().isOk());
+        }
+    }
+
+    @Nested
+    class FetchDeckByDeckIdTest{
+        @Test
+        void shouldFetchDeckByDeckId() throws Exception{
+            int deckThatExists = 2;
+            Result<Deck> expected = new Result<>();
+            expected.setpayload(TestHelper.user2Deck());
+            when(deckService.fetchDeckByDeckId(deckThatExists)).thenReturn(expected);
+            MockHttpServletRequestBuilder request = get("/api/deck/{deckId}",deckThatExists);
+            mvc.perform(request).andExpect(status().isOk());
+        }
+        @Test
+        void shouldNotFetchDeckByIdWhereDeckDoesNotExist() throws Exception{
+            int deckThatDoesNotExists = Integer.MAX_VALUE;
+            Result<Deck> expected = new Result<>();
+            expected.addErrorMessage("Deck not found.", ResultType.NOT_FOUND);
+            when(deckService.fetchDeckByDeckId(deckThatDoesNotExists)).thenReturn(expected);
+            MockHttpServletRequestBuilder request = get("/api/deck/{deckId}",deckThatDoesNotExists);
+            mvc.perform(request).andExpect(status().isNotFound());
         }
     }
 
