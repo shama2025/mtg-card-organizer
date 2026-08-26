@@ -9,4 +9,6 @@ public interface DeckRepository {
     List<Deck> fetchAllDecksInACollection(int collectionId);
 
     Deck fetchDeckByDeckId(int deckId);
+
+    Deck createDeck(Deck deck);
 }

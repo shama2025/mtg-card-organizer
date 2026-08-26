@@ -4,6 +4,7 @@ import mtgcollection.data.interfaces.DeckRepository;
 import mtgcollection.data.jdbc.mapper.DeckMapper;
 import mtgcollection.model.Deck;
 import org.springframework.jdbc.core.simple.JdbcClient;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -44,5 +45,23 @@ public class DeckJdbcRepository implements DeckRepository {
                 .param("deckId", deckId)
                 .query(new DeckMapper())
                 .single();
+    }
+
+    @Override
+    public Deck createDeck(Deck deck) {
+        final String sql = """
+                insert into deck (name, card_count, date_created, date_updated)
+                values(:name, 0, :dateCreated, :dateCreated);
+                """;
+        GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
+
+        jdbcClient.sql(sql)
+                .param("name", deck.getName())
+                .param("dateCreated", deck.getDateCreated())
+                .update(keyHolder,"deck_id");
+        deck.setDeckId(keyHolder.getKey().intValue());
+        deck.setDateUpdated(deck.getDateCreated());
+        deck.setCardCount(0);
+        return deck;
     }
 }
