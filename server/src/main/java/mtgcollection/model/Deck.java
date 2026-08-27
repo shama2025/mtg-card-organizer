@@ -18,6 +18,8 @@ public class Deck {
     @PastOrPresent(message = "Creation date has to be today.")
     @FutureOrPresent(message = "Creation date has to be today.")
     private LocalDate dateCreated;
+
+    @FutureOrPresent(message = "Updated date has to be today or in future.")
     private LocalDate dateUpdated;
     private List<Card> cardList;
 
