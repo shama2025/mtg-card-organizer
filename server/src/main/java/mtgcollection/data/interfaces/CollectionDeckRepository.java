@@ -5,4 +5,6 @@ import mtgcollection.model.CollectionDeck;
 public interface CollectionDeckRepository {
 
     CollectionDeck createCollectionDeck(int deckId, int collectionId);
+
+    boolean removeDeck(int deckId);
 }

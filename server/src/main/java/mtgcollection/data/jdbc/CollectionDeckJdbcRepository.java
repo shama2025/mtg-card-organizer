@@ -30,4 +30,14 @@ public class CollectionDeckJdbcRepository implements CollectionDeckRepository {
             return null;
         }
     }
+
+    @Override
+    public boolean removeDeck(int deckId) {
+        final String sql = """
+                delete from card_deck where deck_id = :deckId;
+                """;
+        return jdbcClient.sql(sql)
+                .param("deckId",deckId)
+                .update() == 1;
+    }
 }
