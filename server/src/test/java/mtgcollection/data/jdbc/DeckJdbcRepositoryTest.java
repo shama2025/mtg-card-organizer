@@ -83,6 +83,42 @@ class DeckJdbcRepositoryTest {
     }
 
     @Nested
+    class UpdateDeckTests{
+        @Test
+        void shouldUpdateDeck(){
+            Deck deck = TestHelper.deckToEdit();
+            boolean isUpdated = deckJdbcRepository.updateDeck(deck);
+            assertTrue(isUpdated);
+        }
+
+        @Test
+        void shouldNotUpdateDeckWhereDeckDoesNotExist(){
+            Deck deck = TestHelper.deckToEdit();
+            deck.setDeckId(Integer.MAX_VALUE);
+            boolean isUpdated = deckJdbcRepository.updateDeck(deck);
+            assertFalse(isUpdated);
+        }
+
+        @Test
+        void shouldNotUpdateDeckWhereDateUpdatedIsNull(){
+            Deck deck = TestHelper.deckToEdit();
+            deck.setDateUpdated(null);
+            assertThrows(DataIntegrityViolationException.class, () ->{
+                deckJdbcRepository.updateDeck(deck);
+            });
+        }
+
+        @Test
+        void shouldNotUpdateDeckWhereNameIsNull(){
+            Deck deck = TestHelper.deckToEdit();
+            deck.setName(null);
+            assertThrows(DataIntegrityViolationException.class, () ->{
+                deckJdbcRepository.updateDeck(deck);
+            });
+        }
+    }
+
+    @Nested
     class DeleteDeckTest{
         @Test
         void shouldDeleteDeck(){
