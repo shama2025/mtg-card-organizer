@@ -201,4 +201,43 @@ class DeckControllerTest {
             mvc.perform(request).andExpect(status().isBadRequest());
         }
     }
+
+    @Nested
+    class DeleteDeckTest{
+        @Test
+        void shouldDeleteDeck() throws Exception{
+            int validDeckID = 1;
+            Result<Integer> result = new Result<>();
+            result.setpayload(validDeckID);
+            when(deckService.removeDeck(validDeckID)).thenReturn(result);
+            MockHttpServletRequestBuilder request =
+                    MockMvcRequestBuilders.delete("/api/deck/{deckId}",validDeckID)
+                            .header("authorization", "{\"id\": \"1\",\"email\": \"a@a.com\"}");
+            mvc.perform(request).andExpect(status().isNoContent());
+        }
+
+        @Test
+        void shouldNotDeleteDeckWhenCardIsNotFound() throws Exception {
+            int inValidDeckID = Integer.MAX_VALUE;
+            Result<Integer> result = new Result<>();
+            result.addErrorMessage("Deck not found.",ResultType.NOT_FOUND);
+            when(deckService.removeDeck(inValidDeckID)).thenReturn(result);
+            MockHttpServletRequestBuilder request =
+                    MockMvcRequestBuilders.delete("/api/deck/{deckId}",inValidDeckID)
+                            .header("authorization", "{\"id\": \"1\",\"email\": \"a@a.com\"}");
+            mvc.perform(request).andExpect(status().isNotFound());
+        }
+
+        @Test
+        void shouldNotDeleteWhenAnotherTransactionFails() throws Exception {
+            int validDeckID = 1;
+            Result<Integer> result = new Result<>();
+            result.addErrorMessage("Error deleting deck.",ResultType.INVALID);
+            when(deckService.removeDeck(validDeckID)).thenReturn(result);
+            MockHttpServletRequestBuilder request =
+                    MockMvcRequestBuilders.delete("/api/deck/{deckId}",validDeckID)
+                            .header("authorization", "{\"id\": \"1\",\"email\": \"a@a.com\"}");
+            mvc.perform(request).andExpect(status().isBadRequest());
+        }
+    }
 }

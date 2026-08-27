@@ -1,0 +1,9 @@
+@base_url = http://localhost:8080/api
+
+### Delete Deck Tests
+
+### Happy Path
+DELETE {{base_url}}/deck/1 HTTP/1.1
+
+### Bad Path Deck doesn't exist
+DELETE {{base_url}}/deck/999 HTTP/1.1
