@@ -28,8 +28,8 @@ public class DeckController {
         this.collectionService = collectionService;
     }
 
-    @GetMapping
-    public ResponseEntity<?> fetchAllDecksByCollectionId(@RequestHeader Map<String,String> headers) throws JsonProcessingException {
+    @GetMapping("/{collectionId}")
+    public ResponseEntity<?> fetchAllDecksByCollectionId(@RequestHeader Map<String,String> headers, @PathVariable int collectionId) throws JsonProcessingException {
         if(headers.get("authorization") == null){
             // Missing auth header
             return new ResponseEntity<>(List.of("Missing authorization header"), HttpStatus.BAD_REQUEST);
@@ -40,8 +40,7 @@ public class DeckController {
 
         ObjectMapper mapper = new ObjectMapper();
         LoggedInUser user = mapper.readValue(userAuthJson,LoggedInUser.class);
-        Collection collection = collectionService.findCollectionByUserId(user.id());
-        return new ResponseEntity<>(deckService.fetchAllDecksByCollectionId(collection.getCollectionId()),HttpStatus.OK);
+        return new ResponseEntity<>(deckService.fetchAllDecksByCollectionId(collectionId),HttpStatus.OK);
     }
 
     @GetMapping("/{deckId}")

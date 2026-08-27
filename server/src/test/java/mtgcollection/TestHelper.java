@@ -26,7 +26,7 @@ public class TestHelper {
         return new Collection(1,userToFind().getUserId());
     }
 
-    public static LoggedInUser loggedInUser(){return new LoggedInUser(1,"a@a.com");}
+    public static LoggedInUser loggedInUser(){return new LoggedInUser(1,"a@a.com", collection().getCollectionId());}
 
     public static Card solRing() {
         return new Card(
@@ -35,13 +35,14 @@ public class TestHelper {
                 "Sol Ring",
                 new Set("C11", "Commander 2011"),
                 List.of("Vintage","Commander"),
-                Map.of(
+                List.of(
+                        Map.of(
                         "small", "https://cards.scryfall.io/small/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.jpg",
                         "normal", "https://cards.scryfall.io/normal/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.jpg",
                         "large", "https://cards.scryfall.io/large/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.jpg",
                         "png", "https://cards.scryfall.io/png/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.png",
                         "art_crop", "https://cards.scryfall.io/art_crop/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.jpg"
-                ),
+                )),
                 null, // colorless
                 new ManaCost(1, "{1}"),
                 "Mark Tedin",
@@ -56,14 +57,15 @@ public class TestHelper {
                 "Counterspell",
                 new Set("MH2", "Modern Horizons 2"),
                 List.of("Modern", "Legacy", "Vintage", "Commander", "Pauper"),
-                Map.of(
-                        "small", "https://cards.scryfall.io/small/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.jpg",
-                        "normal", "https://cards.scryfall.io/normal/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.jpg",
-                        "large", "https://cards.scryfall.io/large/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.jpg",
-                        "png", "https://cards.scryfall.io/png/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.png",
-                        "art_crop", "https://cards.scryfall.io/art_crop/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.jpg"
-                ),
-                new ManaColor(new String[]{"U"}),
+                List.of(
+                        Map.of(
+                                "small", "https://cards.scryfall.io/small/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.jpg",
+                                "normal", "https://cards.scryfall.io/normal/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.jpg",
+                                "large", "https://cards.scryfall.io/large/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.jpg",
+                                "png", "https://cards.scryfall.io/png/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.png",
+                                "art_crop", "https://cards.scryfall.io/art_crop/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.jpg"
+                        )),
+                new ManaColor(List.of("U")),
                 new ManaCost(2, "{U}{U}"),
                 "Mark Poole",
                 1
@@ -77,14 +79,15 @@ public class TestHelper {
                 "Lightning Bolt",
                 new Set("2XM", "Double Masters 2022"),
                 List.of("Modern", "Legacy", "Vintage", "Commander", "Pauper"),
-                Map.of(
-                        "small", "https://cards.scryfall.io/small/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.jpg",
-                        "normal", "https://cards.scryfall.io/normal/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.jpg",
-                        "large", "https://cards.scryfall.io/large/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.jpg",
-                        "png", "https://cards.scryfall.io/png/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.png",
-                        "art_crop", "https://cards.scryfall.io/art_crop/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.jpg"
-                ),
-                new ManaColor(new String[]{"R"}),
+                List.of(
+                        Map.of(
+                                "small", "https://cards.scryfall.io/small/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.jpg",
+                                "normal", "https://cards.scryfall.io/normal/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.jpg",
+                                "large", "https://cards.scryfall.io/large/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.jpg",
+                                "png", "https://cards.scryfall.io/png/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.png",
+                                "art_crop", "https://cards.scryfall.io/art_crop/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.jpg"
+                        )),
+                new ManaColor(List.of("R")),
                 new ManaCost(1, "{R}"),
                 "Christopher Rush",
                 1
@@ -98,14 +101,15 @@ public class TestHelper {
                 "Birds of Paradise",
                 new Set("DMR", "Dominaria Remastered"),
                 List.of("Modern", "Legacy", "Vintage", "Commander"),
-                Map.of(
-                        "small", "https://cards.scryfall.io/small/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.jpg",
-                        "normal", "https://cards.scryfall.io/normal/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.jpg",
-                        "large", "https://cards.scryfall.io/large/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.jpg",
-                        "png", "https://cards.scryfall.io/png/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.png",
-                        "art_crop", "https://cards.scryfall.io/art_crop/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.jpg"
-                ),
-                new ManaColor(new String[]{"G"}),
+                List.of(
+                        Map.of(
+                                "small", "https://cards.scryfall.io/small/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.jpg",
+                                "normal", "https://cards.scryfall.io/normal/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.jpg",
+                                "large", "https://cards.scryfall.io/large/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.jpg",
+                                "png", "https://cards.scryfall.io/png/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.png",
+                                "art_crop", "https://cards.scryfall.io/art_crop/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.jpg"
+                        )),
+                new ManaColor(List.of("G")),
                 new ManaCost(1, "{G}"),
                 "Edward P. Beard, Jr.",
                 2
@@ -119,13 +123,14 @@ public class TestHelper {
                 "Black Lotus",
                 new Set("vma", "Vintage Masters"),
                 null, // Banned in all formats
-                Map.of(
-                        "small", "https://cards.scryfall.io/small/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.jpg",
-                        "normal", "https://cards.scryfall.io/normal/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.jpg",
-                        "large", "https://cards.scryfall.io/large/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.jpg",
-                        "png", "https://cards.scryfall.io/png/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.png",
-                        "art_crop", "https://cards.scryfall.io/art_crop/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.jpg"
-                ),
+                List.of(
+                        Map.of(
+                                "small", "https://cards.scryfall.io/small/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.jpg",
+                                "normal", "https://cards.scryfall.io/normal/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.jpg",
+                                "large", "https://cards.scryfall.io/large/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.jpg",
+                                "png", "https://cards.scryfall.io/png/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.png",
+                                "art_crop", "https://cards.scryfall.io/art_crop/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.jpg"
+                        )),
                 new ManaColor(null),
                 new ManaCost(0, "{0}"),
                 "Christopher Rush",
@@ -180,7 +185,7 @@ public class TestHelper {
                 "{T}, Sacrifice Black Lotus: Add three mana of any one color.",        // oracleText
                 null,                                                                  // power
                 null,                                                                  // toughness
-                new String[]{},                                                        // colors (colorless)
+                List.of(),                                                        // colors (colorless)
                 new String[]{},                                                        // colorIdentity
                 new String[]{},                                                        // keywords
                 new String[]{"W", "U", "B", "R", "G"},                                 // producedMana
@@ -229,16 +234,22 @@ public class TestHelper {
                 0,                                                                     // pennyRank
                 List.of(),                                                             // cardFaces
                 List.of(),                                                             // allParts
-                new HashMap<>()                                                        // preview
+                new HashMap<>(),                                                       // preview
+                0
         );
     }
 
     public static Deck user2Deck(){
         return new Deck(2,"Mono Green Ramp",5,
-                LocalDate.of(2026,8,15),LocalDate.of(2026,8,24));
+                LocalDate.of(2026,8,15),LocalDate.of(2026,8,24),null);
+    }
+
+    public static Deck user2DeckWithCard(){
+        return new Deck(2,"Mono Green Ramp",5,
+                LocalDate.of(2026,8,15),LocalDate.of(2026,8,24),List.of(lightningBolt()));
     }
 
     public static Deck deckToCreate(){
-        return new Deck(0, "Temur Landfall",0,LocalDate.now(),null);
+        return new Deck(0, "Temur Landfall",0,LocalDate.now(),null,null);
     }
 }

@@ -1,6 +1,7 @@
 package mtgcollection.domain;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import jakarta.validation.constraints.Null;
 import mtgcollection.data.http.ScryFallApiHttpRepository;
 import mtgcollection.data.http.response.model.CardResponse;
 import mtgcollection.data.interfaces.CardCollectionRepository;
@@ -43,18 +44,20 @@ public class CollectionService {
         return cardRepository.fetchAllCards(collectionId);
     }
 
-    public Result<Card> addCardToCollection(String cardName, Collection collection) throws InterruptedException, JsonProcessingException {
+    public Result<Card> addCardToCollection(String cardName, int collectionId) throws InterruptedException, JsonProcessingException {
         Result<Card> result = new Result<>();
-        validate(result,cardName,collection.getCollectionId());
+        validate(result,cardName,collectionId);
         if(!result.isSuccess()){
             return result;
         }
         // Check if card is in db
-        Card card = fetchCardJdbcRepo(cardName);
-        if(card == null) {
+        Card card;
+
+        card = fetchCardJdbcRepo(cardName);
+        if(card == null){
             // Check if card exists in mtg
             card = fetchCardHttpRepo(cardName);
-            if (card == null) {
+            if(card == null){
                 result.addErrorMessage("Card not found.", ResultType.NOT_FOUND);
                 return result;
             }
@@ -64,10 +67,11 @@ public class CollectionService {
                     card.getManaColor(),card.getManaCost(),
                     card.getArtistName(),1);
         }
+
         card = cardRepository.addCard(card);
-        CardCollection cardCollection = cardCollectionRepository.addCardToCollection(card,collection);
-        if(cardCollection.collection().getCollectionId() != collection.getCollectionId()
-                && cardCollection.card().getId() != card.getId()){
+        CardCollection cardCollection = cardCollectionRepository.addCardToCollection(card.getId(),collectionId);
+        if(cardCollection.collectionId() != collectionId
+                && cardCollection.cardId() != card.getId()){
             result.addErrorMessage("Error adding card to collection", ResultType.INVALID);
         }
         result.setpayload(card);
@@ -128,10 +132,11 @@ public class CollectionService {
                 result.addErrorMessage("Card was not found.", ResultType.NOT_FOUND);
             }
         }catch (EmptyResultDataAccessException ex){
-            result.addErrorMessage("Collection was not found.", ResultType.NOT_FOUND);
+            result.addErrorMessage("Card was not found.", ResultType.NOT_FOUND);
         }
         try{
-            if(collectionRepository.fetchCollectionByCollectionId(collectionId) == null){
+            Collection collection = collectionRepository.fetchCollectionByCollectionId(collectionId);
+            if(collection == null){
                 result.addErrorMessage("Collection was not found.", ResultType.NOT_FOUND);
             }
         }catch (EmptyResultDataAccessException ex){
@@ -151,7 +156,7 @@ public class CollectionService {
 
         card.parseSet(cardResponse.get().set(),cardResponse.get().setName());
         card.parseLegalities(cardResponse.get().legalities());
-        card.parseCardImages(cardResponse.get().imageUris());
+        card.setImgPath(List.of(cardResponse.get().imageUris()));
         card.setManaColor(new ManaColor(cardResponse.get().colors()));
         card.parseCardManaCost(cardResponse.get().manaCost());
 

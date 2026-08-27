@@ -17,17 +17,17 @@ public class CardCollectionJdbcRepository implements CardCollectionRepository {
     }
 
     @Override
-    public CardCollection addCardToCollection(Card cardToAdd, Collection collection) {
+    public CardCollection addCardToCollection(int cardId, int collectionId) {
         final String sql = """
                 insert into collection_card(collection_id,card_id,quantity)
                 values(:collectionId, :cardId, 1);
                 """;
 
         jdbcClient.sql(sql)
-                .param("cardId", cardToAdd.getId())
-                .param("collectionId", collection.getCollectionId())
+                .param("cardId", cardId)
+                .param("collectionId", collectionId)
                 .update();
-        return new CardCollection(cardToAdd,collection,1);
+        return new CardCollection(cardId,collectionId,1);
     }
 
     @Override

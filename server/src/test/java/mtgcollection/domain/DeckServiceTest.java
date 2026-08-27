@@ -5,11 +5,16 @@ import mtgcollection.data.interfaces.CollectionDeckRepository;
 import mtgcollection.data.interfaces.CollectionRepository;
 import mtgcollection.data.interfaces.DeckRepository;
 import mtgcollection.model.CollectionDeck;
+import mtgcollection.data.interfaces.CardDeckRepository;
+import mtgcollection.data.interfaces.CardRepository;
+import mtgcollection.data.interfaces.DeckRepository;
+import mtgcollection.model.CardDeck;
 import mtgcollection.model.Deck;
 import mtgcollection.model.Result;
 import mtgcollection.model.ResultType;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -31,6 +36,12 @@ public class DeckServiceTest {
     @MockBean
     CollectionRepository collectionRepository;
 
+    @MockBean
+    CardRepository cardRepository;
+
+    @MockBean
+    CardDeckRepository cardDeckRepository;
+
     @Autowired
     DeckService deckService;
 
@@ -51,8 +62,10 @@ public class DeckServiceTest {
         void shouldFetchDeckByDeckId(){
             int deckThatDoesExist = 2;
             Result<Deck> expected = new Result<>();
-            expected.setpayload(TestHelper.user2Deck());
-            when(deckRepository.fetchDeckByDeckId(deckThatDoesExist)).thenReturn(TestHelper.user2Deck());
+            expected.setpayload(TestHelper.user2DeckWithCard());
+            when(deckRepository.fetchDeckByDeckId(deckThatDoesExist)).thenReturn(TestHelper.user2DeckWithCard());
+            when(cardDeckRepository.fetchAllCardDecksFromDeckId(deckThatDoesExist)).thenReturn(List.of(new CardDeck(1,1,1)));
+            when(cardRepository.fetchCardById(1)).thenReturn(TestHelper.lightningBolt());
             Result<Deck> result = deckService.fetchDeckByDeckId(deckThatDoesExist);
             assertTrue(result.isSuccess());
             assertEquals(expected,result);

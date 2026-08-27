@@ -1,8 +1,10 @@
 package mtgcollection.model;
 
 import jakarta.validation.constraints.*;
+import mtgcollection.model.card.Card;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Objects;
 
 public class Deck {
@@ -17,21 +19,15 @@ public class Deck {
     @FutureOrPresent(message = "Creation date has to be today.")
     private LocalDate dateCreated;
     private LocalDate dateUpdated;
+    private List<Card> cardList;
 
-    public Deck(int deckId, String name, int cardCount, LocalDate dateCreated, LocalDate dateUpdated) {
+    public Deck(int deckId, String name, int cardCount, LocalDate dateCreated, LocalDate dateUpdated, List<Card> cardList) {
         this.deckId = deckId;
         this.name = name;
         this.cardCount = cardCount;
         this.dateCreated = dateCreated;
         this.dateUpdated = dateUpdated;
-    }
-
-    public int getDeckId() {
-        return deckId;
-    }
-
-    public void setDeckId(int deckId) {
-        this.deckId = deckId;
+        this.cardList = cardList;
     }
 
     public String getName() {
@@ -40,6 +36,14 @@ public class Deck {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public int getDeckId() {
+        return deckId;
+    }
+
+    public void setDeckId(int deckId) {
+        this.deckId = deckId;
     }
 
     public int getCardCount() {
@@ -66,15 +70,23 @@ public class Deck {
         this.dateUpdated = dateUpdated;
     }
 
+    public List<Card> getCardList() {
+        return cardList;
+    }
+
+    public void setCardList(List<Card> cardList) {
+        this.cardList = cardList;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Deck deck = (Deck) o;
-        return deckId == deck.deckId && cardCount == deck.cardCount && Objects.equals(name, deck.name) && Objects.equals(dateCreated, deck.dateCreated) && Objects.equals(dateUpdated, deck.dateUpdated);
+        return deckId == deck.deckId && cardCount == deck.cardCount && Objects.equals(name, deck.name) && Objects.equals(dateCreated, deck.dateCreated) && Objects.equals(dateUpdated, deck.dateUpdated) && Objects.equals(cardList, deck.cardList);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(deckId, name, cardCount, dateCreated, dateUpdated);
+        return Objects.hash(deckId, name, cardCount, dateCreated, dateUpdated, cardList);
     }
 }
