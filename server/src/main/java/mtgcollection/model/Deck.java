@@ -1,5 +1,6 @@
 package mtgcollection.model;
 
+import jakarta.validation.constraints.*;
 import mtgcollection.model.card.Card;
 
 import java.time.LocalDate;
@@ -8,8 +9,14 @@ import java.util.Objects;
 
 public class Deck {
     private int deckId;
+
+    @NotNull(message = "Name cannot be null.")
+    @NotBlank(message = "Name cannot be blank.")
     private String name;
     private int cardCount;
+
+    @PastOrPresent(message = "Creation date has to be today.")
+    @FutureOrPresent(message = "Creation date has to be today.")
     private LocalDate dateCreated;
     private LocalDate dateUpdated;
     private List<Card> cardList;

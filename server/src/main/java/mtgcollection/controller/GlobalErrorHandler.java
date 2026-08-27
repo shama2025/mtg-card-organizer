@@ -1,6 +1,7 @@
 package mtgcollection.controller;
 
 import mtgcollection.data.http.exceptions.DownstreamProvider;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;

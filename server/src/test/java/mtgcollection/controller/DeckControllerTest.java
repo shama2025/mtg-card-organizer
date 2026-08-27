@@ -1,5 +1,7 @@
 package mtgcollection.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import mtgcollection.TestHelper;
 import mtgcollection.domain.CollectionService;
 import mtgcollection.domain.DeckService;
@@ -12,13 +14,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.springframework.mock.http.server.reactive.MockServerHttpRequest.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -41,7 +49,7 @@ class DeckControllerTest {
         void shouldReturnBadRequestResponse() throws Exception {
             // Act
             when(collectionService.fetchAllCardsByCollection(1)).thenReturn(TestHelper.cardList());
-            MockHttpServletRequestBuilder request = get("/api/collection");
+            MockHttpServletRequestBuilder request = get("/api/collection/{collectionId}",0);
             // assert
             mvc.perform(request).andExpect(status().isBadRequest());
         }
@@ -52,10 +60,9 @@ class DeckControllerTest {
         @Test
         void shouldFetchDeckByCollectionID() throws Exception {
             // Act
-            when(collectionService.findCollectionByUserId(1)).thenReturn(TestHelper.collection());
             when(deckService.fetchAllDecksByCollectionId(TestHelper.collection().getCollectionId())).thenReturn(List.of(TestHelper.user2Deck()));
-            MockHttpServletRequestBuilder request = get("/api/deck")
-                    .header("authorization", "{\"id\": \"1\",\"email\": \"a@a.com\"}");            // assert
+            MockHttpServletRequestBuilder request = get("/api/decks/{collectionId}",1)
+                    .header("authorization", "{\"id\": \"1\",\"email\": \"a@a.com\"}");
             mvc.perform(request).andExpect(status().isOk());
         }
     }
@@ -82,4 +89,116 @@ class DeckControllerTest {
         }
     }
 
+    @Nested
+    class CreateDeckTest{
+        @Test
+        void shouldCreateDeckInCollection() throws Exception {
+            Deck deck = TestHelper.deckToCreate();
+            int validCollectionId = 1;
+            Result<Deck> expected = new Result<>();
+            expected.setpayload(deck);
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.registerModule(new JavaTimeModule());
+            when(deckService.createDeckInCollection(deck, validCollectionId))
+                    .thenReturn(expected);
+            MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/api/collection/{collectionId}/deck/{deckId}",validCollectionId,deck.getDeckId())
+                    .param("collectionId", String.valueOf(validCollectionId))
+                    .header("authorization", "{\"id\": \"1\",\"email\": \"a@a.com\"}")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(mapper.writeValueAsString(deck));
+            mvc.perform(request)
+                    .andExpect(status().isCreated());
+        }
+        @Test
+        void shouldNotAddDeckIfCollectionIdDoesNotExist()throws Exception{
+            Deck deck = TestHelper.deckToCreate();
+            deck.setDateCreated(LocalDate.now().minusDays(5));
+            int validCollectionId = 1;
+            Result<Deck> expected = new Result<>();
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.registerModule(new JavaTimeModule());
+            expected.addErrorMessage("Creation date has to be today.",ResultType.INVALID);
+            when(deckService.createDeckInCollection(deck,validCollectionId)).thenReturn(expected);
+            MockHttpServletRequestBuilder request =
+                    MockMvcRequestBuilders.post("/api/collection/{collectionId}/deck/{deckId}",validCollectionId,deck.getDeckId())
+                            .param("collectionId", String.valueOf(validCollectionId))
+                            .header("authorization", "{\"id\": \"1\",\"email\": \"a@a.com\"}")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(mapper.writeValueAsString(deck));
+            mvc.perform(request).andExpect(status().isBadRequest());
+        }
+
+        @Test
+        void shouldNotAddDeckIfCreationDateIsInFuture()throws Exception{
+            Deck deck = TestHelper.deckToCreate();
+            deck.setDateCreated(LocalDate.now().plusDays(5));
+            int validCollectionId = 1;
+            Result<Deck> expected = new Result<>();
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.registerModule(new JavaTimeModule());
+            expected.addErrorMessage("Creation date has to be today.",ResultType.INVALID);
+            when(deckService.createDeckInCollection(deck,validCollectionId)).thenReturn(expected);
+            MockHttpServletRequestBuilder request =
+                    MockMvcRequestBuilders.post("/api/collection/{collectionId}/deck/{deckId}",validCollectionId,deck.getDeckId())
+                            .param("collectionId", String.valueOf(validCollectionId))
+                            .header("authorization", "{\"id\": \"1\",\"email\": \"a@a.com\"}")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(mapper.writeValueAsString(deck));
+            mvc.perform(request).andExpect(status().isBadRequest());
+        }
+
+        @Test
+        void shouldNotAddDeckIfCreationDateIsInPast()throws Exception{
+            Deck deck = TestHelper.deckToCreate();
+            deck.setDateCreated(LocalDate.now().minusDays(5));
+            int validCollectionId = 1;
+            Result<Deck> expected = new Result<>();
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.registerModule(new JavaTimeModule());
+            expected.addErrorMessage("Creation date has to be today.",ResultType.INVALID);
+            when(deckService.createDeckInCollection(deck,validCollectionId)).thenReturn(expected);
+            MockHttpServletRequestBuilder request =
+                    MockMvcRequestBuilders.post("/api/collection/{collectionId}/deck/{deckId}",validCollectionId,deck.getDeckId())
+                            .param("collectionId", String.valueOf(validCollectionId))
+                            .header("authorization", "{\"id\": \"1\",\"email\": \"a@a.com\"}")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(mapper.writeValueAsString(deck));
+            mvc.perform(request).andExpect(status().isBadRequest());
+        }
+
+        @Test
+        void shouldNotAddDeckIfNameIsNull()throws Exception{
+            Deck deck = TestHelper.deckToCreate();
+            deck.setName("");
+            int validCollectionId = 1;
+            Result<Deck> expected = new Result<>();
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.registerModule(new JavaTimeModule());
+            expected.addErrorMessage("Name cannot be null.",ResultType.INVALID);
+            when(deckService.createDeckInCollection(deck,validCollectionId)).thenReturn(expected);
+            MockHttpServletRequestBuilder request =
+                    MockMvcRequestBuilders.post("/api/collection/{collectionId}/deck/{deckId}",validCollectionId,deck.getDeckId())
+                            .param("collectionId", String.valueOf(validCollectionId))
+                            .header("authorization", "{\"id\": \"1\",\"email\": \"a@a.com\"}")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(mapper.writeValueAsString(deck));
+            mvc.perform(request).andExpect(status().isBadRequest());
+        }
+
+        @Test
+        void shouldNotAddDeckIfDeckIsNull()throws Exception{
+            int validCollectionId = 1;
+            Result<Deck> expected = new Result<>();
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.registerModule(new JavaTimeModule());
+            expected.addErrorMessage("Deck cannot be null.",ResultType.INVALID);
+            when(deckService.createDeckInCollection(null,validCollectionId)).thenReturn(expected);
+            MockHttpServletRequestBuilder request =
+                    MockMvcRequestBuilders.post("/api/collection/{collectionId}/deck/{deckId}",validCollectionId,0)
+                            .param("collectionId", String.valueOf(validCollectionId))
+                            .header("authorization", "{\"id\": \"1\",\"email\": \"a@a.com\"}")
+                            .contentType(MediaType.APPLICATION_JSON);
+            mvc.perform(request).andExpect(status().isBadRequest());
+        }
+    }
 }
