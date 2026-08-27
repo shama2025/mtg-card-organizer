@@ -27,9 +27,6 @@ class CardCollectionJdbcRepositoryTest {
     CardCollectionJdbcRepository cardCollectionJdbcRepository;
 
     @Autowired
-    CollectionJdbcRepository collectionJdbcRepository;
-
-    @Autowired
     CardJdbcRepository cardJdbcRepository;
 
     @BeforeEach
