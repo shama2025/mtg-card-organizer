@@ -28,8 +28,8 @@ public class CollectionJdbcRepository implements CollectionRepository {
 
     public Collection fetchUserCollection(int userId){
         final String sql = """
-                select * from collection
-                where user_id = :userId;
+                select cc.collection_id as collectionId, cc.user_id as ownerId from collection cc
+                where cc.user_id = :userId;
                 """;
         return jdbcClient.sql(sql)
                 .param("userId", userId)

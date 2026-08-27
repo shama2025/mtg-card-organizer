@@ -49,7 +49,7 @@ public class UserController {
 
     @PostMapping("/add")
     public ResponseEntity<?> add(@RequestBody User user){
-        Result<User> result = service.add(user);
+        Result<LoggedInUser> result = service.add(user);
 
         if(result.isSuccess()){
             return new ResponseEntity<>(result.getpayload(), HttpStatus.CREATED);

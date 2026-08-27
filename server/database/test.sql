@@ -109,17 +109,19 @@ BEGIN
         ('a@a.com', 'a'),
         ('b@b.com', 'b');
 
-    -- 2. Seed Cards
+    -- 2. Seed Cards (img_path is now a JSON Array of Maps)
     insert into card (card_uuid, name, img_path, mana_color, mana_cost, sets, legalities, artist, quantity) values
         (
             'f29ba16f-c8fb-42fe-aabf-87089cb214a7',
             'LIGHTNING BOLT',
-            JSON_OBJECT(
-                'small', 'https://cards.scryfall.io/small/front/f/2/f29ba16f-c8fb-42fe-aabf-87089cb214a7.jpg',
-                'normal', 'https://cards.scryfall.io/normal/front/f/2/f29ba16f-c8fb-42fe-aabf-87089cb214a7.jpg',
-                'large', 'https://cards.scryfall.io/large/front/f/2/f29ba16f-c8fb-42fe-aabf-87089cb214a7.jpg',
-                'png', 'https://cards.scryfall.io/png/front/f/2/f29ba16f-c8fb-42fe-aabf-87089cb214a7.png',
-                'art_crop', 'https://cards.scryfall.io/art_crop/front/f/2/f29ba16f-c8fb-42fe-aabf-87089cb214a7.jpg'
+            JSON_ARRAY(
+                JSON_OBJECT(
+                    'small', 'https://cards.scryfall.io/small/front/f/2/f29ba16f-c8fb-42fe-aabf-87089cb214a7.jpg',
+                    'normal', 'https://cards.scryfall.io/normal/front/f/2/f29ba16f-c8fb-42fe-aabf-87089cb214a7.jpg',
+                    'large', 'https://cards.scryfall.io/large/front/f/2/f29ba16f-c8fb-42fe-aabf-87089cb214a7.jpg',
+                    'png', 'https://cards.scryfall.io/png/front/f/2/f29ba16f-c8fb-42fe-aabf-87089cb214a7.png',
+                    'art_crop', 'https://cards.scryfall.io/art_crop/front/f/2/f29ba16f-c8fb-42fe-aabf-87089cb214a7.jpg'
+                )
             ),
             JSON_ARRAY('R'),
             JSON_OBJECT('cmc', 1, 'mana_string', '{R}'),
@@ -131,12 +133,14 @@ BEGIN
         (
             'a97f330d-6823-4337-a7d1-e9c522d08a5c',
             'COUNTERSPELL',
-            JSON_OBJECT(
-                'small', 'https://cards.scryfall.io/small/front/a/9/a97f330d-6823-4337-a7d1-e9c522d08a5c.jpg',
-                'normal', 'https://cards.scryfall.io/normal/front/a/9/a97f330d-6823-4337-a7d1-e9c522d08a5c.jpg',
-                'large', 'https://cards.scryfall.io/large/front/a/9/a97f330d-6823-4337-a7d1-e9c522d08a5c.jpg',
-                'png', 'https://cards.scryfall.io/png/front/a/9/a97f330d-6823-4337-a7d1-e9c522d08a5c.png',
-                'art_crop', 'https://cards.scryfall.io/art_crop/front/a/9/a97f330d-6823-4337-a7d1-e9c522d08a5c.jpg'
+            JSON_ARRAY(
+                JSON_OBJECT(
+                    'small', 'https://cards.scryfall.io/small/front/a/9/a97f330d-6823-4337-a7d1-e9c522d08a5c.jpg',
+                    'normal', 'https://cards.scryfall.io/normal/front/a/9/a97f330d-6823-4337-a7d1-e9c522d08a5c.jpg',
+                    'large', 'https://cards.scryfall.io/large/front/a/9/a97f330d-6823-4337-a7d1-e9c522d08a5c.jpg',
+                    'png', 'https://cards.scryfall.io/png/front/a/9/a97f330d-6823-4337-a7d1-e9c522d08a5c.png',
+                    'art_crop', 'https://cards.scryfall.io/art_crop/front/a/9/a97f330d-6823-4337-a7d1-e9c522d08a5c.jpg'
+                )
             ),
             JSON_ARRAY('U'),
             JSON_OBJECT('cmc', 2, 'mana_string', '{U}{U}'),
@@ -148,14 +152,16 @@ BEGIN
         (
             'ab851e3a-7f61-464a-9520-21a4f02a3a10',
             'SOL RING',
-            JSON_OBJECT(
-                'small', 'https://cards.scryfall.io/small/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.jpg',
-                'normal', 'https://cards.scryfall.io/normal/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.jpg',
-                'large', 'https://cards.scryfall.io/large/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.jpg',
-                'png', 'https://cards.scryfall.io/png/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.png',
-                'art_crop', 'https://cards.scryfall.io/art_crop/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.jpg'
+            JSON_ARRAY(
+                JSON_OBJECT(
+                    'small', 'https://cards.scryfall.io/small/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.jpg',
+                    'normal', 'https://cards.scryfall.io/normal/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.jpg',
+                    'large', 'https://cards.scryfall.io/large/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.jpg',
+                    'png', 'https://cards.scryfall.io/png/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.png',
+                    'art_crop', 'https://cards.scryfall.io/art_crop/front/a/b/ab851e3a-7f61-464a-9520-21a4f02a3a10.jpg'
+                )
             ),
-            null, -- Colorless card
+            null,
             JSON_OBJECT('cmc', 1, 'mana_string', '{1}'),
             JSON_OBJECT('code','C11','name','Commander 2011'),
             JSON_ARRAY('vintage', 'commander'),
@@ -165,12 +171,14 @@ BEGIN
         (
             'fe0a79f6-e0b3-4705-894c-e83cb41c18ca',
             'BIRDS OF PARADISE',
-            JSON_OBJECT(
-                'small', 'https://cards.scryfall.io/small/front/f/e/fe0a79f6-e0b3-4705-894c-e83cb41c18ca.jpg',
-                'normal', 'https://cards.scryfall.io/normal/front/f/e/fe0a79f6-e0b3-4705-894c-e83cb41c18ca.jpg',
-                'large', 'https://cards.scryfall.io/large/front/f/e/fe0a79f6-e0b3-4705-894c-e83cb41c18ca.jpg',
-                'png', 'https://cards.scryfall.io/png/front/f/e/fe0a79f6-e0b3-4705-894c-e83cb41c18ca.png',
-                'art_crop', 'https://cards.scryfall.io/art_crop/front/f/e/fe0a79f6-e0b3-4705-894c-e83cb41c18ca.jpg'
+            JSON_ARRAY(
+                JSON_OBJECT(
+                    'small', 'https://cards.scryfall.io/small/front/f/e/fe0a79f6-e0b3-4705-894c-e83cb41c18ca.jpg',
+                    'normal', 'https://cards.scryfall.io/normal/front/f/e/fe0a79f6-e0b3-4705-894c-e83cb41c18ca.jpg',
+                    'large', 'https://cards.scryfall.io/large/front/f/e/fe0a79f6-e0b3-4705-894c-e83cb41c18ca.jpg',
+                    'png', 'https://cards.scryfall.io/png/front/f/e/fe0a79f6-e0b3-4705-894c-e83cb41c18ca.png',
+                    'art_crop', 'https://cards.scryfall.io/art_crop/front/f/e/fe0a79f6-e0b3-4705-894c-e83cb41c18ca.jpg'
+                )
             ),
             JSON_ARRAY('G'),
             JSON_OBJECT('cmc', 1, 'mana_string', '{G}'),
@@ -185,31 +193,31 @@ BEGIN
         ('Izzet Spellslinger', 60, '2026-08-01', '2026-08-20'),
         ('Mono Green Ramp', 100, '2026-08-15', '2026-08-24');
 
-    -- 4. Seed Card-Deck Bridge (Links cards to decks with quantities)
+    -- 4. Seed Card-Deck Bridge
     insert into card_deck (card_id, deck_id, quantity) values
-        (1, 1, 4), -- 4x Lightning Bolt -> Izzet Spellslinger
-        (2, 1, 4), -- 4x Counterspell -> Izzet Spellslinger
-        (3, 1, 1), -- 1x Sol Ring -> Izzet Spellslinger
-        (3, 2, 1), -- 1x Sol Ring -> Mono Green Ramp
-        (4, 2, 4); -- 4x Birds of Paradise -> Mono Green Ramp
+        (1, 1, 4),
+        (2, 1, 4),
+        (3, 1, 1),
+        (3, 2, 1),
+        (4, 2, 4);
 
     -- 5. Seed Collections
     insert into collection (user_id) values
-        (1), -- collection_id 1 for User 1
-        (2); -- collection_id 2 for User 2
+        (1),
+        (2);
 
-    -- 6. Seed Collection Decks (Links decks to collections)
+    -- 6. Seed Collection Decks
     insert into collection_deck (collection_id, deck_id) values
-        (1, 1), -- User 1 collection owns Izzet Spellslinger
-        (2, 2); -- User 2 collection owns Mono Green Ramp
+        (1, 1),
+        (2, 2);
 
-    -- 7. Seed Collection Cards (Join table)
+    -- 7. Seed Collection Cards
     insert into collection_card (collection_id, card_id, quantity) values
-        (1, 1, 1), -- User 1 owns Lightning Bolt
-        (1, 2, 1), -- User 1 owns Counterspell
-        (1, 3, 1), -- User 1 owns Sol Ring
-        (2, 3, 3), -- User 2 owns 3 Sol Rings
-        (2, 4, 2); -- User 2 owns 2 Birds of Paradise
+        (1, 1, 1),
+        (1, 2, 1),
+        (1, 3, 1),
+        (2, 3, 3),
+        (2, 4, 2);
 
 END //
 

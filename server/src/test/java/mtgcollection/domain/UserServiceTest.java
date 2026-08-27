@@ -1,5 +1,6 @@
 package mtgcollection.domain;
 
+import mtgcollection.data.interfaces.CollectionRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -24,6 +25,9 @@ class UserServiceTest {
     @MockBean
     UserRepository repository;
 
+    @MockBean
+    CollectionRepository collectionRepository;
+
     @Autowired
     UserService service;
 
@@ -44,10 +48,25 @@ class UserServiceTest {
             User userLoggingIn = TestHelper.userToFind();
             userToFinder.hashPassword();
             Result<LoggedInUser> expected = new Result<>();
-            expected.setpayload(new LoggedInUser(userToFinder.getUserId(),userToFinder.getEmail()));
-            when(repository.findUserByEmail(userToFinder.getEmail())).thenReturn(userToFinder );
+            expected.setpayload(new LoggedInUser(userToFinder.getUserId(),userToFinder.getEmail(),1));
+            when(collectionRepository.fetchUserCollection(userLoggingIn.getUserId())).thenReturn(TestHelper.collection());
+            when(repository.findUserByEmail(userToFinder.getEmail())).thenReturn(userToFinder);
             Result<LoggedInUser> actual = service.findUserByEmail(userLoggingIn);
             assertTrue(actual.isSuccess());
+            assertEquals(expected,actual);
+        }
+
+        @Test
+        void shouldNotFindUserByEmailWhenCollectionDoesNotExist(){
+            User userToFinder = TestHelper.userToFind();
+            User userLoggingIn = TestHelper.userToFind();
+            userToFinder.hashPassword();
+            Result<LoggedInUser> expected = new Result<>();
+            expected.addErrorMessage("No collection associated with user.",ResultType.NOT_FOUND);
+            when(collectionRepository.fetchUserCollection(userLoggingIn.getUserId())).thenReturn(null);
+            when(repository.findUserByEmail(userToFinder.getEmail())).thenReturn(userToFinder);
+            Result<LoggedInUser> actual = service.findUserByEmail(userLoggingIn);
+            assertFalse(actual.isSuccess());
             assertEquals(expected,actual);
         }
 
@@ -140,12 +159,13 @@ class UserServiceTest {
         @Test
         void shouldAddUser(){
             User toAdd = TestHelper.userToAdd();
-            Result<User> expected = new Result<>();
-            expected.setpayload(new User(3,"c@c.com","hashed"));
+            Result<LoggedInUser> expected = new Result<>();
+            expected.setpayload(new LoggedInUser(3,"c@c.com",3));
+            when(collectionRepository.createCollection(toAdd.getUserId())).thenReturn(TestHelper.collection());
             when(repository.add(toAdd)).thenReturn(new User(3,"c@c.com","hashed"));
-            Result<User> actual = service.add(toAdd);
+            Result<LoggedInUser> actual = service.add(toAdd);
             assertTrue(actual.isSuccess());
-            assertEquals(actual.getpayload().getUserId(), expected.getpayload().getUserId());
+            assertEquals(actual.getpayload().id(), expected.getpayload().id());
         }
 
         // Null/Blank email
@@ -153,9 +173,9 @@ class UserServiceTest {
         void shouldNotAddUserWithBlankEmail(){
             User toAdd = TestHelper.userToAdd();
             toAdd.setEmail("");
-            Result<User> expected = new Result<>();
+            Result<LoggedInUser> expected = new Result<>();
             expected.addErrorMessage("Email cannot be blank.", ResultType.INVALID);
-            Result<User> actual = service.add(toAdd);
+            Result<LoggedInUser> actual = service.add(toAdd);
             assertFalse(actual.isSuccess());
             assertEquals(expected,actual);
         }
@@ -164,10 +184,10 @@ class UserServiceTest {
         void shouldNotAddUserWithNullEmail(){
             User toAdd = TestHelper.userToAdd();
             toAdd.setEmail(null);
-            Result<User> expected = new Result<>();
+            Result<LoggedInUser> expected = new Result<>();
             expected.addErrorMessage("Email cannot be blank.", ResultType.INVALID);
             expected.addErrorMessage("Email cannot be null.", ResultType.INVALID);
-            Result<User> actual = service.add(toAdd);
+            Result<LoggedInUser> actual = service.add(toAdd);
             assertFalse(actual.isSuccess());
             assertEquals(expected,actual);
         }
@@ -177,9 +197,9 @@ class UserServiceTest {
         void shouldNotAddUserWithBlankPassword(){
             User toAdd = TestHelper.userToAdd();
             toAdd.setPassword("");
-            Result<User> expected = new Result<>();
+            Result<LoggedInUser> expected = new Result<>();
             expected.addErrorMessage("Password cannot be blank.", ResultType.INVALID);
-            Result<User> actual = service.add(toAdd);
+            Result<LoggedInUser> actual = service.add(toAdd);
             assertFalse(actual.isSuccess());
             assertEquals(expected,actual);
         }
@@ -188,10 +208,10 @@ class UserServiceTest {
         void shouldNotAddUserWithNullPassword(){
             User toAdd = TestHelper.userToAdd();
             toAdd.setPassword(null);
-            Result<User> expected = new Result<>();
+            Result<LoggedInUser> expected = new Result<>();
             expected.addErrorMessage("Password cannot be blank.", ResultType.INVALID);
             expected.addErrorMessage("Password cannot be null.", ResultType.INVALID);
-            Result<User> actual = service.add(toAdd);
+            Result<LoggedInUser> actual = service.add(toAdd);
             assertFalse(actual.isSuccess());
             assertEquals(expected,actual);
         }
@@ -202,7 +222,7 @@ class UserServiceTest {
             User toAdd = TestHelper.userToAdd();
             toAdd.setEmail("a@a.com");
             when(repository.add(toAdd)).thenThrow(DataIntegrityViolationException.class);
-            Result<User> actual = service.add(toAdd);
+            Result<LoggedInUser> actual = service.add(toAdd);
             assertFalse(actual.isSuccess());
             assertTrue(actual.getErrorMessages().contains("Email already exists."));
             assertEquals(ResultType.INVALID, actual.getResultType());

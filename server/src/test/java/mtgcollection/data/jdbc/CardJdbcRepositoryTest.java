@@ -1,6 +1,7 @@
 package mtgcollection.data.jdbc;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import jakarta.validation.constraints.Null;
 import mtgcollection.TestHelper;
 import mtgcollection.model.card.Card;
 import org.junit.jupiter.api.BeforeEach;
@@ -54,9 +55,9 @@ class CardJdbcRepositoryTest {
         void shouldAddCardWithEmptyManaColor() throws JsonProcessingException{
             Card cardToAdd = TestHelper.lightningBolt();
             cardToAdd.setManaColor(null);
-            Card createdCard = repository.addCard(cardToAdd);
-            createdCard.setId(5);
-            assertEquals(cardToAdd,createdCard);
+            assertThrows(NullPointerException.class, () ->{
+               repository.addCard(cardToAdd);
+            });
         }
 
         // Should not add null artist name

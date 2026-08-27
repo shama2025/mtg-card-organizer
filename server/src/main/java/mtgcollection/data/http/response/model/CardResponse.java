@@ -75,7 +75,7 @@ String power,
 
 String toughness,
 
-String [] colors,// if array is empty then card is colorless
+List<String> colors,// if array is empty then card is colorless
 
 @JsonProperty("color_identity")
 String [] colorIdentity,
@@ -198,5 +198,8 @@ List<HashMap<String,Object>> cardFaces,
 @JsonProperty("all_parts")
 List<HashMap<String,Object>> allParts,
 
-HashMap<String,String> preview
+HashMap<String,String> preview,
+
+@JsonProperty("mtgo_foil_id")
+int mtgoFoilId
 ) { }

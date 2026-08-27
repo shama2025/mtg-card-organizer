@@ -10,7 +10,10 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.jdbc.UncategorizedSQLException;
 import org.springframework.jdbc.core.simple.JdbcClient;
+
+import java.sql.SQLException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,9 +25,6 @@ class CardCollectionJdbcRepositoryTest {
 
     @Autowired
     CardCollectionJdbcRepository cardCollectionJdbcRepository;
-
-    @Autowired
-    CollectionJdbcRepository collectionJdbcRepository;
 
     @Autowired
     CardJdbcRepository cardJdbcRepository;
@@ -40,9 +40,9 @@ class CardCollectionJdbcRepositoryTest {
         void shouldAddCardToCollection() throws JsonProcessingException {
             Card card = cardJdbcRepository.addCard(TestHelper.lightningBolt());
             Collection collection = new Collection(1,1);
-            CardCollection cardCollection = cardCollectionJdbcRepository.addCardToCollection(card,collection);
-            assertEquals(card,cardCollection.card());
-            assertEquals(collection,cardCollection.collection());
+            CardCollection cardCollection = cardCollectionJdbcRepository.addCardToCollection(card.getId(),collection.getCollectionId());
+            assertEquals(card.getId(),cardCollection.cardId());
+            assertEquals(collection.getCollectionId(),cardCollection.collectionId());
         }
     }
 
@@ -111,8 +111,9 @@ class CardCollectionJdbcRepositoryTest {
             int cardQuantity = -5;
             int collectionThatExists = TestHelper.collection().getCollectionId();
             int cardThatExists = TestHelper.lightningBolt().getId();
-            boolean isUpdated = cardCollectionJdbcRepository.updateCardInCollection(cardThatExists,collectionThatExists,cardQuantity);
-            assertFalse(isUpdated);
+            assertThrows(UncategorizedSQLException.class, () ->{
+                cardCollectionJdbcRepository.updateCardInCollection(cardThatExists,collectionThatExists,cardQuantity);
+            });
         }
     }
 
