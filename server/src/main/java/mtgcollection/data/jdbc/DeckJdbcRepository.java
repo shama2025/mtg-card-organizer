@@ -66,6 +66,23 @@ public class DeckJdbcRepository implements DeckRepository {
         return deck;
     }
 
+    @Override
+    public boolean updateDeck(Deck deck) {
+        final String sql = """
+                update deck d
+                set d.name = :name,
+                d.card_count = :cardCount,
+                d.date_updated = :dateUpdated
+                where d.deck_id = :deckId;
+                """;
+        return jdbcClient.sql(sql)
+                .param("name", deck.getName())
+                .param("cardCount",deck.getCardCount())
+                .param("dateUpdated", deck.getDateUpdated())
+                .param("deckId", deck.getDeckId())
+                .update() == 1;
+    }
+
     @Transactional
     @Override
     public boolean removeDeck(int deckId) {
