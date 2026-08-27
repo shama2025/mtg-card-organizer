@@ -148,4 +148,43 @@ public class DeckServiceTest {
             assertTrue(result.getErrorMessages().contains("Name cannot be blank."));
         }
     }
+
+    @Nested
+    class DeleteDeckTests{
+        @Test
+        void shouldDeleteDeck(){
+            int validDeckId = 1;
+            when(deckRepository.fetchDeckByDeckId(validDeckId)).thenReturn(TestHelper.user2Deck());
+            when(cardDeckRepository.removeDeck(validDeckId)).thenReturn(true);
+            when(collectionDeckRepository.removeDeck(validDeckId)).thenReturn(true);
+            when(deckRepository.removeDeck(validDeckId)).thenReturn(true);
+            Result<Integer> result = deckService.removeDeck(validDeckId);
+            assertTrue(result.isSuccess());
+            assertEquals(validDeckId,result.getpayload());
+        }
+
+        @Test
+        void shouldNotDeleteDeckWhereDeckDoesNotExist(){
+            int deckThatDoesNotExistId = Integer.MAX_VALUE;
+            when(deckRepository.fetchDeckByDeckId(deckThatDoesNotExistId)).thenReturn(null);
+            Result<Integer> result = deckService.removeDeck(deckThatDoesNotExistId);
+            assertFalse(result.isSuccess());
+            assertTrue(result.getErrorMessages().contains("Deck not found."));
+            assertEquals(ResultType.NOT_FOUND,result.getResultType());
+        }
+
+        @Test
+        void shouldNotDeleteDeckWhenAnotherTransActionFails(){
+            // Can Change any transaction to false and will work same
+            int validDeckId = 1;
+            when(deckRepository.fetchDeckByDeckId(validDeckId)).thenReturn(TestHelper.user2Deck());
+            when(cardDeckRepository.removeDeck(validDeckId)).thenReturn(false);
+            when(collectionDeckRepository.removeDeck(validDeckId)).thenReturn(true);
+            when(deckRepository.removeDeck(validDeckId)).thenReturn(true);
+            Result<Integer> result = deckService.removeDeck(validDeckId);
+            assertFalse(result.isSuccess());
+            assertTrue(result.getErrorMessages().contains("Error deleting deck."));
+            assertEquals(ResultType.INVALID,result.getResultType());
+        }
+    }
 }
