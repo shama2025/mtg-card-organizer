@@ -10,7 +10,10 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.jdbc.UncategorizedSQLException;
 import org.springframework.jdbc.core.simple.JdbcClient;
+
+import java.sql.SQLException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -111,8 +114,9 @@ class CardCollectionJdbcRepositoryTest {
             int cardQuantity = -5;
             int collectionThatExists = TestHelper.collection().getCollectionId();
             int cardThatExists = TestHelper.lightningBolt().getId();
-            boolean isUpdated = cardCollectionJdbcRepository.updateCardInCollection(cardThatExists,collectionThatExists,cardQuantity);
-            assertFalse(isUpdated);
+            assertThrows(UncategorizedSQLException.class, () ->{
+                cardCollectionJdbcRepository.updateCardInCollection(cardThatExists,collectionThatExists,cardQuantity);
+            });
         }
     }
 
