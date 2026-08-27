@@ -1,19 +1,20 @@
-@base_url = http://localhost:8080/api/deck
+@base_url = http://localhost:8080/api
 
 ### Happy Pay
-POST {{base_url}}/?collectionId=1 HTTP/1.1
+POST {{base_url}}/collection/1/deck/1 HTTP/1.1
 Content-Type: application/json
 authorization: {"id": "1", "email": "a@a.com"}
 
 {
+  "deckId": "1",
   "name": "Goblins Standard",
-  "dateCreated": "2026-08-26"
+  "dateCreated": "2026-08-27"
 }
 
 ### Bad Path
 
 ### Collection does not exist
-POST {{base_url}}/?collectionId=1 HTTP/1.1
+POST {{base_url}}/collection/999/deck/1 HTTP/1.1
 Content-Type: application/json
 authorization: {"id": "1", "email": "a@a.com"}
 
@@ -23,7 +24,7 @@ authorization: {"id": "1", "email": "a@a.com"}
 }
 
 ### Card Name is empty
-POST {{base_url}}/?collectionId=1 HTTP/1.1
+POST {{base_url}}/collection/1/deck/1 HTTP/1.1
 Content-Type: application/json
 authorization: {"id": "1", "email": "a@a.com"}
 
@@ -33,7 +34,7 @@ authorization: {"id": "1", "email": "a@a.com"}
 }
 
 ### Date Is In Future
-POST {{base_url}}/?collectionId=1 HTTP/1.1
+POST {{base_url}}/collection/1/deck/1HTTP/1.1
 Content-Type: application/json
 authorization: {"id": "1", "email": "a@a.com"}
 
@@ -43,7 +44,7 @@ authorization: {"id": "1", "email": "a@a.com"}
 }
 
 ### Date Is In Past
-POST {{base_url}}/?collectionId=1 HTTP/1.1
+POST {{base_url}}/collection/1/deck/1 HTTP/1.1
 Content-Type: application/json
 authorization: {"id": "1", "email": "a@a.com"}
 

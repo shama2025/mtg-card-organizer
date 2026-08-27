@@ -4,6 +4,8 @@
 
 ### Happy Path
 DELETE {{base_url}}/deck/1 HTTP/1.1
+Authorization: { "id": "1","email": "a@a.com"}
 
 ### Bad Path Deck doesn't exist
 DELETE {{base_url}}/deck/999 HTTP/1.1
+Authorization: { "id": "1","email": "a@a.com"}
