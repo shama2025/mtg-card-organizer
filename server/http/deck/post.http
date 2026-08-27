@@ -1,0 +1,53 @@
+@base_url = http://localhost:8080/api/deck
+
+### Happy Pay
+POST {{base_url}}/?collectionId=1 HTTP/1.1
+Content-Type: application/json
+authorization: {"id": "1", "email": "a@a.com"}
+
+{
+  "name": "Goblins Standard",
+  "dateCreated": "2026-08-26"
+}
+
+### Bad Path
+
+### Collection does not exist
+POST {{base_url}}/?collectionId=1 HTTP/1.1
+Content-Type: application/json
+authorization: {"id": "1", "email": "a@a.com"}
+
+{
+  "name": "Goblins Standard",
+  "dateCreated": "2026-08-26"
+}
+
+### Card Name is empty
+POST {{base_url}}/?collectionId=1 HTTP/1.1
+Content-Type: application/json
+authorization: {"id": "1", "email": "a@a.com"}
+
+{
+  "name": "",
+  "dateCreated": "2026-08-26"
+}
+
+### Date Is In Future
+POST {{base_url}}/?collectionId=1 HTTP/1.1
+Content-Type: application/json
+authorization: {"id": "1", "email": "a@a.com"}
+
+{
+  "name": "Goblins Standard",
+  "dateCreated": "2075-04-26"
+}
+
+### Date Is In Past
+POST {{base_url}}/?collectionId=1 HTTP/1.1
+Content-Type: application/json
+authorization: {"id": "1", "email": "a@a.com"}
+
+{
+  "name": "Goblins Standard",
+  "dateCreated": "1999-04-26"
+}
