@@ -7,6 +7,7 @@ import jakarta.validation.ValidatorFactory;
 import mtgcollection.data.interfaces.CollectionRepository;
 import mtgcollection.model.Collection;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import mtgcollection.data.interfaces.UserRepository;
 import mtgcollection.dto.LoggedInUser;
@@ -46,8 +47,10 @@ public class UserService {
             result.addErrorMessage("Incorrect password.", ResultType.INVALID);
             return result;
         }
-        Collection collection = collectionRepository.fetchUserCollection(fetchedUser.getUserId());
-        if(collection == null){
+        Collection collection;
+        try{
+            collection = collectionRepository.fetchUserCollection(fetchedUser.getUserId());
+        }catch (EmptyResultDataAccessException ex){
             result.addErrorMessage("No collection associated with user.",ResultType.NOT_FOUND);
             return  result;
         }

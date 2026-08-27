@@ -50,19 +50,20 @@ public class CollectionService {
             return result;
         }
         // Check if card is in db
-        Card card = fetchCardJdbcRepo(cardName);
-        if(card == null) {
-            // Check if card exists in mtg
-            card = fetchCardHttpRepo(cardName);
-            if (card == null) {
-                result.addErrorMessage("Card not found.", ResultType.NOT_FOUND);
-                return result;
-            }
-        }else{
+        Card card;
+        try{
+            card = fetchCardJdbcRepo(cardName);
             card = new Card(0, card.getCardId(),card.getName(),
                     card.getSet(),card.getLegalities(), card.getImgPath(),
                     card.getManaColor(),card.getManaCost(),
                     card.getArtistName(),1);
+        }catch(EmptyResultDataAccessException ex){
+            // Check if card exists in mtg
+            card = fetchCardHttpRepo(cardName);
+            if(card == null){
+                result.addErrorMessage("Card not found.", ResultType.NOT_FOUND);
+                return result;
+            }
         }
         card = cardRepository.addCard(card);
         CardCollection cardCollection = cardCollectionRepository.addCardToCollection(card,collection);
