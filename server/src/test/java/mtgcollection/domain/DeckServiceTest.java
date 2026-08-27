@@ -18,6 +18,7 @@ import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.dao.EmptyResultDataAccessException;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -146,6 +147,70 @@ public class DeckServiceTest {
             Result<Deck> result = deckService.createDeckInCollection(deckToCreate,validCollectionId);
             assertFalse(result.isSuccess());
             assertTrue(result.getErrorMessages().contains("Name cannot be blank."));
+        }
+    }
+
+    @Nested
+    class UpdateDeck{
+        // Should update deck
+        @Test
+        void shouldUpdateDeck(){
+            Deck deckToUpdate = TestHelper.deckToEdit();
+            when(deckRepository.fetchDeckByDeckId(deckToUpdate.getDeckId())).thenReturn(deckToUpdate);
+            when(deckRepository.updateDeck(deckToUpdate)).thenReturn(true);
+            Result<Deck> result = deckService.updateDeck(deckToUpdate);
+            assertTrue(result.isSuccess());
+        }
+
+        @Test
+        void shouldNotUpdateDeckThatHasErrorWhenUpdating(){
+            Deck deckToUpdate = TestHelper.deckToEdit();
+            when(deckRepository.fetchDeckByDeckId(deckToUpdate.getDeckId())).thenReturn(deckToUpdate);
+            when(deckRepository.updateDeck(deckToUpdate)).thenReturn(false);
+            Result<Deck> result = deckService.updateDeck(deckToUpdate);
+            assertFalse(result.isSuccess());
+            assertSame(ResultType.INVALID, result.getResultType());
+            assertTrue(result.getErrorMessages().contains("Error updating deck."));
+        }
+
+        @Test
+        void shouldNotUpdateDeckThatDoesNotExist(){
+            Deck deckToUpdate = TestHelper.deckToEdit();
+            deckToUpdate.setDeckId(Integer.MAX_VALUE);
+            when(deckRepository.fetchDeckByDeckId(deckToUpdate.getDeckId())).thenThrow(EmptyResultDataAccessException.class);
+            Result<Deck> result = deckService.updateDeck(deckToUpdate);
+            assertFalse(result.isSuccess());
+            assertSame(ResultType.NOT_FOUND, result.getResultType());
+            assertTrue(result.getErrorMessages().contains("Deck does not exist."));
+        }
+
+        @Test
+        void shouldNotUpdateDeckWithDateUpdatedInFuture(){
+            Deck deckToUpdate = TestHelper.deckToEdit();
+            deckToUpdate.setDateUpdated(LocalDate.of(1999,12,1));
+            Result<Deck> result = deckService.updateDeck(deckToUpdate);
+            assertFalse(result.isSuccess());
+            assertSame(ResultType.INVALID, result.getResultType());
+            assertTrue(result.getErrorMessages().contains("Updated date has to be today or in future."));
+        }
+
+        @Test
+        void shouldNotUpdateDeckWithBlankName(){
+            Deck deckToUpdate = TestHelper.deckToEdit();
+            deckToUpdate.setName("");
+            Result<Deck> result = deckService.updateDeck(deckToUpdate);
+            assertFalse(result.isSuccess());
+            assertSame(ResultType.INVALID, result.getResultType());
+            assertTrue(result.getErrorMessages().contains("Name cannot be blank."));
+        }
+        @Test
+        void shouldNotUpdateDeckWithNullName(){
+            Deck deckToUpdate = TestHelper.deckToEdit();
+            deckToUpdate.setName(null);
+            Result<Deck> result = deckService.updateDeck(deckToUpdate);
+            assertFalse(result.isSuccess());
+            assertSame(ResultType.INVALID, result.getResultType());
+            assertTrue(result.getErrorMessages().contains("Name cannot be null."));
         }
     }
 

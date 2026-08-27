@@ -254,5 +254,5 @@ public class TestHelper {
     }
 
     public static Deck deckToEdit(){return new Deck(1,"Izzet Spellslinger",
-            60, LocalDate.of(2026,8,1), LocalDate.of(2026,8,20),TestHelper.cardList());}
+            60, LocalDate.now(), LocalDate.now().plusDays(5),TestHelper.cardList());}
 }
