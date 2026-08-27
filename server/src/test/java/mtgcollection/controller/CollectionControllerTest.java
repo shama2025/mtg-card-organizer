@@ -1,7 +1,9 @@
 package mtgcollection.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import mtgcollection.TestHelper;
 import mtgcollection.domain.CollectionService;
+import mtgcollection.dto.CardAddRequest;
 import mtgcollection.dto.LoggedInUser;
 import mtgcollection.model.Collection;
 import mtgcollection.model.Result;
@@ -13,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
@@ -94,10 +97,14 @@ class CollectionControllerTest {
         @Test
         void shouldNotAddCardForNonExistentCollection() throws Exception {
             LoggedInUser user = TestHelper.loggedInUser();
+            CardAddRequest cardRequest = new CardAddRequest(0,"black lotus");
+            ObjectMapper mapper = new ObjectMapper();
+            String cardRequestString = mapper.writeValueAsString(cardRequest);
             when(collectionService.findCollectionByUserId(user.id())).thenReturn(null);
             MockHttpServletRequestBuilder request = post("/api/collection")
                     .header("authorization", "{\"id\": \"999\",\"email\": \"a@a.com\"}")
-                    .content("black lotus");
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(cardRequestString);
             mvc.perform(request).andExpect(status().isNotFound());
         }
 

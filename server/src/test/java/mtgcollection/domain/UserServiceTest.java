@@ -63,7 +63,7 @@ class UserServiceTest {
             userToFinder.hashPassword();
             Result<LoggedInUser> expected = new Result<>();
             expected.addErrorMessage("No collection associated with user.",ResultType.NOT_FOUND);
-            when(collectionRepository.fetchCollectionByCollectionId(userLoggingIn.getUserId())).thenReturn(null);
+            when(collectionRepository.fetchUserCollection(userLoggingIn.getUserId())).thenReturn(null);
             when(repository.findUserByEmail(userToFinder.getEmail())).thenReturn(userToFinder);
             Result<LoggedInUser> actual = service.findUserByEmail(userLoggingIn);
             assertFalse(actual.isSuccess());
