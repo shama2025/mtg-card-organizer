@@ -107,6 +107,27 @@ public class DeckService {
         return result;
     }
 
+    public Result<Deck> updateDeck(Deck deck){
+        Result<Deck> result = new Result<>();
+        validate(result,deck);
+        if(!result.isSuccess()){
+            return result;
+        }
+        try{
+            deckRepository.fetchDeckByDeckId(deck.getDeckId());
+        }catch(EmptyResultDataAccessException ex){
+            result.addErrorMessage("Deck does not exist.",ResultType.NOT_FOUND);
+            return result;
+        }
+        boolean isUpdated = deckRepository.updateDeck(deck);
+        if(!isUpdated){
+            result.addErrorMessage("Error updating deck.", ResultType.INVALID);
+        }else{
+            result.setpayload(deck);
+        }
+        return result;
+    }
+
     public Result<Integer> removeDeck(int deckId){
         Result<Integer> result = new Result<>();
         try{
