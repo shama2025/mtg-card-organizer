@@ -11,7 +11,7 @@ public class Card {
     private String name;
     private List<String> legalities;
     private Set sets;
-    private Map<String,String> imagePaths;
+    private List<Map<String,String>> imagePaths;
     private ManaColor manaColor;
     private ManaCost manaCost;
     private String artistName;
@@ -19,7 +19,7 @@ public class Card {
 
     public Card(){}
 
-    public Card(int cardId, UUID cardUuid, String name, Set sets, List<String> legalities, Map<String,String> imagePaths, ManaColor manaColor, ManaCost manaCost, String artistName, int quantity){
+    public Card(int cardId, UUID cardUuid, String name, Set sets, List<String> legalities, List<Map<String,String>> imagePaths, ManaColor manaColor, ManaCost manaCost, String artistName, int quantity){
         this.cardId = cardId;
         this.cardUuid = cardUuid;
         this.name = name;
@@ -64,11 +64,11 @@ public class Card {
         this.legalities = legalities;
     }
 
-    public Map<String,String> getImgPath() {
+    public List<Map<String,String>> getImgPath() {
         return imagePaths;
     }
 
-    public void setImgPath(Map<String,String> imagePaths) {
+    public void setImgPath(List<Map<String,String>> imagePaths) {
         this.imagePaths = imagePaths;
     }
 
