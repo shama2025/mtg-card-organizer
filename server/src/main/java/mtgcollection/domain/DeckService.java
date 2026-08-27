@@ -48,6 +48,10 @@ public class DeckService {
 
     public Result<Deck> createDeckInCollection(Deck deck, int collectionId){
         Result<Deck> result = new Result<>();
+        if(deck == null){
+            result.addErrorMessage("Deck cannot be null.",ResultType.INVALID);
+            return result;
+        }
         validate(result,deck);
         if(!result.isSuccess()){
             return result;

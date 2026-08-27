@@ -52,4 +52,22 @@ public class DeckController {
         }
         return ErrorResponse.build(result);
     }
+
+    @PostMapping
+    public ResponseEntity<?> createDeck(@RequestHeader Map<String, String> headers, @RequestParam int collectionId, @RequestBody Deck deck
+    ) throws JsonProcessingException {
+        if (headers.get("authorization") == null) {
+            return new ResponseEntity<>(List.of("Missing authorization header"), HttpStatus.BAD_REQUEST);
+        }
+
+        String userAuthJson = headers.get("authorization");
+        ObjectMapper mapper = new ObjectMapper();
+        LoggedInUser user = mapper.readValue(userAuthJson, LoggedInUser.class);
+
+        Result<Deck> result = deckService.createDeckInCollection(deck, collectionId);
+        if (result.isSuccess()) {
+            return new ResponseEntity<>(result.getpayload(), HttpStatus.CREATED);
+        }
+        return ErrorResponse.build(result);
+    }
 }
