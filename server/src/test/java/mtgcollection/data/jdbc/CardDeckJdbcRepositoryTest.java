@@ -43,4 +43,18 @@ class CardDeckJdbcRepositoryTest {
             assertEquals(0,cardDecks.size());
         }
     }
+
+    @Nested
+    class DeleteDeckFromCardDeck{
+        @Test
+        void shouldDeleteDeck(){
+            int validDeckId = 1;
+            assertTrue(repository.removeDeck(validDeckId));
+        }
+        @Test
+        void shouldNotDeleteDeck(){
+            int validDeckId = Integer.MAX_VALUE;
+            assertFalse(repository.removeDeck(validDeckId));
+        }
+    }
 }
