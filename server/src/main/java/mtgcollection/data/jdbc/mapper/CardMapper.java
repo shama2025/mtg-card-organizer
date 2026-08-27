@@ -16,64 +16,64 @@ import java.util.UUID;
 public class CardMapper implements RowMapper<Card> {
     @Override
     public Card mapRow(ResultSet rs, int rowNum) throws SQLException {
-        Card card = new Card();
-        ObjectMapper mapper = new ObjectMapper();
+            Card card = new Card();
+            ObjectMapper mapper = new ObjectMapper();
 
-        String legalities = rs.getString("c.legalities");
-        if(legalities != null && !legalities.isBlank()){
-            // Format it
-            try{
-                card.setLegalities(mapper.readValue(legalities, new TypeReference<List<String>>() {}));
-            }catch (JacksonException ex){
-                throw new SQLException("Error parsing mana cost column",ex);
+            card.setId(rs.getInt("card_id"));
+            card.setName(rs.getString("name"));
+            card.setArtistName(rs.getString("artist"));
+            card.setQuantity(rs.getInt("quantity"));
+
+            String uuidStr = rs.getString("card_uuid");
+            if (uuidStr != null && !uuidStr.isBlank()) {
+                card.setCardId(UUID.fromString(uuidStr));
             }
-        }
 
-        String sets = rs.getString("c.sets");
-        if(sets != null && !sets.isBlank()){
-            // Format it
-            try{
-                card.setSet(mapper.readValue(sets, Set.class));
-            }catch (JacksonException ex){
-                throw new SQLException("Failed to parse sets JSON column", ex);
+            String legalities = rs.getString("legalities");
+            if (legalities != null && !legalities.isBlank()) {
+                try {
+                    card.setLegalities(mapper.readValue(legalities, new TypeReference<List<String>>() {}));
+                } catch (JacksonException ex) {
+                    throw new SQLException("Error parsing legalities JSON column", ex);
+                }
             }
-        }
 
-        String manaColor = rs.getString("c.mana_color");
-        if(manaColor != null && !manaColor.isBlank()){
-            // Format it
-            try{
-                card.setManaColor(mapper.readValue(manaColor, new TypeReference<ManaColor>() {}));
-            }catch (JacksonException ex){
-                throw new SQLException("Error parsing mana color column",ex);
+            String sets = rs.getString("sets");
+            if (sets != null && !sets.isBlank()) {
+                try {
+                    card.setSet(mapper.readValue(sets, Set.class));
+                } catch (JacksonException ex) {
+                    throw new SQLException("Error parsing sets JSON column", ex);
+                }
             }
-        }
 
-        String manaCost = rs.getString("c.mana_cost");
-        if(manaCost != null && !manaCost.isBlank()){
-            // Format it
-            try{
-                card.setManaCost(mapper.readValue(manaCost, ManaCost.class));
-            }catch (JacksonException ex){
-                throw new SQLException("Error parsing mana cost column",ex);
+            String manaColor = rs.getString("mana_color");
+            if (manaColor != null && !manaColor.isBlank()) {
+                try {
+                    card.setManaColor(mapper.readValue(manaColor, ManaColor.class));
+                } catch (JacksonException ex) {
+                    throw new SQLException("Error parsing mana color JSON column", ex);
+                }
             }
-        }
 
-        String imageUri = rs.getString("c.img_path");
-        if(imageUri != null && !imageUri.isBlank()){
-            try{
-                card.setImgPath(mapper.readValue(imageUri, new TypeReference<Map<String,String>>() {}));
-            }catch (JacksonException ex){
-                throw new SQLException("Error parsing mana cost column",ex);
+            String manaCost = rs.getString("mana_cost");
+            if (manaCost != null && !manaCost.isBlank()) {
+                try {
+                    card.setManaCost(mapper.readValue(manaCost, ManaCost.class));
+                } catch (JacksonException ex) {
+                    throw new SQLException("Error parsing mana cost JSON column", ex);
+                }
             }
+
+            String imageUri = rs.getString("img_path");
+            if (imageUri != null && !imageUri.isBlank()) {
+                try {
+                    card.setImgPath(mapper.readValue(imageUri, new TypeReference<List<Map<String, String>>>() {}));
+                } catch (JacksonException ex) {
+                    throw new SQLException("Error parsing image path JSON column", ex);
+                }
+            }
+
+            return card;
         }
-
-        card.setCardId(UUID.fromString(rs.getString("c.card_uuid")));
-        card.setId(rs.getInt("c.card_id"));
-        card.setName(rs.getString("c.name"));
-        card.setQuantity(rs.getInt("cc.quantity"));
-        card.setArtistName(rs.getString("c.artist"));
-
-        return card;
-    }
 }
