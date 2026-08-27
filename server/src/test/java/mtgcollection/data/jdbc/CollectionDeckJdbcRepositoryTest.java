@@ -40,4 +40,18 @@ class CollectionDeckJdbcRepositoryTest {
             assertEquals(1,collectionDeck.collectionId());
         }
     }
+
+    @Nested
+    class DeleteDeckTest{
+        @Test
+        void shouldDeleteDeck(){
+            int validDeck = 1;
+            assertFalse(repository.removeDeck(validDeck));
+        }
+        @Test
+        void shouldNotDeleteDeck(){
+            int invalidDeck = Integer.MAX_VALUE;
+            assertFalse(repository.removeDeck(invalidDeck));
+        }
+    }
 }
