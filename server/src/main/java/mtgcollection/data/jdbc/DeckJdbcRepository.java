@@ -6,6 +6,7 @@ import mtgcollection.model.Deck;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -63,5 +64,16 @@ public class DeckJdbcRepository implements DeckRepository {
         deck.setDateUpdated(deck.getDateCreated());
         deck.setCardCount(0);
         return deck;
+    }
+
+    @Transactional
+    @Override
+    public boolean removeDeck(int deckId) {
+        final String sql = """
+                delete from deck where deck_id = :deckId;
+                """;
+        return jdbcClient.sql(sql)
+                .param("deckId",deckId)
+                .update() == 1;
     }
 }

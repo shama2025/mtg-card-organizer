@@ -1,18 +1,18 @@
-@base_url = http://localhost:8080/api/deck
+@base_url = http://localhost:8080/api
 
 ### GET All decks
 
 ### Bad Request missing Auth Header
-GET {{base_url}} HTTP/1.1
+GET {{base_url}}/decks/1 HTTP/1.1
 
 ### Good Request
-GET {{base_url}} HTTP/1.1
+GET {{base_url}}/decks/1 HTTP/1.1
 Authorization: { "id": "1","email": "a@a.com"}
 
 ### GET One deck
 
 ### Happy Path
-GET {{base_url}}/1 HTTP/1.1
+GET {{base_url}}/deck/1 HTTP/1.1
 
 ### Bad Path Deck Not Found
-GET {{base_url}}/999 HTTP/1.1
+GET {{base_url}}/deck/999 HTTP/1.1

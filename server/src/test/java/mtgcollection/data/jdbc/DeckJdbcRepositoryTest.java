@@ -24,6 +24,12 @@ class DeckJdbcRepositoryTest {
     @Autowired
     DeckJdbcRepository deckJdbcRepository;
 
+    @Autowired
+    CardDeckJdbcRepository cardDeckJdbcRepository;
+
+    @Autowired
+    CollectionDeckJdbcRepository collectionDeckJdbcRepository;
+
     @BeforeEach
     void runSetKnownGoodState(){
         jdbcClient.sql("call set_known_good_state();").update();
@@ -76,4 +82,23 @@ class DeckJdbcRepositoryTest {
         }
     }
 
+    @Nested
+    class DeleteDeckTest{
+        @Test
+        void shouldDeleteDeck(){
+            int validDeckId = 1;
+            boolean isCardDeckDeleted = cardDeckJdbcRepository.removeDeck(validDeckId);
+            boolean isCollectionDeckDeleted = collectionDeckJdbcRepository.removeDeck(validDeckId);
+            boolean isDeckDeleted = deckJdbcRepository.removeDeck(validDeckId);
+            assertTrue(isDeckDeleted && isCardDeckDeleted && isCollectionDeckDeleted);
+        }
+        @Test
+        void shouldNotDeleteDeck(){
+            int inValidDeckId = Integer.MAX_VALUE;
+            boolean isCardDeckDeleted = cardDeckJdbcRepository.removeDeck(inValidDeckId);
+            boolean isCollectionDeckDeleted = collectionDeckJdbcRepository.removeDeck(inValidDeckId);
+            boolean isDeckDeleted = deckJdbcRepository.removeDeck(inValidDeckId);
+            assertFalse(isDeckDeleted && isCardDeckDeleted && isCollectionDeckDeleted);
+        }
+    }
 }

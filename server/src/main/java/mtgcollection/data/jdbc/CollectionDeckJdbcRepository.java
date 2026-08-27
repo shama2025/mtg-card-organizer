@@ -4,6 +4,7 @@ import mtgcollection.data.interfaces.CollectionDeckRepository;
 import mtgcollection.model.CollectionDeck;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public class CollectionDeckJdbcRepository implements CollectionDeckRepository {
@@ -29,5 +30,16 @@ public class CollectionDeckJdbcRepository implements CollectionDeckRepository {
         }else{
             return null;
         }
+    }
+
+    @Transactional
+    @Override
+    public boolean removeDeck(int deckId) {
+        final String sql = """
+                delete from collection_deck where deck_id = :deckId;
+                """;
+        return jdbcClient.sql(sql)
+                .param("deckId",deckId)
+                .update() == 1;
     }
 }

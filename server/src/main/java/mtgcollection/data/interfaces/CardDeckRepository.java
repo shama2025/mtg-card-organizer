@@ -8,4 +8,6 @@ public interface CardDeckRepository {
 
     List<CardDeck> fetchAllCardDecksFromDeckId(int deckId);
 
+    boolean removeDeck(int deckId);
+
 }

@@ -16,6 +16,7 @@ import mtgcollection.model.Deck;
 import mtgcollection.model.Result;
 import mtgcollection.model.ResultType;
 import mtgcollection.model.card.Card;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -50,11 +51,18 @@ public class DeckService {
     public Result<Deck> fetchDeckByDeckId(int deckId){
         Result<Deck> result = new Result<>();
         List<Card> cardList = new ArrayList<>();
-        Deck deck = deckRepository.fetchDeckByDeckId(deckId);
-        if(deck == null){
+        Deck deck;
+        try{
+            deck = deckRepository.fetchDeckByDeckId(deckId);
+            if(deck == null){
+                result.addErrorMessage("Deck not found.", ResultType.NOT_FOUND);
+                return result;
+            }
+        }catch(EmptyResultDataAccessException ex){
             result.addErrorMessage("Deck not found.", ResultType.NOT_FOUND);
             return result;
         }
+
         List<CardDeck> cardDeckList = cardDeckRepository.fetchAllCardDecksFromDeckId(deckId);
         for(CardDeck cardDeck : cardDeckList){
             Card card = cardRepository.fetchCardById(cardDeck.cardId());
@@ -75,10 +83,16 @@ public class DeckService {
         if(!result.isSuccess()){
             return result;
         }
-        if(collectionRepository.fetchCollectionByCollectionId(collectionId) == null){
+        try{
+            if(collectionRepository.fetchCollectionByCollectionId(collectionId) == null){
+                result.addErrorMessage("Collection not found.", ResultType.NOT_FOUND);
+                return result;
+            }
+        }catch (EmptyResultDataAccessException ex){
             result.addErrorMessage("Collection not found.", ResultType.NOT_FOUND);
             return result;
         }
+
         Deck createdDeck = deckRepository.createDeck(deck);
         if(createdDeck == null){
             result.addErrorMessage("Error creating deck.", ResultType.INVALID);
@@ -90,6 +104,31 @@ public class DeckService {
             return result;
         }
         result.setpayload(createdDeck);
+        return result;
+    }
+
+    public Result<Integer> removeDeck(int deckId){
+        Result<Integer> result = new Result<>();
+        try{
+            Deck deck = deckRepository.fetchDeckByDeckId(deckId);
+            if(deck == null){
+                result.addErrorMessage("Deck not found.", ResultType.NOT_FOUND);
+                return result;
+            }
+        }catch(EmptyResultDataAccessException ex){
+            result.addErrorMessage("Deck not found.", ResultType.NOT_FOUND);
+            return result;
+        }
+
+        boolean isCardDeckRemoved = cardDeckRepository.removeDeck(deckId);
+        boolean isCollectionDeckRemoved = collectionDeckRepository.removeDeck(deckId);
+        boolean isDeckRemoved = deckRepository.removeDeck(deckId);
+
+        if(isCardDeckRemoved && isDeckRemoved && isCollectionDeckRemoved){
+            result.setpayload(deckId);
+            return result;
+        }
+        result.addErrorMessage("Error deleting deck.",ResultType.INVALID);
         return result;
     }
 
