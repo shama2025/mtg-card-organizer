@@ -93,6 +93,24 @@ public class DeckService {
         return result;
     }
 
+    public Result<Integer> removeDeck(int deckId){
+        Result<Integer> result = new Result<>();
+        if(deckRepository.fetchDeckByDeckId(deckId) == null){
+            result.addErrorMessage("Deck not found.", ResultType.NOT_FOUND);
+            return result;
+        }
+        boolean isCardDeckRemoved = cardDeckRepository.removeDeck(deckId);
+        boolean isCollectionDeckRemoved = collectionDeckRepository.removeDeck(deckId);
+        boolean isDeckRemoved = deckRepository.removeDeck(deckId);
+
+        if(isCardDeckRemoved && isDeckRemoved && isCollectionDeckRemoved){
+            result.setpayload(deckId);
+            return result;
+        }
+        result.addErrorMessage("Error deleting deck.",ResultType.INVALID);
+        return result;
+    }
+
     private void validate(Result<Deck> result, Deck deck){
         // Validate using validators first
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
