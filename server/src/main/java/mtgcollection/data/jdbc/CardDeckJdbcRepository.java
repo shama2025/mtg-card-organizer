@@ -27,4 +27,14 @@ public class CardDeckJdbcRepository implements CardDeckRepository {
                 .query(CardDeck.class)
                 .list();
     }
+
+    @Override
+    public boolean removeDeck(int deckId) {
+        final String sql = """
+                delete from card_deck where deck_id = :deckId;
+                """;
+        return jdbcClient.sql(sql)
+                .param("deckId",deckId)
+                .update() > 0;
+    }
 }
