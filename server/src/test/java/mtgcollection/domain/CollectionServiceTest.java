@@ -155,6 +155,7 @@ class CollectionServiceTest {
             int collectionThatDoesNotExist = Integer.MAX_VALUE;
             Result<Integer> expected = new Result<>();
             expected.addErrorMessage("Collection was not found.",ResultType.NOT_FOUND);
+            when(cardRepository.fetchCardById(cardThatExists)).thenReturn(TestHelper.lightningBolt());
             when(collectionRepository.fetchCollectionByCollectionId(collectionThatDoesNotExist)).thenReturn(null);
             Result<Integer> result = collectionService.removeCardFromCollection(cardThatExists,collectionThatDoesNotExist);
             assertFalse(result.isSuccess());
