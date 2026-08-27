@@ -4,6 +4,8 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
+import mtgcollection.data.interfaces.CollectionRepository;
+import mtgcollection.model.Collection;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import mtgcollection.data.interfaces.UserRepository;
@@ -19,8 +21,11 @@ public class UserService {
 
     private final UserRepository repository;
 
-    public UserService(UserRepository repository){
+    private final CollectionRepository collectionRepository;
+
+    public UserService(UserRepository repository, CollectionRepository collectionRepository){
         this.repository = repository;
+        this.collectionRepository = collectionRepository;
     }
 
     public Result<LoggedInUser> findUserByEmail(User user){
@@ -41,22 +46,29 @@ public class UserService {
             result.addErrorMessage("Incorrect password.", ResultType.INVALID);
             return result;
         }
-
-        result.setpayload(new LoggedInUser(fetchedUser.getUserId(),fetchedUser.getEmail()));
+        Collection collection = collectionRepository.fetchUserCollection(fetchedUser.getUserId());
+        if(collection == null){
+            result.addErrorMessage("No collection associated with user.",ResultType.NOT_FOUND);
+            return  result;
+        }
+        result.setpayload(new LoggedInUser(fetchedUser.getUserId(),fetchedUser.getEmail(),collection.getCollectionId()));
         return result;
     }
 
-    public Result<User> add(User user){
-        Result<User> result = new Result<>();
+    public Result<LoggedInUser> add(User user){
+        Result<LoggedInUser> result = new Result<>();
 
         validate(result,user);
-
+        if(!result.isSuccess()){
+            return result;
+        }
         // Confirm email is unique
         try{
             // Hash User password first
             user.hashPassword();
             User createdUser = repository.add(user);
-            result.setpayload(createdUser);
+            Collection collection = collectionRepository.createCollection(user.getUserId());
+            result.setpayload(new LoggedInUser(createdUser.getUserId(), createdUser.getEmail(), collection.getCollectionId()));
             return result;
         }catch(DataIntegrityViolationException ex){
             result.addErrorMessage("Email already exists.", ResultType.INVALID);
