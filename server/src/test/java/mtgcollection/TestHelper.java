@@ -235,10 +235,15 @@ public class TestHelper {
 
     public static Deck user2Deck(){
         return new Deck(2,"Mono Green Ramp",5,
-                LocalDate.of(2026,8,15),LocalDate.of(2026,8,24));
+                LocalDate.of(2026,8,15),LocalDate.of(2026,8,24),null);
+    }
+
+    public static Deck user2DeckWithCard(){
+        return new Deck(2,"Mono Green Ramp",5,
+                LocalDate.of(2026,8,15),LocalDate.of(2026,8,24),List.of(lightningBolt()));
     }
 
     public static Deck deckToCreate(){
-        return new Deck(0, "Temur Landfall",0,LocalDate.now(),null);
+        return new Deck(0, "Temur Landfall",0,LocalDate.now(),null,null);
     }
 }
