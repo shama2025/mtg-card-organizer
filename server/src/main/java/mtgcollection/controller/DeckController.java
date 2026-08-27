@@ -74,6 +74,27 @@ public class DeckController {
         return ErrorResponse.build(result);
     }
 
+    @PutMapping("/deck/{deckId}")
+    public ResponseEntity<?> updateDeck(@RequestHeader Map<String,String> headers, @PathVariable int deckId, @RequestBody Deck deck) throws JsonProcessingException{
+        if(deckId != deck.getDeckId()){
+            return new ResponseEntity<>(List.of("Invalid deck id."), HttpStatus.BAD_REQUEST);
+        }
+
+        if (headers.get("authorization") == null) {
+            return new ResponseEntity<>(List.of("Missing authorization header"), HttpStatus.BAD_REQUEST);
+        }
+
+        String userAuthJson = headers.get("authorization");
+        ObjectMapper mapper = new ObjectMapper();
+        LoggedInUser user = mapper.readValue(userAuthJson, LoggedInUser.class);
+
+        Result<Deck> result = deckService.updateDeck(deck);
+        if(result.isSuccess()){
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return ErrorResponse.build(result);
+    }
+
     @DeleteMapping("/deck/{deckId}")
     public ResponseEntity<?> deleteDeck(@RequestHeader Map<String,String> headers, @PathVariable int deckId) throws JsonProcessingException {
         if (headers.get("authorization") == null) {

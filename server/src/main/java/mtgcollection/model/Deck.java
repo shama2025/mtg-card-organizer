@@ -15,10 +15,12 @@ public class Deck {
     private String name;
     private int cardCount;
 
+    @NotNull(message = "Creation date cannot be null.")
     @PastOrPresent(message = "Creation date has to be today.")
     @FutureOrPresent(message = "Creation date has to be today.")
     private LocalDate dateCreated;
 
+    @NotNull(message = "Updated date cannot be null.")
     @FutureOrPresent(message = "Updated date has to be today or in future.")
     private LocalDate dateUpdated;
     private List<Card> cardList;

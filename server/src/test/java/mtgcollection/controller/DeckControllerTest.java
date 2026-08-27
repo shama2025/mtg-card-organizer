@@ -1,5 +1,6 @@
 package mtgcollection.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import mtgcollection.TestHelper;
@@ -22,6 +23,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
@@ -200,6 +202,131 @@ class DeckControllerTest {
                             .contentType(MediaType.APPLICATION_JSON);
             mvc.perform(request).andExpect(status().isBadRequest());
         }
+    }
+
+    @Nested
+    class UpdateDeckTest{
+        @Test
+        void shouldUpdateDeck() throws Exception {
+            Deck deckToEdit = TestHelper.deckToEdit();
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.registerModule(new JavaTimeModule());
+            String deckToEditString = mapper.writeValueAsString(deckToEdit);
+            Result<Deck> result = new Result<>();
+            result.setpayload(deckToEdit);
+            when(deckService.updateDeck(deckToEdit)).thenReturn(result);
+            MockHttpServletRequestBuilder request =
+                    MockMvcRequestBuilders.put("/api/deck/{deckId}",deckToEdit.getDeckId())
+                            .header("authorization", "{\"id\": \"1\",\"email\": \"a@a.com\"}")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(deckToEditString);
+            mvc.perform(request).andExpect(status().isNoContent());
+        }
+
+        @Test
+        void shouldNotUpdateDeckWhereDeckIDsDoNotMatch() throws Exception {
+            Deck deckToEdit = TestHelper.deckToEdit();
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.registerModule(new JavaTimeModule());
+            String deckToEditString = mapper.writeValueAsString(deckToEdit);
+            MockHttpServletRequestBuilder request =
+                    MockMvcRequestBuilders.put("/api/deck/{deckId}",2)
+                            .header("authorization", "{\"id\": \"1\",\"email\": \"a@a.com\"}")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(deckToEditString);
+            mvc.perform(request).andExpect(status().isBadRequest());
+        }
+
+        @Test
+        void shouldNotUpdateDeckWhereDateUpdatedDoesNotExist() throws Exception {
+            Deck deckToEdit = TestHelper.deckToEdit();
+            deckToEdit.setDeckId(Integer.MAX_VALUE);
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.registerModule(new JavaTimeModule());
+            String deckToEditString = mapper.writeValueAsString(deckToEdit);
+            Result<Deck> result = new Result<>();
+            result.addErrorMessage("Deck does not exist.",ResultType.NOT_FOUND);
+            when(deckService.updateDeck(deckToEdit)).thenReturn(result);
+            MockHttpServletRequestBuilder request =
+                    MockMvcRequestBuilders.put("/api/deck/{deckId}",deckToEdit.getDeckId())
+                            .header("authorization", "{\"id\": \"1\",\"email\": \"a@a.com\"}")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(deckToEditString);
+            mvc.perform(request).andExpect(status().isNotFound());
+        }
+
+        @Test
+        void shouldNotUpdateDeckWhereDateUpdatedIsInPast() throws Exception {
+            Deck deckToEdit = TestHelper.deckToEdit();
+            deckToEdit.setDateUpdated(LocalDate.of(1990,12,1));
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.registerModule(new JavaTimeModule());
+            String deckToEditString = mapper.writeValueAsString(deckToEdit);
+            Result<Deck> result = new Result<>();
+            result.addErrorMessage("Updated date has to be today or in future.",ResultType.INVALID);
+            when(deckService.updateDeck(deckToEdit)).thenReturn(result);
+            MockHttpServletRequestBuilder request =
+                    MockMvcRequestBuilders.put("/api/deck/{deckId}",deckToEdit.getDeckId())
+                            .header("authorization", "{\"id\": \"1\",\"email\": \"a@a.com\"}")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(deckToEditString);
+            mvc.perform(request).andExpect(status().isBadRequest());
+        }
+
+        @Test
+        void shouldNotUpdateDeckWhereDateCreatedIsBlank() throws Exception {
+            Deck deckToEdit = TestHelper.deckToEdit();
+            deckToEdit.setDateCreated(null);
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.registerModule(new JavaTimeModule());
+            String deckToEditString = mapper.writeValueAsString(deckToEdit);
+            Result<Deck> result = new Result<>();
+            result.addErrorMessage("Updated date cannot be null.",ResultType.INVALID);
+            when(deckService.updateDeck(deckToEdit)).thenReturn(result);
+            MockHttpServletRequestBuilder request =
+                    MockMvcRequestBuilders.put("/api/deck/{deckId}",deckToEdit.getDeckId())
+                            .header("authorization", "{\"id\": \"1\",\"email\": \"a@a.com\"}")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(deckToEditString);
+            mvc.perform(request).andExpect(status().isBadRequest());
+        }
+
+        @Test
+        void shouldNotUpdateDeckWhereDateUpdatedIsBlank() throws Exception {
+            Deck deckToEdit = TestHelper.deckToEdit();
+            deckToEdit.setDateUpdated(null);
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.registerModule(new JavaTimeModule());
+            String deckToEditString = mapper.writeValueAsString(deckToEdit);
+            Result<Deck> result = new Result<>();
+            result.addErrorMessage("Updated date cannot be null.",ResultType.INVALID);
+            when(deckService.updateDeck(deckToEdit)).thenReturn(result);
+            MockHttpServletRequestBuilder request =
+                    MockMvcRequestBuilders.put("/api/deck/{deckId}",deckToEdit.getDeckId())
+                            .header("authorization", "{\"id\": \"1\",\"email\": \"a@a.com\"}")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(deckToEditString);
+            mvc.perform(request).andExpect(status().isBadRequest());
+        }
+
+        @Test
+        void shouldNotUpdateDeckWhereNameIsBlank() throws Exception {
+            Deck deckToEdit = TestHelper.deckToEdit();
+            deckToEdit.setName("");
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.registerModule(new JavaTimeModule());
+            String deckToEditString = mapper.writeValueAsString(deckToEdit);
+            Result<Deck> result = new Result<>();
+            result.addErrorMessage("Name cannot be blank.",ResultType.INVALID);
+            when(deckService.updateDeck(deckToEdit)).thenReturn(result);
+            MockHttpServletRequestBuilder request =
+                    MockMvcRequestBuilders.put("/api/deck/{deckId}",deckToEdit.getDeckId())
+                            .header("authorization", "{\"id\": \"1\",\"email\": \"a@a.com\"}")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(deckToEditString);
+            mvc.perform(request).andExpect(status().isBadRequest());
+        }
+
     }
 
     @Nested
