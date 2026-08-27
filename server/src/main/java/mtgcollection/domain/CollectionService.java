@@ -44,9 +44,9 @@ public class CollectionService {
         return cardRepository.fetchAllCards(collectionId);
     }
 
-    public Result<Card> addCardToCollection(String cardName, Collection collection) throws InterruptedException, JsonProcessingException {
+    public Result<Card> addCardToCollection(String cardName, int collectionId) throws InterruptedException, JsonProcessingException {
         Result<Card> result = new Result<>();
-        validate(result,cardName,collection.getCollectionId());
+        validate(result,cardName,collectionId);
         if(!result.isSuccess()){
             return result;
         }
@@ -69,9 +69,9 @@ public class CollectionService {
         }
 
         card = cardRepository.addCard(card);
-        CardCollection cardCollection = cardCollectionRepository.addCardToCollection(card,collection);
-        if(cardCollection.collection().getCollectionId() != collection.getCollectionId()
-                && cardCollection.card().getId() != card.getId()){
+        CardCollection cardCollection = cardCollectionRepository.addCardToCollection(card.getId(),collectionId);
+        if(cardCollection.collectionId() != collectionId
+                && cardCollection.cardId() != card.getId()){
             result.addErrorMessage("Error adding card to collection", ResultType.INVALID);
         }
         result.setpayload(card);

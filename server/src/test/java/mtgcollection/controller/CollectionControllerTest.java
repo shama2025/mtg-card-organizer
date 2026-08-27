@@ -86,7 +86,7 @@ class CollectionControllerTest {
             cardToAdd.setId(5);
             expected.setpayload(cardToAdd);
             when(collectionService.findCollectionByUserId(user.id())).thenReturn(collection);
-            when(collectionService.addCardToCollection("black lotus",collection)).thenReturn(expected);
+            when(collectionService.addCardToCollection("black lotus",collection.getCollectionId())).thenReturn(expected);
             MockHttpServletRequestBuilder request = post("/api/collection")
                     .header("authorization", "{\"id\": \"1\",\"email\": \"a@a.com\"}")
                     .content("black lotus");
@@ -97,7 +97,7 @@ class CollectionControllerTest {
         @Test
         void shouldNotAddCardForNonExistentCollection() throws Exception {
             LoggedInUser user = TestHelper.loggedInUser();
-            CardAddRequest cardRequest = new CardAddRequest(0,"black lotus");
+            CardAddRequest cardRequest = new CardAddRequest("black lotus");
             ObjectMapper mapper = new ObjectMapper();
             String cardRequestString = mapper.writeValueAsString(cardRequest);
             when(collectionService.findCollectionByUserId(user.id())).thenReturn(null);

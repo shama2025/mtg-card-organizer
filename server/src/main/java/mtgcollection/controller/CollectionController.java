@@ -27,8 +27,8 @@ public class CollectionController {
         this.collectionService = collectionService;
     }
 
-    @GetMapping
-    public ResponseEntity<?> fetchAllCardsByUserId(@RequestHeader Map<String,String> headers) throws JsonProcessingException {
+    @GetMapping("/{collectionId}")
+    public ResponseEntity<?> fetchAllCardsByUserId(@RequestHeader Map<String,String> headers,@PathVariable int collectionId) throws JsonProcessingException {
         if(headers.get("authorization") == null){
             // Missing auth header
             return new ResponseEntity<>(List.of("Missing authorization header"), HttpStatus.BAD_REQUEST);
@@ -39,12 +39,11 @@ public class CollectionController {
 
         ObjectMapper mapper = new ObjectMapper();
         LoggedInUser user = mapper.readValue(userAuthJson,LoggedInUser.class);
-        Collection collection = collectionService.findCollectionByUserId(user.id());
-        return new ResponseEntity<>(collectionService.fetchAllCardsByCollection(collection.getCollectionId()),HttpStatus.OK);
+        return new ResponseEntity<>(collectionService.fetchAllCardsByCollection(collectionId),HttpStatus.OK);
     }
 
-    @PostMapping
-    public ResponseEntity<?> addCardToCollection(@RequestHeader Map<String,String> headers, @RequestBody CardAddRequest request) throws JsonProcessingException, InterruptedException {
+    @PostMapping("/{collectionId}")
+    public ResponseEntity<?> addCardToCollection(@RequestHeader Map<String,String> headers, @RequestBody CardAddRequest request, @PathVariable int collectionId) throws JsonProcessingException, InterruptedException {
         if(headers.get("authorization") == null){
             // Missing auth header
             return new ResponseEntity<>(List.of("Missing authorization header"), HttpStatus.BAD_REQUEST);
@@ -53,22 +52,16 @@ public class CollectionController {
         String userAuthJson = headers.get("authorization");
         ObjectMapper mapper = new ObjectMapper();
         LoggedInUser user = mapper.readValue(userAuthJson,LoggedInUser.class);
-        Collection collection;
-        try{
-            collection = collectionService.findCollectionByUserId(user.id());
-        }catch (EmptyResultDataAccessException ex){
-           return new ResponseEntity<>(List.of("No collection associated with user."),HttpStatus.NOT_FOUND);
-        }
         String cardName = request.name();
-        Result<Card> result = collectionService.addCardToCollection(cardName,collection);
+        Result<Card> result = collectionService.addCardToCollection(cardName,collectionId);
         if(result.isSuccess()){
             return new ResponseEntity<>(result.getpayload(),HttpStatus.CREATED);
         }
         return ErrorResponse.build(result);
     }
 
-    @PutMapping("/{cardId}")
-    public ResponseEntity<?> updateCardFromCollection(@RequestHeader Map<String,String> headers, @PathVariable int cardId, @RequestBody CardEditRequest request) throws JsonProcessingException {
+    @PutMapping("/{collectionId}/card/{cardId}")
+    public ResponseEntity<?> updateCardFromCollection(@RequestHeader Map<String,String> headers, @PathVariable int cardId, @RequestBody CardEditRequest request, @PathVariable int collectionId) throws JsonProcessingException {
         if(headers.get("authorization") == null){
             // Missing auth header
             return new ResponseEntity<>(List.of("Missing authorization header"), HttpStatus.BAD_REQUEST);
@@ -77,19 +70,16 @@ public class CollectionController {
         String userAuthJson = headers.get("authorization");
         ObjectMapper mapper = new ObjectMapper();
         LoggedInUser user = mapper.readValue(userAuthJson,LoggedInUser.class);
-        Collection collection = collectionService.findCollectionByUserId(user.id());
-        if(collection == null){
-            return new ResponseEntity<>(List.of("Collection does not correspond to user"),HttpStatus.NOT_FOUND);
-        }
-        Result<Integer> result = collectionService.updateCardInCollection(cardId,collection.getCollectionId(),request.quantity());
+        int quantity = request.quantity();
+        Result<Integer> result = collectionService.updateCardInCollection(cardId,collectionId,quantity);
         if(result.isSuccess()){
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         return ErrorResponse.build(result);
     }
 
-    @DeleteMapping("/{cardId}")
-    public ResponseEntity<?> removeCardFromCollection(@RequestHeader Map<String,String> headers, @PathVariable int cardId) throws JsonProcessingException {
+    @DeleteMapping("/{collectionId}/card/{cardId}")
+    public ResponseEntity<?> removeCardFromCollection(@RequestHeader Map<String,String> headers, @PathVariable int cardId, @PathVariable int collectionId) throws JsonProcessingException {
         if(headers.get("authorization") == null){
             // Missing auth header
             return new ResponseEntity<>(List.of("Missing authorization header"), HttpStatus.BAD_REQUEST);
@@ -98,11 +88,7 @@ public class CollectionController {
         String userAuthJson = headers.get("authorization");
         ObjectMapper mapper = new ObjectMapper();
         LoggedInUser user = mapper.readValue(userAuthJson,LoggedInUser.class);
-        Collection collection = collectionService.findCollectionByUserId(user.id());
-        if(collection == null){
-            return new ResponseEntity<>(List.of("Collection does not correspond to user"),HttpStatus.NOT_FOUND);
-        }
-        Result<Integer> result = collectionService.removeCardFromCollection(cardId,collection.getCollectionId());
+        Result<Integer> result = collectionService.removeCardFromCollection(cardId,collectionId);
         if(result.isSuccess()){
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }

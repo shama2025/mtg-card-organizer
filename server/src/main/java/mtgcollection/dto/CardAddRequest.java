@@ -1,4 +1,4 @@
 package mtgcollection.dto;
 
-public record CardAddRequest(int collectionId, String name) {
+public record CardAddRequest(String name) {
 }
