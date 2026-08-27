@@ -3,11 +3,11 @@ package mtgcollection.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import mtgcollection.domain.CollectionService;
-import mtgcollection.dto.CardRequest;
+import mtgcollection.dto.CardEditRequest;
+import mtgcollection.dto.CardAddRequest;
 import mtgcollection.dto.LoggedInUser;
 import mtgcollection.model.Collection;
 import mtgcollection.model.Result;
-import mtgcollection.model.ResultType;
 import mtgcollection.model.card.Card;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
@@ -44,7 +44,7 @@ public class CollectionController {
     }
 
     @PostMapping
-    public ResponseEntity<?> addCardToCollection(@RequestHeader Map<String,String> headers, @RequestBody CardRequest request) throws JsonProcessingException, InterruptedException {
+    public ResponseEntity<?> addCardToCollection(@RequestHeader Map<String,String> headers, @RequestBody CardAddRequest request) throws JsonProcessingException, InterruptedException {
         if(headers.get("authorization") == null){
             // Missing auth header
             return new ResponseEntity<>(List.of("Missing authorization header"), HttpStatus.BAD_REQUEST);
@@ -68,7 +68,7 @@ public class CollectionController {
     }
 
     @PutMapping("/{cardId}")
-    public ResponseEntity<?> updateCardFromCollection(@RequestHeader Map<String,String> headers, @PathVariable int cardId, @RequestBody int quantity) throws JsonProcessingException {
+    public ResponseEntity<?> updateCardFromCollection(@RequestHeader Map<String,String> headers, @PathVariable int cardId, @RequestBody CardEditRequest request) throws JsonProcessingException {
         if(headers.get("authorization") == null){
             // Missing auth header
             return new ResponseEntity<>(List.of("Missing authorization header"), HttpStatus.BAD_REQUEST);
@@ -81,7 +81,7 @@ public class CollectionController {
         if(collection == null){
             return new ResponseEntity<>(List.of("Collection does not correspond to user"),HttpStatus.NOT_FOUND);
         }
-        Result<Integer> result = collectionService.updateCardInCollection(cardId,collection.getCollectionId(),quantity);
+        Result<Integer> result = collectionService.updateCardInCollection(cardId,collection.getCollectionId(),request.quantity());
         if(result.isSuccess()){
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
