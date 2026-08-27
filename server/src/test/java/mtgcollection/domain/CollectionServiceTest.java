@@ -2,13 +2,11 @@ package mtgcollection.domain;
 
 import mtgcollection.TestHelper;
 import mtgcollection.data.http.ScryFallApiHttpRepository;
-import mtgcollection.data.http.response.model.CardResponse;
 import mtgcollection.data.interfaces.CardCollectionRepository;
 import mtgcollection.data.interfaces.CardRepository;
 import mtgcollection.data.interfaces.CollectionRepository;
 import mtgcollection.model.CardCollection;
 import mtgcollection.model.card.Card;
-import mtgcollection.model.Collection;
 import mtgcollection.model.Result;
 import mtgcollection.model.ResultType;
 import org.junit.jupiter.api.Nested;
@@ -60,6 +58,7 @@ class CollectionServiceTest {
         void shouldAddCardThatDoesNotExistInCardTable() throws Exception {
             Card cardNotInCardTable =TestHelper.blackLotus();
             Card expected = TestHelper.blackLotus();
+            int validCollectionId = TestHelper.collection().getCollectionId();
             expected.setId(5);
             when(collectionRepository.fetchCollectionByCollectionId(TestHelper.collection().getCollectionId()))
                     .thenReturn(TestHelper.collection());
@@ -69,9 +68,9 @@ class CollectionServiceTest {
                     .thenReturn(Optional.of(TestHelper.blackLotusCardResponse()));
             when(cardRepository.addCard(any(Card.class)))
                     .thenReturn(expected);
-            when(cardCollectionRepository.addCardToCollection(eq(expected), any(Collection.class)))
-                    .thenReturn(new CardCollection(expected, TestHelper.collection(), 1));
-            Result<Card> result = collectionService.addCardToCollection(cardNotInCardTable.getName(),TestHelper.collection());
+            when(cardCollectionRepository.addCardToCollection(expected.getId(),validCollectionId))
+                    .thenReturn(new CardCollection(expected.getId(), validCollectionId, 1));
+            Result<Card> result = collectionService.addCardToCollection(cardNotInCardTable.getName(),validCollectionId);
             assertTrue(result.isSuccess());
             assertEquals(expected, result.getpayload());
         }
@@ -81,6 +80,7 @@ class CollectionServiceTest {
         void shouldAddCardThatExistsInCardTable() throws Exception {
             Card cardPresentInCardTable = TestHelper.solRing();
             Card expected = TestHelper.solRing();
+            int validCollectionId = TestHelper.collection().getCollectionId();
             expected.setId(5);
             when(collectionRepository.fetchCollectionByCollectionId(TestHelper.collection().getCollectionId()))
                     .thenReturn(TestHelper.collection());
@@ -88,9 +88,9 @@ class CollectionServiceTest {
                     .thenReturn(cardPresentInCardTable);
             when(cardRepository.addCard(any(Card.class)))
                     .thenReturn(expected);
-            when(cardCollectionRepository.addCardToCollection(eq(expected), any(Collection.class)))
-                    .thenReturn(new CardCollection(expected, TestHelper.collection(), 1));
-            Result<Card> result = collectionService.addCardToCollection(cardPresentInCardTable.getName(),TestHelper.collection());
+            when(cardCollectionRepository.addCardToCollection(expected.getId(), validCollectionId))
+                    .thenReturn(new CardCollection(expected.getId(),validCollectionId, 1));
+            Result<Card> result = collectionService.addCardToCollection(cardPresentInCardTable.getName(),validCollectionId);
             assertTrue(result.isSuccess());
             assertEquals(expected, result.getpayload());
         }
@@ -98,9 +98,10 @@ class CollectionServiceTest {
         // Should not add card if name card does not exist
         @Test
         void shouldNotAddCardThatDoesNotExist() throws Exception {
-            when(collectionRepository.fetchCollectionByCollectionId(1)).thenReturn(TestHelper.collection());
             String notARealCard = "asdfhwhifjjalwl";
-            Result<Card> result = collectionService.addCardToCollection(notARealCard,TestHelper.collection());
+            int validCollectionId = TestHelper.collection().getCollectionId();
+            when(collectionRepository.fetchCollectionByCollectionId(1)).thenReturn(TestHelper.collection());
+            Result<Card> result = collectionService.addCardToCollection(notARealCard,validCollectionId);
             assertFalse(result.isSuccess());
             assertTrue(result.getErrorMessages().contains("Card not found."));
             assertSame(ResultType.NOT_FOUND,result.getResultType());
@@ -109,8 +110,7 @@ class CollectionServiceTest {
         // Should not add card if collection does not exist
         @Test
         void shouldNotCardIfCollectionIsNotFound() throws Exception {
-            Collection doesNotExist = TestHelper.collection();
-            doesNotExist.setCollectionId(Integer.MAX_VALUE);
+            int doesNotExist = TestHelper.collection().getCollectionId();
             Result<Card> result = collectionService.addCardToCollection("Black Lotus",doesNotExist);
             assertFalse(result.isSuccess());
             assertTrue(result.getErrorMessages().contains("Collection was not found."));
@@ -120,16 +120,18 @@ class CollectionServiceTest {
         // Should not add card if name is blank/null
         @Test
         void shouldNotAddCardIfNameIsNull() throws Exception {
+            int validCollectionid = TestHelper.collection().getCollectionId();
             when(collectionRepository.fetchCollectionByCollectionId(1)).thenReturn(TestHelper.collection());
-            Result<Card> result = collectionService.addCardToCollection(null,TestHelper.collection());
+            Result<Card> result = collectionService.addCardToCollection(null,validCollectionid);
             assertFalse(result.isSuccess());
             assertTrue(result.getErrorMessages().contains("Card name cannot be empty."));
             assertSame(ResultType.INVALID,result.getResultType());
         }
         @Test
         void shouldNotAddCardIfNameIsBlank() throws Exception {
+            int validCollection = TestHelper.collection().getCollectionId();
             when(collectionRepository.fetchCollectionByCollectionId(1)).thenReturn(TestHelper.collection());
-            Result<Card> result = collectionService.addCardToCollection("",TestHelper.collection());
+            Result<Card> result = collectionService.addCardToCollection("", validCollection);
             assertFalse(result.isSuccess());
             assertTrue(result.getErrorMessages().contains("Card name cannot be empty."));
             assertSame(ResultType.INVALID,result.getResultType());

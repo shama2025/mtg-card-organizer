@@ -40,9 +40,9 @@ class CardCollectionJdbcRepositoryTest {
         void shouldAddCardToCollection() throws JsonProcessingException {
             Card card = cardJdbcRepository.addCard(TestHelper.lightningBolt());
             Collection collection = new Collection(1,1);
-            CardCollection cardCollection = cardCollectionJdbcRepository.addCardToCollection(card,collection);
-            assertEquals(card,cardCollection.card());
-            assertEquals(collection,cardCollection.collection());
+            CardCollection cardCollection = cardCollectionJdbcRepository.addCardToCollection(card.getId(),collection.getCollectionId());
+            assertEquals(card.getId(),cardCollection.cardId());
+            assertEquals(collection.getCollectionId(),cardCollection.collectionId());
         }
     }
 
