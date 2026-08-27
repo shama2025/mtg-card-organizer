@@ -151,7 +151,7 @@ public class CollectionService {
 
         card.parseSet(cardResponse.get().set(),cardResponse.get().setName());
         card.parseLegalities(cardResponse.get().legalities());
-        card.parseCardImages(cardResponse.get().imageUris());
+        card.setImgPath(cardResponse.get().imageUris());
         card.setManaColor(new ManaColor(cardResponse.get().colors()));
         card.parseCardManaCost(cardResponse.get().manaCost());
 
