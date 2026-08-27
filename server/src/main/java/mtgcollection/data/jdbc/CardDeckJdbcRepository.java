@@ -4,6 +4,7 @@ import mtgcollection.data.interfaces.CardDeckRepository;
 import mtgcollection.model.CardDeck;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -28,6 +29,7 @@ public class CardDeckJdbcRepository implements CardDeckRepository {
                 .list();
     }
 
+    @Transactional
     @Override
     public boolean removeDeck(int deckId) {
         final String sql = """

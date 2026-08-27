@@ -11,4 +11,6 @@ public interface DeckRepository {
     Deck fetchDeckByDeckId(int deckId);
 
     Deck createDeck(Deck deck);
+
+    boolean removeDeck(int deckId);
 }
