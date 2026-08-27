@@ -50,6 +50,10 @@ public class UserService {
         Collection collection;
         try{
             collection = collectionRepository.fetchUserCollection(fetchedUser.getUserId());
+            if(collection == null){
+                result.addErrorMessage("No collection associated with user.",ResultType.NOT_FOUND);
+                return result;
+            }
         }catch (EmptyResultDataAccessException ex){
             result.addErrorMessage("No collection associated with user.",ResultType.NOT_FOUND);
             return  result;
