@@ -135,16 +135,6 @@ public class Card {
                  .collect(Collectors.toList());
     }
 
-    public void parseCardImages(HashMap<String, String> imageUris){
-//        HashMap<String,String> paths = new ArrayList<>();
-//        for(Map.Entry<String, String> imageUri : imageUris.entrySet()){
-//            String type = imageUri.getKey();
-//            String uri = imageUri.getValue();
-//            paths.add(new ImagePaths(type,uri));
-//        }
-        this.imagePaths = imageUris;
-    }
-
     public void parseCardManaCost(String manaCost){
         if (manaCost == null || manaCost.isBlank()) {
             this.manaCost = new ManaCost(0,"");
