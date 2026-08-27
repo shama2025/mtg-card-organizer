@@ -15,7 +15,8 @@ public class DeckMapper implements RowMapper<Deck> {
                 rs.getString("name"),
                 rs.getObject("card_count", Integer.class),
                 rs.getObject("date_created", LocalDate.class),
-                rs.getObject("date_updated", LocalDate.class)
+                rs.getObject("date_updated", LocalDate.class),
+                null
         );
     }
 }
