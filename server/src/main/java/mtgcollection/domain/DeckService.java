@@ -33,11 +33,16 @@ public class DeckService {
 
     private final CollectionRepository collectionRepository;
 
-    public DeckService(DeckRepository deckRepository,CardDeckRepository cardDeckRepository,CardRepository cardRepository, CollectionRepository collectionRepository) {
+    private final CollectionDeckRepository collectionDeckRepository;
+
+    public DeckService(DeckRepository deckRepository,CardDeckRepository cardDeckRepository,
+                       CardRepository cardRepository, CollectionRepository collectionRepository,
+                       CollectionDeckRepository collectionDeckRepository) {
         this.deckRepository = deckRepository;
         this.cardDeckRepository = cardDeckRepository;
         this.cardRepository = cardRepository;
         this.collectionRepository = collectionRepository;
+        this.collectionDeckRepository = collectionDeckRepository;
     }
 
     public List<Deck> fetchAllDecksByCollectionId(int collectionId){return deckRepository.fetchAllDecksInACollection(collectionId);}

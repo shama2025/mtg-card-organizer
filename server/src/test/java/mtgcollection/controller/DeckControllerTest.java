@@ -49,7 +49,7 @@ class DeckControllerTest {
         void shouldReturnBadRequestResponse() throws Exception {
             // Act
             when(collectionService.fetchAllCardsByCollection(1)).thenReturn(TestHelper.cardList());
-            MockHttpServletRequestBuilder request = get("/api/collection");
+            MockHttpServletRequestBuilder request = get("/api/collection/{collectionId}",0);
             // assert
             mvc.perform(request).andExpect(status().isBadRequest());
         }
@@ -60,10 +60,9 @@ class DeckControllerTest {
         @Test
         void shouldFetchDeckByCollectionID() throws Exception {
             // Act
-            when(collectionService.findCollectionByUserId(1)).thenReturn(TestHelper.collection());
             when(deckService.fetchAllDecksByCollectionId(TestHelper.collection().getCollectionId())).thenReturn(List.of(TestHelper.user2Deck()));
-            MockHttpServletRequestBuilder request = get("/api/deck")
-                    .header("authorization", "{\"id\": \"1\",\"email\": \"a@a.com\"}");            // assert
+            MockHttpServletRequestBuilder request = get("/api/decks/{collectionId}",1)
+                    .header("authorization", "{\"id\": \"1\",\"email\": \"a@a.com\"}");
             mvc.perform(request).andExpect(status().isOk());
         }
     }
@@ -102,7 +101,7 @@ class DeckControllerTest {
             mapper.registerModule(new JavaTimeModule());
             when(deckService.createDeckInCollection(deck, validCollectionId))
                     .thenReturn(expected);
-            MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/api/deck")
+            MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/api/collection/{collectionId}/deck/{deckId}",validCollectionId,deck.getDeckId())
                     .param("collectionId", String.valueOf(validCollectionId))
                     .header("authorization", "{\"id\": \"1\",\"email\": \"a@a.com\"}")
                     .contentType(MediaType.APPLICATION_JSON)
@@ -121,7 +120,7 @@ class DeckControllerTest {
             expected.addErrorMessage("Creation date has to be today.",ResultType.INVALID);
             when(deckService.createDeckInCollection(deck,validCollectionId)).thenReturn(expected);
             MockHttpServletRequestBuilder request =
-                    MockMvcRequestBuilders.post("/api/deck")
+                    MockMvcRequestBuilders.post("/api/collection/{collectionId}/deck/{deckId}",validCollectionId,deck.getDeckId())
                             .param("collectionId", String.valueOf(validCollectionId))
                             .header("authorization", "{\"id\": \"1\",\"email\": \"a@a.com\"}")
                             .contentType(MediaType.APPLICATION_JSON)
@@ -140,7 +139,7 @@ class DeckControllerTest {
             expected.addErrorMessage("Creation date has to be today.",ResultType.INVALID);
             when(deckService.createDeckInCollection(deck,validCollectionId)).thenReturn(expected);
             MockHttpServletRequestBuilder request =
-                    MockMvcRequestBuilders.post("/api/deck")
+                    MockMvcRequestBuilders.post("/api/collection/{collectionId}/deck/{deckId}",validCollectionId,deck.getDeckId())
                             .param("collectionId", String.valueOf(validCollectionId))
                             .header("authorization", "{\"id\": \"1\",\"email\": \"a@a.com\"}")
                             .contentType(MediaType.APPLICATION_JSON)
@@ -159,7 +158,7 @@ class DeckControllerTest {
             expected.addErrorMessage("Creation date has to be today.",ResultType.INVALID);
             when(deckService.createDeckInCollection(deck,validCollectionId)).thenReturn(expected);
             MockHttpServletRequestBuilder request =
-                    MockMvcRequestBuilders.post("/api/deck")
+                    MockMvcRequestBuilders.post("/api/collection/{collectionId}/deck/{deckId}",validCollectionId,deck.getDeckId())
                             .param("collectionId", String.valueOf(validCollectionId))
                             .header("authorization", "{\"id\": \"1\",\"email\": \"a@a.com\"}")
                             .contentType(MediaType.APPLICATION_JSON)
@@ -178,7 +177,7 @@ class DeckControllerTest {
             expected.addErrorMessage("Name cannot be null.",ResultType.INVALID);
             when(deckService.createDeckInCollection(deck,validCollectionId)).thenReturn(expected);
             MockHttpServletRequestBuilder request =
-                    MockMvcRequestBuilders.post("/api/deck")
+                    MockMvcRequestBuilders.post("/api/collection/{collectionId}/deck/{deckId}",validCollectionId,deck.getDeckId())
                             .param("collectionId", String.valueOf(validCollectionId))
                             .header("authorization", "{\"id\": \"1\",\"email\": \"a@a.com\"}")
                             .contentType(MediaType.APPLICATION_JSON)
@@ -195,7 +194,7 @@ class DeckControllerTest {
             expected.addErrorMessage("Deck cannot be null.",ResultType.INVALID);
             when(deckService.createDeckInCollection(null,validCollectionId)).thenReturn(expected);
             MockHttpServletRequestBuilder request =
-                    MockMvcRequestBuilders.post("/api/deck")
+                    MockMvcRequestBuilders.post("/api/collection/{collectionId}/deck/{deckId}",validCollectionId,0)
                             .param("collectionId", String.valueOf(validCollectionId))
                             .header("authorization", "{\"id\": \"1\",\"email\": \"a@a.com\"}")
                             .contentType(MediaType.APPLICATION_JSON);

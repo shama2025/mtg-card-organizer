@@ -16,19 +16,17 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/deck")
+@RequestMapping("/api")
 @CrossOrigin
 public class DeckController {
 
     private final DeckService deckService;
-    private final CollectionService collectionService;
 
-    public DeckController(DeckService deckService, CollectionService collectionService) {
+    public DeckController(DeckService deckService) {
         this.deckService = deckService;
-        this.collectionService = collectionService;
     }
 
-    @GetMapping("/{collectionId}")
+    @GetMapping("/decks/{collectionId}")
     public ResponseEntity<?> fetchAllDecksByCollectionId(@RequestHeader Map<String,String> headers, @PathVariable int collectionId) throws JsonProcessingException {
         if(headers.get("authorization") == null){
             // Missing auth header
@@ -43,7 +41,7 @@ public class DeckController {
         return new ResponseEntity<>(deckService.fetchAllDecksByCollectionId(collectionId),HttpStatus.OK);
     }
 
-    @GetMapping("/{deckId}")
+    @GetMapping("/deck/{deckId}")
     public ResponseEntity<?> fetchDeckByDeckId(@PathVariable int deckId){
         Result<Deck> result = deckService.fetchDeckByDeckId(deckId);
         if(result.isSuccess()){
@@ -52,9 +50,15 @@ public class DeckController {
         return ErrorResponse.build(result);
     }
 
-    @PostMapping
-    public ResponseEntity<?> createDeck(@RequestHeader Map<String, String> headers, @RequestParam int collectionId, @RequestBody Deck deck
+    @PostMapping("/collection/{collectionId}/deck/{deckId}")
+    public ResponseEntity<?> createDeck(@RequestHeader Map<String, String> headers, @PathVariable int collectionId,
+                                        @PathVariable int deckId,
+                                        @RequestBody Deck deck
     ) throws JsonProcessingException {
+        if(deckId != deck.getDeckId()){
+            return new ResponseEntity<>(List.of("Invalid DeckId"),HttpStatus.BAD_REQUEST);
+        }
+
         if (headers.get("authorization") == null) {
             return new ResponseEntity<>(List.of("Missing authorization header"), HttpStatus.BAD_REQUEST);
         }

@@ -88,7 +88,7 @@ class CollectionControllerTest {
             String cardRequestString = mapper.writeValueAsString(cardRequest);
             Result<Card> result = new Result<>();
             result.setpayload(TestHelper.blackLotus());
-            when(collectionService.addCardToCollection(cardRequestString,validCollection)).thenReturn(result);
+            when(collectionService.addCardToCollection(cardRequest.name(),validCollection)).thenReturn(result);
             MockHttpServletRequestBuilder request = post("/api/collection/{collectionId}", validCollection)
                     .header("authorization", "{\"id\": \"1\",\"email\": \"a@a.com\"}")
                     .contentType(MediaType.APPLICATION_JSON)
