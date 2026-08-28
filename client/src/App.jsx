@@ -1,11 +1,11 @@
-import AppRouter from "./components/AppRouter"
+import AppRouter from "./components/AppRouter";
 
 function App() {
   return (
     <>
-   <AppRouter/>
+      <AppRouter />
     </>
-  )
+  );
 }
 
-export default App
+export default App;

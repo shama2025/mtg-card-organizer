@@ -1,1 +1,22 @@
 @import "tailwindcss";
+
+@theme {
+  /* Jeskai Red */
+  --color-jeskai-red-light: #f87171;
+  --color-jeskai-red: #dc2626;
+  --color-jeskai-red-dark: #991b1b;
+
+  /* Jeskai White */
+  --color-jeskai-white-pure: #ffffff;
+  --color-jeskai-white-surface: #f8fafc;
+  --color-jeskai-white-border: #e2e8f0;
+
+  /* Jeskai Blue */
+  --color-jeskai-blue-light: #38bdf8;
+  --color-jeskai-blue: #0284c7;
+  --color-jeskai-blue-dark: #0369a1;
+
+  /* Backgrounds & Surfaces */
+  --color-jeskai-dark: #0f172a;
+  --color-jeskai-card: #1e293b;
+}
