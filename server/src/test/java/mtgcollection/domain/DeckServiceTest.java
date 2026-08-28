@@ -1,6 +1,8 @@
 package mtgcollection.domain;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import mtgcollection.TestHelper;
+import mtgcollection.data.http.ScryFallApiHttpRepository;
 import mtgcollection.data.interfaces.CollectionDeckRepository;
 import mtgcollection.data.interfaces.CollectionRepository;
 import mtgcollection.data.interfaces.DeckRepository;
@@ -12,6 +14,7 @@ import mtgcollection.model.CardDeck;
 import mtgcollection.model.Deck;
 import mtgcollection.model.Result;
 import mtgcollection.model.ResultType;
+import mtgcollection.model.card.Card;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -22,6 +25,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
@@ -42,6 +46,9 @@ public class DeckServiceTest {
 
     @MockBean
     CardDeckRepository cardDeckRepository;
+
+    @MockBean
+    ScryFallApiHttpRepository scryFallApiHttpRepository;
 
     @Autowired
     DeckService deckService;
@@ -208,6 +215,112 @@ public class DeckServiceTest {
             Deck deckToUpdate = TestHelper.deckToEdit();
             deckToUpdate.setName(null);
             Result<Deck> result = deckService.updateDeck(deckToUpdate);
+            assertFalse(result.isSuccess());
+            assertSame(ResultType.INVALID, result.getResultType());
+            assertTrue(result.getErrorMessages().contains("Name cannot be null."));
+        }
+    }
+
+    @Nested
+    class AddCardToDeck{
+        @Test
+        void shouldAddCardToDeck() throws InterruptedException, JsonProcessingException {
+            Deck decKToUpdate = TestHelper.deckToEdit();
+            String cardDoesExist = "black lotus";
+            Card blackLotus = TestHelper.blackLotus();
+            CardDeck cardDeck = new CardDeck(blackLotus.getId(),decKToUpdate.getDeckId(),1);
+            blackLotus.setId(5);
+            when(deckRepository.fetchDeckByDeckId(decKToUpdate.getDeckId())).thenReturn(decKToUpdate);
+            when(cardRepository.fetchCardByName(cardDoesExist.toUpperCase())).thenReturn(blackLotus);
+            when(cardDeckRepository.addCardDeck(blackLotus.getId(), decKToUpdate.getDeckId()))
+                    .thenReturn(cardDeck);
+            when(deckRepository.updateDeck(decKToUpdate)).thenReturn(true);
+            Result<Deck> result = deckService.addCardToDeck(decKToUpdate, cardDoesExist);
+            assertTrue(result.isSuccess());
+        }
+
+        @Test
+        void shouldNotAddCardToDeckWhenThereIsAnError() throws InterruptedException, JsonProcessingException {
+            Deck decKToUpdate = TestHelper.deckToEdit();
+            String cardDoesExist = "black lotus";
+            Card blackLotus = TestHelper.blackLotus();
+            CardDeck cardDeck = new CardDeck(blackLotus.getId(),decKToUpdate.getDeckId(),1);
+            blackLotus.setId(5);
+            when(deckRepository.fetchDeckByDeckId(decKToUpdate.getDeckId())).thenReturn(decKToUpdate);
+            when(cardRepository.fetchCardByName(cardDoesExist.toUpperCase())).thenReturn(blackLotus);
+            when(cardDeckRepository.addCardDeck(blackLotus.getId(), decKToUpdate.getDeckId()))
+                    .thenReturn(cardDeck);
+            when(deckRepository.updateDeck(decKToUpdate)).thenReturn(false);
+            Result<Deck> result = deckService.addCardToDeck(decKToUpdate, cardDoesExist);
+            assertFalse(result.isSuccess());
+            assertTrue(result.getErrorMessages().contains("Error updating deck."));
+            assertEquals(ResultType.INVALID, result.getResultType());
+        }
+
+        @Test
+        void shouldNotAddCardToDeckWhereCardDeckIsNull() throws InterruptedException, JsonProcessingException {
+            Deck decKToUpdate = TestHelper.deckToEdit();
+            String cardDoesExist = "black lotus";
+            Card blackLotus = TestHelper.blackLotus();
+            blackLotus.setId(5);
+            when(deckRepository.fetchDeckByDeckId(decKToUpdate.getDeckId())).thenReturn(decKToUpdate);
+            when(cardRepository.fetchCardByName(cardDoesExist.toUpperCase())).thenReturn(blackLotus);
+            when(cardDeckRepository.addCardDeck(blackLotus.getId(), decKToUpdate.getDeckId()))
+                    .thenReturn(null);
+            Result<Deck> result = deckService.addCardToDeck(decKToUpdate, cardDoesExist);
+            assertFalse(result.isSuccess());
+            assertTrue(result.getErrorMessages().contains("Error adding card to deck."));
+            assertEquals(ResultType.INVALID, result.getResultType());
+        }
+
+        @Test
+        void shouldNotAddCardToDeckWhereCardDoesNotExist() throws InterruptedException, JsonProcessingException {
+            Deck decKToUpdate = TestHelper.deckToEdit();
+            String cardDoesNotExist = "blahblah";
+            when(deckRepository.fetchDeckByDeckId(decKToUpdate.getDeckId())).thenReturn(decKToUpdate);
+            when(cardRepository.fetchCardByName(cardDoesNotExist)).thenThrow(EmptyResultDataAccessException.class);
+            when(scryFallApiHttpRepository.fetchCardFromScryfallByName(cardDoesNotExist)).thenReturn(Optional.empty());
+            Result<Deck> result = deckService.addCardToDeck(decKToUpdate,cardDoesNotExist);
+            assertFalse(result.isSuccess());
+            assertTrue(result.getErrorMessages().contains("Card not found."));
+            assertEquals(ResultType.NOT_FOUND, result.getResultType());
+        }
+
+        @Test
+        void shouldNotAddCardToDeckThatDoesNotExist() throws InterruptedException, JsonProcessingException {
+            Deck deckToUpdate = TestHelper.deckToEdit();
+            deckToUpdate.setDeckId(Integer.MAX_VALUE);
+            when(deckRepository.fetchDeckByDeckId(deckToUpdate.getDeckId())).thenThrow(EmptyResultDataAccessException.class);
+            Result<Deck> result = deckService.addCardToDeck(deckToUpdate,"");
+            assertFalse(result.isSuccess());
+            assertSame(ResultType.NOT_FOUND, result.getResultType());
+            assertTrue(result.getErrorMessages().contains("Deck does not exist."));
+        }
+
+        @Test
+        void shouldNotAddCardToDeckWithDateUpdatedInFuture() throws InterruptedException, JsonProcessingException {
+            Deck deckToUpdate = TestHelper.deckToEdit();
+            deckToUpdate.setDateUpdated(LocalDate.of(1999,12,1));
+            Result<Deck> result = deckService.addCardToDeck(deckToUpdate,"");
+            assertFalse(result.isSuccess());
+            assertSame(ResultType.INVALID, result.getResultType());
+            assertTrue(result.getErrorMessages().contains("Updated date has to be today or in future."));
+        }
+
+        @Test
+        void shouldNotAddCardToDeckDeckWithBlankName() throws InterruptedException, JsonProcessingException {
+            Deck deckToUpdate = TestHelper.deckToEdit();
+            deckToUpdate.setName("");
+            Result<Deck> result = deckService.addCardToDeck(deckToUpdate,"");
+            assertFalse(result.isSuccess());
+            assertSame(ResultType.INVALID, result.getResultType());
+            assertTrue(result.getErrorMessages().contains("Name cannot be blank."));
+        }
+        @Test
+        void shouldNotAddCardToDeckDeckWithNullName() throws InterruptedException, JsonProcessingException {
+            Deck deckToUpdate = TestHelper.deckToEdit();
+            deckToUpdate.setName(null);
+            Result<Deck> result = deckService.addCardToDeck(deckToUpdate,"");
             assertFalse(result.isSuccess());
             assertSame(ResultType.INVALID, result.getResultType());
             assertTrue(result.getErrorMessages().contains("Name cannot be null."));

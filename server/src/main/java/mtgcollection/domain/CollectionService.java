@@ -62,13 +62,14 @@ public class CollectionService {
                 result.addErrorMessage("Card not found.", ResultType.NOT_FOUND);
                 return result;
             }
+            card = cardRepository.addCard(card);
+            card = new Card(0, card.getCardId(),card.getName(),
+                    card.getSet(),card.getLegalities(), card.getImgPath(),
+                    card.getManaColor(),card.getManaCost(),
+                    card.getArtistName(),1);
         }
-        card = new Card(0, card.getCardId(),card.getName(),
-                card.getSet(),card.getLegalities(), card.getImgPath(),
-                card.getManaColor(),card.getManaCost(),
-                card.getArtistName(),1);
 
-        card = cardRepository.addCard(card);
+
         CardCollection cardCollection = cardCollectionRepository.addCardToCollection(card.getId(),collectionId);
         if(cardCollection.collectionId() != collectionId
                 && cardCollection.cardId() != card.getId()){
