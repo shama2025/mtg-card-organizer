@@ -44,6 +44,32 @@ public class CardDeckJdbcRepository implements CardDeckRepository {
         return new CardDeck(cardId,deckId,1);
     }
 
+    @Override
+    public boolean updateCardInDeck(int cardId, int deckId, int quantity) {
+        final String sql = """
+                update card_deck cd
+                set
+                cd.quantity = :quantity
+                where cd.card_id = :cardId and cd.deck_id = :deckId;
+                """;
+        return jdbcClient.sql(sql)
+                .param("quantity", quantity)
+                .param("cardId", cardId)
+                .param("deckId",deckId)
+                .update() == 1;
+    }
+
+    @Override
+    public boolean removeCardFromDeck(int cardId, int deckId) {
+        final String sql = """
+                delete from card_deck cd where cd.card_id = :cardId and cd.deck_id = :deckId
+                """;
+        return jdbcClient.sql(sql)
+                .param("cardId", cardId)
+                .param("deckId",deckId)
+                .update() == 1;
+    }
+
     @Transactional
     @Override
     public boolean removeDeck(int deckId) {

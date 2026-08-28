@@ -56,6 +56,44 @@ class CardDeckJdbcRepositoryTest {
     }
 
     @Nested
+    class UpdateCardInADeckTest{
+        @Test
+        void shouldUpdateCardInADeck(){
+            int validCardId = 1;
+            int validDeckId = 1;
+            boolean isUpdated = repository.updateCardInDeck(validCardId,validDeckId,3);
+            assertTrue(isUpdated);
+        }
+
+        @Test
+        void shouldNotUpdateCardInADeck(){
+            int inVlidCardId = Integer.MAX_VALUE;
+            int validDeckId = 1;
+            boolean isUpdated = repository.updateCardInDeck(inVlidCardId,validDeckId,3);
+            assertFalse(isUpdated);
+        }
+    }
+
+    @Nested
+    class DeleteCardInADeckTest{
+        @Test
+        void shouldUpdateCardInADeck(){
+            int validCardId = 1;
+            int validDeckId = 1;
+            boolean isRemoved = repository.removeCardFromDeck(validCardId,validDeckId);
+            assertTrue(isRemoved);
+        }
+
+        @Test
+        void shouldNotUpdateCardInADeck(){
+            int inValidCardId = Integer.MAX_VALUE;
+            int validDeckId = 1;
+            boolean isRemoved = repository.removeCardFromDeck(inValidCardId,validDeckId);
+            assertFalse(isRemoved);
+        }
+    }
+
+    @Nested
     class DeleteDeckFromCardDeck{
         @Test
         void shouldDeleteDeck(){
