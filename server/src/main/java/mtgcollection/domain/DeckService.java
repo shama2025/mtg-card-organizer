@@ -158,7 +158,6 @@ public class DeckService {
             // populated with the auto-generated database primary key (card.getId()).
             card = cardRepository.addCard(card);
         }
-        List<Card> cardList = deck.getCardList();
         // Add card to card_deck table
         CardDeck cardDeck = cardDeckRepository.addCardDeck(card.getId(),deck.getDeckId());
         if(cardDeck == null){
@@ -172,6 +171,63 @@ public class DeckService {
             result.setpayload(deck);
         }else{
             result.addErrorMessage("Error updating deck.",ResultType.INVALID);
+        }
+        return result;
+    }
+
+    public Result<Integer> updateCardInADeck( int cardId,int deckId, int quantity){
+        Result<Integer> result = new Result<>();
+
+        if(quantity < 0){
+            result.addErrorMessage("Quantity cannot be below 0.",ResultType.INVALID);
+            return result;
+        }
+
+        try{
+            cardRepository.fetchCardById(cardId);
+        }catch(EmptyResultDataAccessException ex){
+            result.addErrorMessage("Card does not exist.",ResultType.NOT_FOUND);
+            return result;
+        }
+
+        try{
+            deckRepository.fetchDeckByDeckId(deckId);
+        }catch(EmptyResultDataAccessException ex){
+            result.addErrorMessage("Deck does not exist.",ResultType.NOT_FOUND);
+            return result;
+        }
+
+        boolean isUpdated = cardDeckRepository.updateCardInDeck(cardId,deckId,quantity);
+        if(isUpdated){
+            result.setpayload(deckId);
+        }else{
+            result.addErrorMessage("Error updating card in a deck.", ResultType.INVALID);
+        }
+        return result;
+    }
+
+    public Result<Integer> removeCardFromDeck(int cardId, int deckId){
+        Result<Integer> result = new Result<>();
+
+        try{
+            cardRepository.fetchCardById(cardId);
+        }catch(EmptyResultDataAccessException ex){
+            result.addErrorMessage("Card does not exist.",ResultType.NOT_FOUND);
+            return result;
+        }
+
+        try{
+            deckRepository.fetchDeckByDeckId(deckId);
+        }catch(EmptyResultDataAccessException ex){
+            result.addErrorMessage("Deck does not exist.",ResultType.NOT_FOUND);
+            return result;
+        }
+
+        boolean isUpdated = cardDeckRepository.removeCardFromDeck(cardId,deckId);
+        if(isUpdated){
+            result.setpayload(deckId);
+        }else{
+            result.addErrorMessage("Error updating card in a deck.", ResultType.INVALID);
         }
         return result;
     }

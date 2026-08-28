@@ -328,6 +328,116 @@ public class DeckServiceTest {
     }
 
     @Nested
+    class UpdateCardInADeckTest{
+        @Test
+        void shouldUpdateCardInDeck(){
+            int validCardId = 1;
+            int validDeckId = 1;
+            int validQuantity = 10;
+            when(cardRepository.fetchCardById(validCardId)).thenReturn(TestHelper.blackLotus());
+            when(deckRepository.fetchDeckByDeckId(validDeckId)).thenReturn(TestHelper.user2Deck());
+            when(cardDeckRepository.updateCardInDeck(validCardId,validDeckId,validQuantity)).thenReturn(true);
+            Result<Integer> result = deckService.updateCardInADeck(validCardId,validDeckId,validQuantity);
+            assertTrue(result.isSuccess());
+            assertEquals(validDeckId,result.getpayload());
+        }
+        @Test
+        void shouldNotUpdateDeckWhereUpdatingCardFails(){
+            int validCardId = 1;
+            int validDeckId = 1;
+            int validQuantity = 10;
+            when(cardRepository.fetchCardById(validCardId)).thenReturn(TestHelper.blackLotus());
+            when(deckRepository.fetchDeckByDeckId(validDeckId)).thenReturn(TestHelper.user2Deck());
+            when(cardDeckRepository.updateCardInDeck(validCardId,validDeckId,validQuantity)).thenReturn(false);
+            Result<Integer> result = deckService.updateCardInADeck(validCardId,validDeckId,validQuantity);
+            assertFalse(result.isSuccess());
+            assertEquals(ResultType.INVALID, result.getResultType());
+            assertTrue(result.getErrorMessages().contains("Error updating card in a deck."));
+        }
+        @Test
+        void shouldNotUpdateDeckWhereDeckDoesNotExist(){
+            int validCardId = 1;
+            int inValidDeckId = Integer.MAX_VALUE;
+            int validQuantity = 10;
+            when(cardRepository.fetchCardById(validCardId)).thenReturn(TestHelper.blackLotus());
+            when(deckRepository.fetchDeckByDeckId(inValidDeckId)).thenThrow(EmptyResultDataAccessException.class);
+            Result<Integer> result = deckService.updateCardInADeck(validCardId,inValidDeckId,validQuantity);
+            assertFalse(result.isSuccess());
+            assertEquals(ResultType.NOT_FOUND, result.getResultType());
+            assertTrue(result.getErrorMessages().contains("Deck does not exist."));
+        }
+        @Test
+        void shouldNotUpdateDeckWhereCardDoesNotExist(){
+            int inValidCardId = 1;
+            int validDeckId = 1;
+            int validQuantity = 10;
+            when(cardRepository.fetchCardById(inValidCardId)).thenThrow(EmptyResultDataAccessException.class);
+            Result<Integer> result = deckService.updateCardInADeck(inValidCardId,validDeckId,validQuantity);
+            assertFalse(result.isSuccess());
+            assertEquals(ResultType.NOT_FOUND, result.getResultType());
+            assertTrue(result.getErrorMessages().contains("Card does not exist."));
+        }
+        @Test
+        void shouldNotUpdateCardInADeckWhereQuantityIsBelow0(){
+            int validCardId = 1;
+            int validDeckId = 1;
+            int invalidQuantity = -10;
+            Result<Integer> result = deckService.updateCardInADeck(validCardId,validDeckId,invalidQuantity);
+            assertFalse(result.isSuccess());
+            assertEquals(ResultType.INVALID, result.getResultType());
+            assertTrue(result.getErrorMessages().contains("Quantity cannot be below 0."));
+        }
+    }
+
+    @Nested
+    class RemoveCardFromDeckTest{
+        @Test
+        void shouldRemoveCardFromDeckCardInDeck(){
+            int validCardId = 1;
+            int validDeckId = 1;
+            when(cardRepository.fetchCardById(validCardId)).thenReturn(TestHelper.blackLotus());
+            when(deckRepository.fetchDeckByDeckId(validDeckId)).thenReturn(TestHelper.user2Deck());
+            when(cardDeckRepository.removeCardFromDeck(validCardId,validDeckId)).thenReturn(true);
+            Result<Integer> result = deckService.removeCardFromDeck(validCardId,validDeckId);
+            assertTrue(result.isSuccess());
+            assertEquals(validDeckId,result.getpayload());
+        }
+        @Test
+        void shouldNotRemoveCardFromDeckWhereUpdatingCardFails(){
+            int validCardId = 1;
+            int validDeckId = 1;
+            when(cardRepository.fetchCardById(validCardId)).thenReturn(TestHelper.blackLotus());
+            when(deckRepository.fetchDeckByDeckId(validDeckId)).thenReturn(TestHelper.user2Deck());
+            when(cardDeckRepository.removeCardFromDeck(validCardId,validDeckId)).thenReturn(false);
+            Result<Integer> result = deckService.removeCardFromDeck(validCardId,validDeckId);
+            assertFalse(result.isSuccess());
+            assertEquals(ResultType.INVALID, result.getResultType());
+            assertTrue(result.getErrorMessages().contains("Error updating card in a deck."));
+        }
+        @Test
+        void shouldNotRemoveCardFromDeckWhereDeckDoesNotExist(){
+            int validCardId = 1;
+            int inValidDeckId = Integer.MAX_VALUE;
+            when(cardRepository.fetchCardById(validCardId)).thenReturn(TestHelper.blackLotus());
+            when(deckRepository.fetchDeckByDeckId(inValidDeckId)).thenThrow(EmptyResultDataAccessException.class);
+            Result<Integer> result = deckService.removeCardFromDeck(validCardId,inValidDeckId);
+            assertFalse(result.isSuccess());
+            assertEquals(ResultType.NOT_FOUND, result.getResultType());
+            assertTrue(result.getErrorMessages().contains("Deck does not exist."));
+        }
+        @Test
+        void shouldNotRemoveCardFromDeckWhereCardDoesNotExist(){
+            int inValidCardId = 1;
+            int validDeckId = 1;
+            when(cardRepository.fetchCardById(inValidCardId)).thenThrow(EmptyResultDataAccessException.class);
+            Result<Integer> result = deckService.removeCardFromDeck(inValidCardId,validDeckId);
+            assertFalse(result.isSuccess());
+            assertEquals(ResultType.NOT_FOUND, result.getResultType());
+            assertTrue(result.getErrorMessages().contains("Card does not exist."));
+        }
+    }
+
+    @Nested
     class DeleteDeckTests{
         @Test
         void shouldDeleteDeck(){
