@@ -4,7 +4,7 @@ import Card from "../Card/Card";
 import CardInfo from "../CardInfoContainer/CardInfo";
 
 export default function Collection({ collectionId, loggedInUser }) {
-  const [collection, setCollection] = useState([]);
+  const [collection, setCollection] = useState(undefined);
   const [card, setCard] = useState(undefined);
   const [errors, setErrors] = useState([]);
 
@@ -19,6 +19,33 @@ export default function Collection({ collectionId, loggedInUser }) {
     }
     handleFecthCollection();
   }, []);
+
+  if(!collection){
+     return (
+      <div className="w-full max-w-7xl mx-auto p-6 md:p-8 min-h-screen">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <div className="lg:col-span-3 bg-jeskai-card text-jeskai-white-pure p-4 rounded-xl border border-slate-700 shadow-lg">
+          <h2 className="text-lg font-bold text-jeskai-blue-light border-b border-slate-700 pb-2 mb-3">
+            Collection Overview
+          </h2>
+          <p className="text-sm text-slate-300">
+            Total Cards:{" "}
+            <span className="font-semibold text-white">
+              {0}
+            </span>
+          </p>
+        </div>
+        <div className="relative lg:col-span-6 bg-jeskai-white-border p-4 rounded-xl border border-slate-300 shadow-md">
+          <p>No cards in collection. Would you like to add a new card?</p>
+          <div>
+              <p>Add a card text input</p>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+     )
+  }
 
   return (
     <div className="w-full max-w-7xl mx-auto p-6 md:p-8 min-h-screen">
@@ -44,7 +71,7 @@ export default function Collection({ collectionId, loggedInUser }) {
                 className="transition-transform hover:-translate-y-1 cursor-pointer"
               >
                 <div className="relative inline-block overflow-hidden rounded-lg transition-transform duration-200 hover:scale-105 hover:-translate-y-1 cursor-pointer">
-                  <div className="absolute top-2 left-2 z-10 bg-jeskai-blue-light text-jeskai-dark font-bold text-xs px-2 py-0.5 rounded-full shadow-md">
+                  <div className="absolute z-10 bg-jeskai-blue-light text-jeskai-dark font-bold text-xs px-2 py-0.5 rounded-full shadow-md">
                     {card?.quantity}
                   </div>
 
