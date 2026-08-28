@@ -1,4 +1,4 @@
-import  { React, useState } from "react";
+import { React, useState } from "react";
 import { createUser } from "../util/http";
 import { useNavigate } from "react-router-dom";
 
