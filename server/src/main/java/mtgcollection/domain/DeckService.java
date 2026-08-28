@@ -14,6 +14,7 @@ import mtgcollection.model.card.ManaColor;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -141,21 +142,21 @@ public class DeckService {
             result.addErrorMessage("Deck does not exist.",ResultType.NOT_FOUND);
             return result;
         }
-        // Check if card is in db
+
         Card card;
         try {
-            // Card already exists in local DB
             card = fetchCardJdbcRepo(cardName);
-        } catch (EmptyResultDataAccessException ex) {
-            // Card not found in DB -> Fetch from Scryfall HTTP API
+            if (card == null) {
+                result.addErrorMessage("Card not found.", ResultType.NOT_FOUND);
+                return result;
+            }
+            } catch (EmptyResultDataAccessException ex) {
             card = fetchCardHttpRepo(cardName);
             if (card == null) {
                 result.addErrorMessage("Card not found.", ResultType.NOT_FOUND);
                 return result;
             }
 
-            // Insert into DB. cardRepository.addCard() MUST return the Card object
-            // populated with the auto-generated database primary key (card.getId()).
             card = cardRepository.addCard(card);
         }
         // Add card to card_deck table
@@ -199,7 +200,12 @@ public class DeckService {
 
         boolean isUpdated = cardDeckRepository.updateCardInDeck(cardId,deckId,quantity);
         if(isUpdated){
-            result.setpayload(deckId);
+            Deck deck = deckRepository.fetchDeckByDeckId(deckId);
+            deck.setDateUpdated(LocalDate.now());
+            boolean isDeckUpdate = deckRepository.updateDeck(deck);
+            if(isDeckUpdate){
+                result.setpayload(deckId);
+            }
         }else{
             result.addErrorMessage("Error updating card in a deck.", ResultType.INVALID);
         }
@@ -223,9 +229,14 @@ public class DeckService {
             return result;
         }
 
-        boolean isUpdated = cardDeckRepository.removeCardFromDeck(cardId,deckId);
-        if(isUpdated){
-            result.setpayload(deckId);
+        boolean isRemoved = cardDeckRepository.removeCardFromDeck(cardId,deckId);
+        if(isRemoved){
+            Deck deck = deckRepository.fetchDeckByDeckId(deckId);
+            deck.setDateUpdated(LocalDate.now());
+            boolean isDeckUpdate = deckRepository.updateDeck(deck);
+            if(isDeckUpdate){
+                result.setpayload(deckId);
+            }
         }else{
             result.addErrorMessage("Error updating card in a deck.", ResultType.INVALID);
         }

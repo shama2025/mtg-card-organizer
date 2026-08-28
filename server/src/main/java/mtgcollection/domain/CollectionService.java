@@ -53,25 +53,24 @@ public class CollectionService {
 
         Card card;
         try {
-            // Card already exists in local DB
             card = fetchCardJdbcRepo(cardName);
+            if (card == null) {
+                result.addErrorMessage("Card not found.", ResultType.NOT_FOUND);
+                return result;
+            }
         } catch (EmptyResultDataAccessException ex) {
-            // Card not found in DB -> Fetch from Scryfall HTTP API
             card = fetchCardHttpRepo(cardName);
             if (card == null) {
                 result.addErrorMessage("Card not found.", ResultType.NOT_FOUND);
                 return result;
             }
 
-            // Insert into DB. cardRepository.addCard() MUST return the Card object
-            // populated with the auto-generated database primary key (card.getId()).
             card = cardRepository.addCard(card);
         }
 
-        // Pass the database primary key (e.g., card.getId() = 42)
         CardCollection cardCollection = cardCollectionRepository.addCardToCollection(card.getId(), collectionId);
 
-        if (cardCollection.collectionId() != collectionId || cardCollection.cardId() != card.getId()) {
+        if (cardCollection == null || cardCollection.collectionId() != collectionId || cardCollection.cardId() != card.getId()) {
             result.addErrorMessage("Error adding card to collection", ResultType.INVALID);
             return result;
         }

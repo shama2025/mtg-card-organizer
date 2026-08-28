@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import mtgcollection.domain.CollectionService;
 import mtgcollection.domain.DeckService;
+import mtgcollection.dto.CardEditRequest;
 import mtgcollection.dto.LoggedInUser;
 import mtgcollection.model.Collection;
 import mtgcollection.model.Deck;
@@ -91,7 +92,7 @@ public class DeckController {
         return ErrorResponse.build(result);
     }
 
-    @PutMapping("/deck/{deckId}/card/{cardName}")
+    @PostMapping("/deck/{deckId}/card/{cardName}")
     public ResponseEntity<?> addCardToDeck(@RequestHeader Map<String,String> headers,
                                            @RequestBody Deck deck,
                                            @PathVariable int deckId,
@@ -109,6 +110,49 @@ public class DeckController {
         LoggedInUser user = mapper.readValue(userAuthJson, LoggedInUser.class);
 
         Result<Deck> result = deckService.addCardToDeck(deck,cardName);
+        if(result.isSuccess()){
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return ErrorResponse.build(result);
+    }
+
+    @PutMapping("/deck/{deckId}/card/{cardId}")
+    public ResponseEntity<?> updateCardInADeck(@RequestHeader Map<String,String> headers,
+                                               @RequestBody CardEditRequest request,
+                                               @PathVariable int deckId,
+                                               @PathVariable int cardId
+                                               ) throws JsonProcessingException {
+
+        if (headers.get("authorization") == null) {
+            return new ResponseEntity<>(List.of("Missing authorization header"), HttpStatus.BAD_REQUEST);
+        }
+
+        String userAuthJson = headers.get("authorization");
+        ObjectMapper mapper = new ObjectMapper();
+        LoggedInUser user = mapper.readValue(userAuthJson, LoggedInUser.class);
+
+        Result<Integer> result = deckService.updateCardInADeck(cardId,deckId,request.quantity());
+        if(result.isSuccess()){
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return ErrorResponse.build(result);
+    }
+
+    @DeleteMapping("/deck/{deckId}/card/{cardId}")
+    public ResponseEntity<?> removeCardFromADeck(@RequestHeader Map<String,String> headers,
+                                               @PathVariable int deckId,
+                                               @PathVariable int cardId
+    ) throws JsonProcessingException {
+
+        if (headers.get("authorization") == null) {
+            return new ResponseEntity<>(List.of("Missing authorization header"), HttpStatus.BAD_REQUEST);
+        }
+
+        String userAuthJson = headers.get("authorization");
+        ObjectMapper mapper = new ObjectMapper();
+        LoggedInUser user = mapper.readValue(userAuthJson, LoggedInUser.class);
+
+        Result<Integer> result = deckService.removeCardFromDeck(cardId,deckId);
         if(result.isSuccess()){
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }

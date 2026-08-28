@@ -46,7 +46,7 @@ class CollectionDeckJdbcRepositoryTest {
         @Test
         void shouldDeleteDeck(){
             int validDeck = 1;
-            assertFalse(repository.removeDeck(validDeck));
+            assertTrue(repository.removeDeck(validDeck));
         }
         @Test
         void shouldNotDeleteDeck(){

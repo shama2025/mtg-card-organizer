@@ -91,52 +91,37 @@ authorization: {"id": "1","email": "[a@a.com](mailto:a@a.com)"}
 "dateUpdated": "2026-08-27"
 }
 
-### Add Card to Deck
-
-### Happy Path
-PUT {{base_url}}/deck/1/card/cultivate
+### Update Card Quantity - Happy Path (204 No Content)
+PUT {{base_url}}/deck/1/card/10 HTTP/1.1
 Content-Type: application/json
-authorization: {"id": "1","email": "c@c.com"}
+authorization: {"id": "1", "email": "a@a.com"}
 
 {
-"deckId": 1,
-"name": "My Best Deck",
-"dateCreated": "2026-08-28",
-"dateUpdated": "2026-08-28"
+  "quantity": 4
 }
 
-### Bad Path Deck IDs don't match
-PUT {{base_url}}/deck/999/card/black lotus
+### Update Card Quantity - Bad Path: Deck or Card Not Found (404 Not Found)
+PUT {{base_url}}/deck/999999/card/10 HTTP/1.1
 Content-Type: application/json
-authorization: {"id": "1","email": "[a@a.com](mailto:a@a.com)"}
+authorization: {"id": "1", "email": "a@a.com"}
 
 {
-"deckId": 1,
-"name": "My Best Deck",
-"dateCreated": "2026-08-28",
-"dateUpdated": "2026-08-28"
+  "quantity": 4
 }
 
-### Bad Path dates are in past
-PUT {{base_url}}/deck/1/card/black lotus
+### Update Card Quantity - Bad Path: Invalid Quantity / Transaction Error (400 Bad Request)
+PUT {{base_url}}/deck/1/card/10 HTTP/1.1
 Content-Type: application/json
-authorization: {"id": "1","email": "[a@a.com](mailto:a@a.com)"}
+authorization: {"id": "1", "email": "a@a.com"}
 
 {
-"deckId": 1,
-"name": "My Best Deck",
-"dateCreated": "2026-08-20",
-"dateUpdated": "2026-08-20"
+  "quantity": -1
 }
 
-### Bad Path deck name is blank
-PUT {{base_url}}/deck/1/card/black lotus
+### Update Card Quantity - Bad Path: Missing authorization header (400 Bad Request)
+PUT {{base_url}}/deck/1/card/10 HTTP/1.1
 Content-Type: application/json
-authorization: {"id": "1","email": "[a@a.com](mailto:a@a.com)"}
 
 {
-"deckId": 1,
-"name": "",
-"dateCreated": "2026-08-28",
-"dateUpdated": "2026-08-28"
+  "quantity": 4
 }

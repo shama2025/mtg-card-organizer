@@ -191,15 +191,6 @@ public class DeckServiceTest {
             assertTrue(result.getErrorMessages().contains("Deck does not exist."));
         }
 
-        @Test
-        void shouldNotUpdateDeckWithDateUpdatedInFuture(){
-            Deck deckToUpdate = TestHelper.deckToEdit();
-            deckToUpdate.setDateUpdated(LocalDate.of(1999,12,1));
-            Result<Deck> result = deckService.updateDeck(deckToUpdate);
-            assertFalse(result.isSuccess());
-            assertSame(ResultType.INVALID, result.getResultType());
-            assertTrue(result.getErrorMessages().contains("Updated date has to be today or in future."));
-        }
 
         @Test
         void shouldNotUpdateDeckWithBlankName(){
@@ -298,16 +289,6 @@ public class DeckServiceTest {
         }
 
         @Test
-        void shouldNotAddCardToDeckWithDateUpdatedInFuture() throws InterruptedException, JsonProcessingException {
-            Deck deckToUpdate = TestHelper.deckToEdit();
-            deckToUpdate.setDateUpdated(LocalDate.of(1999,12,1));
-            Result<Deck> result = deckService.addCardToDeck(deckToUpdate,"");
-            assertFalse(result.isSuccess());
-            assertSame(ResultType.INVALID, result.getResultType());
-            assertTrue(result.getErrorMessages().contains("Updated date has to be today or in future."));
-        }
-
-        @Test
         void shouldNotAddCardToDeckDeckWithBlankName() throws InterruptedException, JsonProcessingException {
             Deck deckToUpdate = TestHelper.deckToEdit();
             deckToUpdate.setName("");
@@ -334,9 +315,13 @@ public class DeckServiceTest {
             int validCardId = 1;
             int validDeckId = 1;
             int validQuantity = 10;
+            Deck deckToEdit = TestHelper.deckToEdit();
+            deckToEdit.setDeckId(1);
+            deckToEdit.setDateUpdated(LocalDate.now());
             when(cardRepository.fetchCardById(validCardId)).thenReturn(TestHelper.blackLotus());
-            when(deckRepository.fetchDeckByDeckId(validDeckId)).thenReturn(TestHelper.user2Deck());
+            when(deckRepository.fetchDeckByDeckId(validDeckId)).thenReturn(deckToEdit);
             when(cardDeckRepository.updateCardInDeck(validCardId,validDeckId,validQuantity)).thenReturn(true);
+            when(deckRepository.updateDeck(deckToEdit)).thenReturn(true);
             Result<Integer> result = deckService.updateCardInADeck(validCardId,validDeckId,validQuantity);
             assertTrue(result.isSuccess());
             assertEquals(validDeckId,result.getpayload());
@@ -395,9 +380,13 @@ public class DeckServiceTest {
         void shouldRemoveCardFromDeckCardInDeck(){
             int validCardId = 1;
             int validDeckId = 1;
+            Deck deckToEdit = TestHelper.deckToEdit();
+            deckToEdit.setDeckId(1);
+            deckToEdit.setDateUpdated(LocalDate.now());
             when(cardRepository.fetchCardById(validCardId)).thenReturn(TestHelper.blackLotus());
-            when(deckRepository.fetchDeckByDeckId(validDeckId)).thenReturn(TestHelper.user2Deck());
+            when(deckRepository.fetchDeckByDeckId(validDeckId)).thenReturn(deckToEdit);
             when(cardDeckRepository.removeCardFromDeck(validCardId,validDeckId)).thenReturn(true);
+            when(deckRepository.updateDeck(deckToEdit)).thenReturn(true);
             Result<Integer> result = deckService.removeCardFromDeck(validCardId,validDeckId);
             assertTrue(result.isSuccess());
             assertEquals(validDeckId,result.getpayload());

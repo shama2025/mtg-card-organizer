@@ -15,15 +15,12 @@ public class Deck {
     @NotBlank(message = "Name cannot be blank.")
     private String name;
     private int cardCount;
-    // TODO: Update date created to remove the annotations and test for in deck add service method
-    // this is because when we pass the whole thing over the date created will get checked and throw an error
+
     @NotNull(message = "Creation date cannot be null.")
     @PastOrPresent(message = "Creation date has to be today.")
     @FutureOrPresent(message = "Creation date has to be today.")
     private LocalDate dateCreated;
 
-    @NotNull(message = "Updated date cannot be null.")
-    @FutureOrPresent(message = "Updated date has to be today or in future.")
     private LocalDate dateUpdated;
     private List<Card> cardList = new ArrayList<>();
 
