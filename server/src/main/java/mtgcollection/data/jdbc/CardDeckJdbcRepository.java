@@ -3,6 +3,7 @@ package mtgcollection.data.jdbc;
 import mtgcollection.data.interfaces.CardDeckRepository;
 import mtgcollection.model.CardDeck;
 import org.springframework.jdbc.core.simple.JdbcClient;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +28,20 @@ public class CardDeckJdbcRepository implements CardDeckRepository {
                 .param("deckId",deckId)
                 .query(CardDeck.class)
                 .list();
+    }
+
+    @Override
+    public CardDeck addCardDeck(int cardId, int deckId) {
+        final String sql = """
+                 insert into card_deck (card_id, deck_id, quantity) values
+                 (:cardId, :deckId,1);
+                """;
+
+        jdbcClient.sql(sql)
+                .param("cardId", cardId)
+                .param("deckId", deckId)
+                .update();
+        return new CardDeck(cardId,deckId,1);
     }
 
     @Transactional

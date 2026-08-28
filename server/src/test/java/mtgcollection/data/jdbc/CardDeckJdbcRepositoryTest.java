@@ -45,6 +45,17 @@ class CardDeckJdbcRepositoryTest {
     }
 
     @Nested
+    class AddCardDeck{
+        @Test
+        void shouldAddCardDeck(){
+            CardDeck createdCardDeck = repository.addCardDeck(1,1);
+            assertEquals(1, createdCardDeck.cardId());
+            assertEquals(1,createdCardDeck.deckId());
+            assertEquals(1,createdCardDeck.quantity());
+        }
+    }
+
+    @Nested
     class DeleteDeckFromCardDeck{
         @Test
         void shouldDeleteDeck(){
