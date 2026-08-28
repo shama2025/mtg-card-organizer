@@ -4,6 +4,7 @@ import jakarta.validation.constraints.*;
 import mtgcollection.model.card.Card;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -15,11 +16,13 @@ public class Deck {
     private String name;
     private int cardCount;
 
+    @NotNull(message = "Creation date cannot be null.")
     @PastOrPresent(message = "Creation date has to be today.")
     @FutureOrPresent(message = "Creation date has to be today.")
     private LocalDate dateCreated;
+
     private LocalDate dateUpdated;
-    private List<Card> cardList;
+    private List<Card> cardList = new ArrayList<>();
 
     public Deck(int deckId, String name, int cardCount, LocalDate dateCreated, LocalDate dateUpdated, List<Card> cardList) {
         this.deckId = deckId;

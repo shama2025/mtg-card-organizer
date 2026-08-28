@@ -252,4 +252,7 @@ public class TestHelper {
     public static Deck deckToCreate(){
         return new Deck(0, "Temur Landfall",0,LocalDate.now(),null,null);
     }
+
+    public static Deck deckToEdit(){return new Deck(1,"Izzet Spellslinger",
+            60, LocalDate.now(), LocalDate.now().plusDays(5),TestHelper.cardList());}
 }

@@ -6,9 +6,10 @@ Content-Type: application/json
 authorization: {"id": "1", "email": "a@a.com"}
 
 {
-  "deckId": "1",
+  "deckId": "0",
   "name": "Goblins Standard",
-  "dateCreated": "2026-08-27"
+  "dateCreated": "2026-08-28",
+  "dateUpdated": "2026-08-28"
 }
 
 ### Bad Path
@@ -51,4 +52,54 @@ authorization: {"id": "1", "email": "a@a.com"}
 {
   "name": "Goblins Standard",
   "dateCreated": "1999-04-26"
+}
+
+### Add Card to Deck
+
+### Happy Path
+POST {{base_url}}/deck/1/card/cultivate
+Content-Type: application/json
+authorization: {"id": "1","email": "c@c.com"}
+
+{
+"deckId": 1,
+"name": "My Best Deck",
+"dateCreated": "2026-08-28",
+"dateUpdated": "2026-08-28"
+}
+
+### Bad Path Deck IDs don't match
+POST {{base_url}}/deck/999/card/black lotus
+Content-Type: application/json
+authorization: {"id": "1","email": "[a@a.com](mailto:a@a.com)"}
+
+{
+"deckId": 1,
+"name": "My Best Deck",
+"dateCreated": "2026-08-28",
+"dateUpdated": "2026-08-28"
+}
+
+### Bad Path dates are in past
+POST {{base_url}}/deck/1/card/black lotus
+Content-Type: application/json
+authorization: {"id": "1","email": "[a@a.com](mailto:a@a.com)"}
+
+{
+"deckId": 1,
+"name": "My Best Deck",
+"dateCreated": "2026-08-20",
+"dateUpdated": "2026-08-20"
+}
+
+### Bad Path deck name is blank
+POST {{base_url}}/deck/1/card/black lotus
+Content-Type: application/json
+authorization: {"id": "1","email": "[a@a.com](mailto:a@a.com)"}
+
+{
+"deckId": 1,
+"name": "",
+"dateCreated": "2026-08-28",
+"dateUpdated": "2026-08-28"
 }

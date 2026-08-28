@@ -47,33 +47,34 @@ public class CollectionService {
     public Result<Card> addCardToCollection(String cardName, int collectionId) throws InterruptedException, JsonProcessingException {
         Result<Card> result = new Result<>();
         validate(result,cardName,collectionId);
-        if(!result.isSuccess()){
+        if (!result.isSuccess()) {
             return result;
         }
-        // Check if card is in db
+
         Card card;
-        try{
-            // Card already in db
+        try {
             card = fetchCardJdbcRepo(cardName);
-        }catch(EmptyResultDataAccessException ex){
-            // card not found
-            card = fetchCardHttpRepo(cardName);
-            if(card == null){
+            if (card == null) {
                 result.addErrorMessage("Card not found.", ResultType.NOT_FOUND);
                 return result;
             }
-        }
-        card = new Card(0, card.getCardId(),card.getName(),
-                card.getSet(),card.getLegalities(), card.getImgPath(),
-                card.getManaColor(),card.getManaCost(),
-                card.getArtistName(),1);
+        } catch (EmptyResultDataAccessException ex) {
+            card = fetchCardHttpRepo(cardName);
+            if (card == null) {
+                result.addErrorMessage("Card not found.", ResultType.NOT_FOUND);
+                return result;
+            }
 
-        card = cardRepository.addCard(card);
-        CardCollection cardCollection = cardCollectionRepository.addCardToCollection(card.getId(),collectionId);
-        if(cardCollection.collectionId() != collectionId
-                && cardCollection.cardId() != card.getId()){
-            result.addErrorMessage("Error adding card to collection", ResultType.INVALID);
+            card = cardRepository.addCard(card);
         }
+
+        CardCollection cardCollection = cardCollectionRepository.addCardToCollection(card.getId(), collectionId);
+
+        if (cardCollection == null || cardCollection.collectionId() != collectionId || cardCollection.cardId() != card.getId()) {
+            result.addErrorMessage("Error adding card to collection", ResultType.INVALID);
+            return result;
+        }
+
         result.setpayload(card);
         return result;
     }

@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.dao.EmptyResultDataAccessException;
 
 import java.util.List;
 import java.util.Optional;
@@ -56,43 +57,43 @@ class CollectionServiceTest {
         // Should Add card that is not present in card table
         @Test
         void shouldAddCardThatDoesNotExistInCardTable() throws Exception {
-            Card cardNotInCardTable =TestHelper.blackLotus();
+            Card cardNotInCardTable = TestHelper.blackLotus();
             Card expected = TestHelper.blackLotus();
             int validCollectionId = TestHelper.collection().getCollectionId();
             expected.setId(5);
-            when(collectionRepository.fetchCollectionByCollectionId(TestHelper.collection().getCollectionId()))
-                    .thenReturn(TestHelper.collection());
-            when(cardRepository.fetchCardByName(cardNotInCardTable.getName()))
-                    .thenReturn(null);
+
+            when(collectionRepository.fetchCollectionByCollectionId(validCollectionId)).thenReturn(TestHelper.collection());
+            when(cardRepository.fetchCardByName(cardNotInCardTable.getName().toUpperCase()))
+                    .thenThrow(EmptyResultDataAccessException.class);
             when(scryFallApiHttpRepository.fetchCardFromScryfallByName(cardNotInCardTable.getName()))
                     .thenReturn(Optional.of(TestHelper.blackLotusCardResponse()));
             when(cardRepository.addCard(any(Card.class)))
                     .thenReturn(expected);
-            when(cardCollectionRepository.addCardToCollection(expected.getId(),validCollectionId))
+            when(cardCollectionRepository.addCardToCollection(expected.getId(), validCollectionId))
                     .thenReturn(new CardCollection(expected.getId(), validCollectionId, 1));
-            Result<Card> result = collectionService.addCardToCollection(cardNotInCardTable.getName(),validCollectionId);
+
+            Result<Card> result = collectionService.addCardToCollection(cardNotInCardTable.getName(), validCollectionId);
+
             assertTrue(result.isSuccess());
             assertEquals(expected, result.getpayload());
+            assertEquals(5, result.getpayload().getId());
         }
 
-        // Should Add Card that is present in card table
         @Test
         void shouldAddCardThatExistsInCardTable() throws Exception {
             Card cardPresentInCardTable = TestHelper.solRing();
-            Card expected = TestHelper.solRing();
             int validCollectionId = TestHelper.collection().getCollectionId();
-            expected.setId(5);
-            when(collectionRepository.fetchCollectionByCollectionId(TestHelper.collection().getCollectionId()))
-                    .thenReturn(TestHelper.collection());
-            when(cardRepository.fetchCardByName(eq(cardPresentInCardTable.getName().toUpperCase())))
+
+            when(collectionRepository.fetchCollectionByCollectionId(validCollectionId)).thenReturn(TestHelper.collection());
+            when(cardRepository.fetchCardByName(cardPresentInCardTable.getName().toUpperCase()))
                     .thenReturn(cardPresentInCardTable);
-            when(cardRepository.addCard(any(Card.class)))
-                    .thenReturn(expected);
-            when(cardCollectionRepository.addCardToCollection(expected.getId(), validCollectionId))
-                    .thenReturn(new CardCollection(expected.getId(),validCollectionId, 1));
-            Result<Card> result = collectionService.addCardToCollection(cardPresentInCardTable.getName(),validCollectionId);
+            when(cardCollectionRepository.addCardToCollection(cardPresentInCardTable.getId(), validCollectionId))
+                    .thenReturn(new CardCollection(cardPresentInCardTable.getId(), validCollectionId, 1));
+
+            Result<Card> result = collectionService.addCardToCollection(cardPresentInCardTable.getName(), validCollectionId);
+
             assertTrue(result.isSuccess());
-            assertEquals(expected, result.getpayload());
+            assertEquals(cardPresentInCardTable, result.getpayload());
         }
 
         // Should not add card if name card does not exist

@@ -12,5 +12,7 @@ public interface DeckRepository {
 
     Deck createDeck(Deck deck);
 
+    boolean updateDeck(Deck deck);
+
     boolean removeDeck(int deckId);
 }
