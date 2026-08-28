@@ -6,9 +6,10 @@ Content-Type: application/json
 authorization: {"id": "1", "email": "a@a.com"}
 
 {
-  "deckId": "1",
+  "deckId": "0",
   "name": "Goblins Standard",
-  "dateCreated": "2026-08-27"
+  "dateCreated": "2026-08-28",
+  "dateUpdated": "2026-08-28"
 }
 
 ### Bad Path

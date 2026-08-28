@@ -7,13 +7,8 @@ import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 import mtgcollection.data.http.ScryFallApiHttpRepository;
 import mtgcollection.data.http.response.model.CardResponse;
-import mtgcollection.data.interfaces.CollectionDeckRepository;
-import mtgcollection.data.interfaces.CollectionRepository;
-import mtgcollection.data.interfaces.DeckRepository;
+import mtgcollection.data.interfaces.*;
 import mtgcollection.model.*;
-import mtgcollection.data.interfaces.CardDeckRepository;
-import mtgcollection.data.interfaces.CardRepository;
-import mtgcollection.data.interfaces.DeckRepository;
 import mtgcollection.model.card.Card;
 import mtgcollection.model.card.ManaColor;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -38,6 +33,7 @@ public class DeckService {
     private final CollectionDeckRepository collectionDeckRepository;
 
     private final ScryFallApiHttpRepository scryFallApiHttpRepository;
+
 
     public DeckService(DeckRepository deckRepository,CardDeckRepository cardDeckRepository,
                        CardRepository cardRepository, CollectionRepository collectionRepository,
@@ -147,26 +143,22 @@ public class DeckService {
         }
         // Check if card is in db
         Card card;
-        try{
-            // Card already in db
+        try {
+            // Card already exists in local DB
             card = fetchCardJdbcRepo(cardName);
-            if(card == null){
-                result.addErrorMessage("Card not found.", ResultType.NOT_FOUND);
-                return result;
-            }
-        }catch(EmptyResultDataAccessException ex){
-            // card not found
+        } catch (EmptyResultDataAccessException ex) {
+            // Card not found in DB -> Fetch from Scryfall HTTP API
             card = fetchCardHttpRepo(cardName);
-            if(card == null){
+            if (card == null) {
                 result.addErrorMessage("Card not found.", ResultType.NOT_FOUND);
                 return result;
             }
+
+            // Insert into DB. cardRepository.addCard() MUST return the Card object
+            // populated with the auto-generated database primary key (card.getId()).
             card = cardRepository.addCard(card);
-            card = new Card(0, card.getCardId(),card.getName(),
-                    card.getSet(),card.getLegalities(), card.getImgPath(),
-                    card.getManaColor(),card.getManaCost(),
-                    card.getArtistName(),1);
         }
+        List<Card> cardList = deck.getCardList();
         // Add card to card_deck table
         CardDeck cardDeck = cardDeckRepository.addCardDeck(card.getId(),deck.getDeckId());
         if(cardDeck == null){
@@ -176,6 +168,7 @@ public class DeckService {
         // Update Deck
         boolean isDeckUpdated = deckRepository.updateDeck(deck);
         if(isDeckUpdated){
+
             result.setpayload(deck);
         }else{
             result.addErrorMessage("Error updating deck.",ResultType.INVALID);
@@ -249,5 +242,4 @@ public class DeckService {
     private Card fetchCardHttpRepo(String cardName) throws InterruptedException {
         return parseCardResponse(scryFallApiHttpRepository.fetchCardFromScryfallByName(cardName));
     }
-
 }

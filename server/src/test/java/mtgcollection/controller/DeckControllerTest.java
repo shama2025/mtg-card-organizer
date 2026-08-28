@@ -330,6 +330,121 @@ class DeckControllerTest {
     }
 
     @Nested
+    class AddCardToDeckTest{
+        // Should add card to deck
+        @Test
+        void shouldAddCardToDeck() throws Exception {
+            Deck deckToEdit = TestHelper.deckToEdit();
+            String cardNameReal = "BLACK LOTUS";
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.registerModule(new JavaTimeModule());
+            String deckToEditString = mapper.writeValueAsString(deckToEdit);
+            Result<Deck> result = new Result<>();
+            result.setpayload(deckToEdit);
+            when(deckService.addCardToDeck(deckToEdit,cardNameReal)).thenReturn(result);
+            MockHttpServletRequestBuilder request =
+                    MockMvcRequestBuilders.put("/api/deck/{deckId}/card/{cardName}",deckToEdit.getDeckId(),cardNameReal)
+                            .header("authorization", "{\"id\": \"1\",\"email\": \"a@a.com\"}")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(deckToEditString);
+            mvc.perform(request).andExpect(status().isNoContent());
+        }
+
+        // Should not add card to deck where deckId path and body don't match
+        @Test
+        void shouldNotAddCardToDeckWhereDeckIdPathAndRequestBodyDontMatch() throws Exception {
+            Deck deckToEdit = TestHelper.deckToEdit();
+            String cardNameNotReal = "BLACK LOTUS PRIME";
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.registerModule(new JavaTimeModule());
+            String deckToEditString = mapper.writeValueAsString(deckToEdit);
+            MockHttpServletRequestBuilder request =
+                    MockMvcRequestBuilders.put("/api/deck/{deckId}/card/{cardName}",Integer.MAX_VALUE,cardNameNotReal)
+                            .header("authorization", "{\"id\": \"1\",\"email\": \"a@a.com\"}")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(deckToEditString);
+            mvc.perform(request).andExpect(status().isBadRequest());
+        }
+
+        // Should not add card where card does not exist
+        @Test
+        void shouldNotAddCardToDeckWhereCardDoesNotExist() throws Exception {
+            Deck deckToEdit = TestHelper.deckToEdit();
+            String cardNameNotReal = "BLACK LOTUS PRIME";
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.registerModule(new JavaTimeModule());
+            String deckToEditString = mapper.writeValueAsString(deckToEdit);
+            Result<Deck> result = new Result<>();
+            result.addErrorMessage("Card not found",ResultType.NOT_FOUND);
+            when(deckService.addCardToDeck(deckToEdit,cardNameNotReal)).thenReturn(result);
+            MockHttpServletRequestBuilder request =
+                    MockMvcRequestBuilders.put("/api/deck/{deckId}/card/{cardName}",deckToEdit.getDeckId(),cardNameNotReal)
+                            .header("authorization", "{\"id\": \"1\",\"email\": \"a@a.com\"}")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(deckToEditString);
+            mvc.perform(request).andExpect(status().isNotFound());
+        }
+
+        // Should not add card where deck does not exist
+        @Test
+        void shouldNotAddCardToDeckWhereDeckDoesNotExist() throws Exception {
+            Deck deckToEdit = TestHelper.deckToEdit();
+            String cardName = "BLACK LOTUS";
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.registerModule(new JavaTimeModule());
+            String deckToEditString = mapper.writeValueAsString(deckToEdit);
+            Result<Deck> result = new Result<>();
+            result.addErrorMessage("Deck not found",ResultType.NOT_FOUND);
+            when(deckService.addCardToDeck(deckToEdit,cardName)).thenReturn(result);
+            MockHttpServletRequestBuilder request =
+                    MockMvcRequestBuilders.put("/api/deck/{deckId}/card/{cardName}",deckToEdit.getDeckId(),cardName)
+                            .header("authorization", "{\"id\": \"1\",\"email\": \"a@a.com\"}")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(deckToEditString);
+            mvc.perform(request).andExpect(status().isNotFound());
+        }
+
+
+        // Should not add card where cardDeck does note xist
+        @Test
+        void shouldNotAddCardToDeckWhereCardDeckDoesHasErrorAddingCardToDeck() throws Exception {
+            Deck deckToEdit = TestHelper.deckToEdit();
+            String cardName = "BLACK LOTUS";
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.registerModule(new JavaTimeModule());
+            String deckToEditString = mapper.writeValueAsString(deckToEdit);
+            Result<Deck> result = new Result<>();
+            result.addErrorMessage("Error adding card to deck.",ResultType.INVALID);
+            when(deckService.addCardToDeck(deckToEdit,cardName)).thenReturn(result);
+            MockHttpServletRequestBuilder request =
+                    MockMvcRequestBuilders.put("/api/deck/{deckId}/card/{cardName}",deckToEdit.getDeckId(),cardName)
+                            .header("authorization", "{\"id\": \"1\",\"email\": \"a@a.com\"}")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(deckToEditString);
+            mvc.perform(request).andExpect(status().isBadRequest());
+        }
+
+        // Should not Add card where adding to deck fails
+        @Test
+        void shouldNotAddCardToDeckWhereUpdatingDeckFails() throws Exception {
+            Deck deckToEdit = TestHelper.deckToEdit();
+            String cardName = "BLACK LOTUS";
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.registerModule(new JavaTimeModule());
+            String deckToEditString = mapper.writeValueAsString(deckToEdit);
+            Result<Deck> result = new Result<>();
+            result.addErrorMessage("Error updating deck",ResultType.INVALID);
+            when(deckService.addCardToDeck(deckToEdit,cardName)).thenReturn(result);
+            MockHttpServletRequestBuilder request =
+                    MockMvcRequestBuilders.put("/api/deck/{deckId}/card/{cardName}",deckToEdit.getDeckId(),cardName)
+                            .header("authorization", "{\"id\": \"1\",\"email\": \"a@a.com\"}")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(deckToEditString);
+            mvc.perform(request).andExpect(status().isBadRequest());
+        }
+    }
+
+    @Nested
     class DeleteDeckTest{
         @Test
         void shouldDeleteDeck() throws Exception{

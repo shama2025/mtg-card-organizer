@@ -47,34 +47,35 @@ public class CollectionService {
     public Result<Card> addCardToCollection(String cardName, int collectionId) throws InterruptedException, JsonProcessingException {
         Result<Card> result = new Result<>();
         validate(result,cardName,collectionId);
-        if(!result.isSuccess()){
+        if (!result.isSuccess()) {
             return result;
         }
-        // Check if card is in db
+
         Card card;
-        try{
-            // Card already in db
+        try {
+            // Card already exists in local DB
             card = fetchCardJdbcRepo(cardName);
-        }catch(EmptyResultDataAccessException ex){
-            // card not found
+        } catch (EmptyResultDataAccessException ex) {
+            // Card not found in DB -> Fetch from Scryfall HTTP API
             card = fetchCardHttpRepo(cardName);
-            if(card == null){
+            if (card == null) {
                 result.addErrorMessage("Card not found.", ResultType.NOT_FOUND);
                 return result;
             }
+
+            // Insert into DB. cardRepository.addCard() MUST return the Card object
+            // populated with the auto-generated database primary key (card.getId()).
             card = cardRepository.addCard(card);
-            card = new Card(0, card.getCardId(),card.getName(),
-                    card.getSet(),card.getLegalities(), card.getImgPath(),
-                    card.getManaColor(),card.getManaCost(),
-                    card.getArtistName(),1);
         }
 
+        // Pass the database primary key (e.g., card.getId() = 42)
+        CardCollection cardCollection = cardCollectionRepository.addCardToCollection(card.getId(), collectionId);
 
-        CardCollection cardCollection = cardCollectionRepository.addCardToCollection(card.getId(),collectionId);
-        if(cardCollection.collectionId() != collectionId
-                && cardCollection.cardId() != card.getId()){
+        if (cardCollection.collectionId() != collectionId || cardCollection.cardId() != card.getId()) {
             result.addErrorMessage("Error adding card to collection", ResultType.INVALID);
+            return result;
         }
+
         result.setpayload(card);
         return result;
     }
