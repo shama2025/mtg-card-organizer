@@ -10,11 +10,11 @@ export default function CardInfo({ card }) {
   }
 
   return (
-    <div className="bg-jeskai-card h-full text-jeskai-white-pure rounded-xl border border-slate-700 p-5 shadow-xl flex flex-col gap-4 max-h-[calc(100vh-6rem)] overflow-y-auto">
+    <div className="bg-jeskai-card h-full text-jeskai-white-pure rounded-xl border border-slate-700 p-5 shadow-xl flex flex-col gap-4 overflow-y-auto">
       <div className="flex justify-center bg-slate-900/50 p-3 rounded-lg border border-slate-800">
         <img
           src={card?.imgPath?.[0]?.large || card?.imgPath}
-          className="h-64 object-contain rounded-md shadow-md hover:scale-105 transition-transform"
+          className="h-70 object-contain  hover:scale-105 transition-transform"
           alt={card?.name || "Card image"}
         />
       </div>
