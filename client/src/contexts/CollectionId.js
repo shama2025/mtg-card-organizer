@@ -1,5 +1,5 @@
-import { createContext } from "react";
+import { createContext, useContext } from "react";
 
-export const CollectionId = createContext(
-  JSON.parse(localStorage.getItem("collection_id")),
-);
+export const CollectionId = createContext(null);
+
+export const useCollectionId = () => useContext(CollectionId);

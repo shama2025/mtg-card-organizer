@@ -9,14 +9,14 @@ import { Minus, Plus } from "lucide-react";
 import ErrorList from "../ErrorList/ErrorList";
 
 export default function Collection() {
-  const loggedInUser = useContext(LoggedInUser);
-  const collectionId = useContext(CollectionId);
-
   const [collection, setCollection] = useState(undefined);
   const [card, setCard] = useState(undefined);
   const [errors, setErrors] = useState([]);
   const [isAddCardModalVisible, setAddCardModalVisible] = useState(false);
   const [collectionQuantity, setCollectionQuantity] = useState(0);
+
+  const loggedInUser = useContext(LoggedInUser);
+  const collectionId = useContext(CollectionId).collectionId;
 
   function handleCardCount(card, isQuantityIncreased) {
     card.quantity = card.quantity + (isQuantityIncreased ? 1 : -1);

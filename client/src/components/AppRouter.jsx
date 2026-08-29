@@ -4,16 +4,21 @@ import Layout from "./Layout";
 import SignUpForm from "./UserForms/SignUpForm/SignUpForm";
 import LoginForm from "./UserForms/LoginForm/LoginForm";
 import Collection from "./Collection/Collection/Collection";
+import { CollectionId } from "../contexts/CollectionId";
 
 export default function AppRouter() {
   const [loggedInUser, setLoggedInUser] = useState(
     JSON.parse(localStorage.getItem("user")),
   );
 
+  const [collectionId, setCollectionId] = useState(() => {
+    return localStorage.getItem("collection_id") || null;
+  });
+
   const routes = createBrowserRouter([
     {
       path: "/",
-      element: <Layout setLoggedInUser={setLoggedInUser} />,
+      element: <Layout />,
       children: [
         {
           path: "users",
@@ -40,5 +45,9 @@ export default function AppRouter() {
     },
   ]);
 
-  return <RouterProvider router={routes}></RouterProvider>;
+  return (
+    <CollectionId.Provider value={{ collectionId, setCollectionId }}>
+      <RouterProvider router={routes} />
+    </CollectionId.Provider>
+  );
 }
