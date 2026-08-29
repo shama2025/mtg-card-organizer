@@ -9,18 +9,11 @@ export default function AppRouter() {
   const [loggedInUser, setLoggedInUser] = useState(
     JSON.parse(localStorage.getItem("user")),
   );
-  const [collectionId, setCollectionId] = useState(loggedInUser.collectionId);
 
   const routes = createBrowserRouter([
     {
       path: "/",
-      element: (
-        <Layout
-          collectionId={collectionId}
-          loggedInUser={loggedInUser}
-          setLoggedInUser={setLoggedInUser}
-        />
-      ),
+      element: <Layout setLoggedInUser={setLoggedInUser} />,
       children: [
         {
           path: "users",
@@ -38,10 +31,7 @@ export default function AppRouter() {
         {
           path: "collection",
           element: loggedInUser ? (
-            <Collection
-              collectionId={collectionId}
-              loggedInUser={loggedInUser}
-            />
+            <Collection />
           ) : (
             <LoginForm setLoggedInUser={setLoggedInUser} />
           ),

@@ -74,7 +74,7 @@ public class CollectionService {
             result.addErrorMessage("Error adding card to collection", ResultType.INVALID);
             return result;
         }
-
+        card.setQuantity(cardCollection.quantity());
         result.setpayload(card);
         return result;
     }
