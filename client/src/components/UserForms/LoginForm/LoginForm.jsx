@@ -23,6 +23,7 @@ export default function LoginForm({ setLoggedInUser }) {
       // navigate to layout
       setLoggedInUser(response.user);
       localStorage.setItem("user", JSON.stringify(response.user));
+      localStorage.setItem("collection_id", response.user.collectionId);
       navigator("/");
     } else {
       // Handle error
