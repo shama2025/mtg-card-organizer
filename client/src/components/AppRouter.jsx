@@ -9,9 +9,6 @@ export default function AppRouter() {
   const [loggedInUser, setLoggedInUser] = useState(
     JSON.parse(localStorage.getItem("user")),
   );
-  const [collectionId, setCollectionId] = useState(
-    localStorage.getItem("collection_id"),
-  );
 
   const routes = createBrowserRouter([
     {
