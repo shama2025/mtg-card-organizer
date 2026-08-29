@@ -19,26 +19,26 @@ export default function AddCardModal({
   const [isSpinnerHidden, setIsSpinnerHidden] = useState(true);
 
   async function handleSubmit(event) {
-  event.preventDefault();
-  setIsSpinnerHidden(false);
-  const { card, errors } = await addCardToCollection(
-    cardName,
-    collectionId,
-    loggedInUser,
-  );
-  setIsSpinnerHidden(true);
-  if (errors) {
-    setErrors([errors]);
-    return;
+    event.preventDefault();
+    setIsSpinnerHidden(false);
+    const { card, errors } = await addCardToCollection(
+      cardName,
+      collectionId,
+      loggedInUser,
+    );
+    setIsSpinnerHidden(true);
+    if (errors) {
+      setErrors([errors]);
+      return;
+    }
+    if (card && card.id) {
+      setCollection((prevCollection) => [...prevCollection, card]);
+      setCardName("");
+      setAddCardModalVisible(false);
+    } else {
+      setErrors(["Received invalid card data from server."]);
+    }
   }
-  if (card && card.id) {
-    setCollection((prevCollection) => [...prevCollection, card]);
-    setCardName("");
-    setAddCardModalVisible(false);
-  } else {
-    setErrors(["Received invalid card data from server."]);
-  }
-}
 
   return (
     <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">

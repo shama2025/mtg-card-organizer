@@ -14,13 +14,15 @@ export async function addCardToCollection(name, collectionId, loggedInUser) {
       const payload = await response.json();
       return {
         card: payload,
-        errors: undefined
+        errors: undefined,
       };
     } else {
       const payload = await response.json();
       return {
         card: undefined,
-        errors: payload.message || "Failed to add card. Make sure card doesn't already exist.",
+        errors:
+          payload.message ||
+          "Failed to add card. Make sure card doesn't already exist.",
       };
     }
   } catch (errors) {
