@@ -1,10 +1,12 @@
 import { React, useContext, useEffect, useState } from "react";
-import { fetchCollection } from "./http";
+import { deleteCard, editCardCount, fetchCollection } from "./http";
 import CardInfo from "../CardInfoContainer/CardInfo";
 import AddCard from "../AddCard/AddCard";
 import AddCardModal from "../AddCardModal/AddCardModal";
 import { LoggedInUser } from "../../../contexts/LoggedInUser";
 import { CollectionId } from "../../../contexts/CollectionId";
+import { Minus, Plus } from "lucide-react";
+import ErrorList from "../ErrorList/ErrorList";
 
 export default function Collection() {
   const loggedInUser = useContext(LoggedInUser);
@@ -14,18 +16,76 @@ export default function Collection() {
   const [card, setCard] = useState(undefined);
   const [errors, setErrors] = useState([]);
   const [isAddCardModalVisible, setAddCardModalVisible] = useState(false);
+  const [collectionQuantity, setCollectionQuantity] = useState(0);
 
-  useEffect(function () {
-    async function handleFecthCollection() {
-      const response = await fetchCollection(collectionId, loggedInUser);
-      if (response.collection) {
-        setCollection(response.collection);
-      } else {
-        setErrors(response.errors);
+  function handleCardCount(card, isQuantityIncreased) {
+    card.quantity = card.quantity + (isQuantityIncreased ? 1 : -1);
+    if (card.quantity > 0) {
+      // edit card
+      const { cardId, errors } = editCardCount(
+        card.quantity,
+        card.id,
+        collectionId,
+        loggedInUser,
+      );
+      if (errors) {
+        setErrors(errors);
+        return;
+      }
+      if (cardId) {
+        // update state of collection
+        let index = collection.indexOf(card);
+        let collectionCopy = [...collection];
+        collectionCopy[index] = card;
+        setCollection(collectionCopy);
+        calculateCollectionQuantity();
+      }
+    } else if (card.quantity === 0) {
+      // delete card
+      const { cardId, errors } = deleteCard(
+        card.id,
+        collectionId,
+        loggedInUser,
+      );
+      if (errors) {
+        setErrors(errors);
+        return;
+      }
+      if (cardId) {
+        // update state of collection
+        debugger;
+        let index = collection.indexOf(card);
+        let collectionCopy = [...collection];
+        collectionCopy.splice(index, 1);
+        setCollection(collectionCopy);
+        calculateCollectionQuantity();
       }
     }
-    handleFecthCollection();
-  }, []);
+  }
+
+  function calculateCollectionQuantity() {
+    let sum = 0;
+    collection.forEach((card) => {
+      sum += card.quantity;
+    });
+    setCollectionQuantity(sum);
+  }
+
+  useEffect(
+    function () {
+      async function handleFecthCollection() {
+        const response = await fetchCollection(collectionId, loggedInUser);
+        if (response.collection) {
+          setCollection(response.collection);
+          calculateCollectionQuantity();
+        } else {
+          setErrors(response.errors);
+        }
+      }
+      handleFecthCollection();
+    },
+    [collection],
+  );
 
   if (!collection) {
     return (
@@ -45,6 +105,13 @@ export default function Collection() {
                 No cards in your collection. Would you like to add one?
               </p>
               <AddCard setAddCardModalVisible={setAddCardModalVisible} />
+              {errors.length > 0 ? (
+                <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+                  <ErrorList errors={errors} />
+                </div>
+              ) : (
+                <></>
+              )}
               <div hidden={!isAddCardModalVisible}>
                 <AddCardModal
                   setAddCardModalVisible={setAddCardModalVisible}
@@ -76,12 +143,19 @@ export default function Collection() {
           <p className="text-sm text-slate-300">
             Total Cards:{" "}
             <span className="font-semibold text-white">
-              {collection.length}
+              {collectionQuantity}
             </span>
           </p>
         </div>
 
         <div className="relative lg:col-span-6 bg-jeskai-white-border p-4 rounded-xl border border-slate-300 shadow-md">
+          {errors.length > 0 ? (
+            <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+              <ErrorList errors={errors} />
+            </div>
+          ) : (
+            <></>
+          )}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             <AddCard setAddCardModalVisible={setAddCardModalVisible} />
             {collection.map((card) => (
@@ -93,6 +167,34 @@ export default function Collection() {
                 <div className="relative inline-block overflow-hidden rounded-lg transition-transform duration-200 hover:scale-105 hover:-translate-y-1 cursor-pointer">
                   <div className="absolute z-10 bg-jeskai-blue-light text-jeskai-dark font-bold text-xs px-2 py-0.5 rounded-full shadow-md">
                     {card?.quantity}
+                  </div>
+                  <div
+                    className="absolute z-10
+                   hover:bg-gray-500
+                    hover:scale-115 
+                    border-jeskai-blue 
+                    top-5 right-1.5 
+                    bg-gray-500/50
+                     text-jeskai-dark 
+                     font-bold text-xs 
+                     px-1 py-0.5 
+                     rounded-md 
+                     shadow-md
+                     "
+                    onClick={() => handleCardCount(card, true)}
+                  >
+                    <Plus />
+                  </div>
+                  <div
+                    className="absolute z-10
+                   hover:bg-gray-500 hover:scale-115
+                    border-jeskai-blue top-15 right-1.5
+                     bg-gray-500/50 text-jeskai-dark 
+                     font-bold text-xs px-1 py-0.5 
+                     rounded-md shadow-md"
+                    onClick={() => handleCardCount(card, false)}
+                  >
+                    <Minus />
                   </div>
                   <img
                     src={card?.imgPath?.[0]?.large || card?.imgPath}

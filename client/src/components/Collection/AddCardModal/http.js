@@ -14,17 +14,21 @@ export async function addCardToCollection(name, collectionId, loggedInUser) {
       const payload = await response.json();
       return {
         card: payload,
+        errors: undefined,
       };
     } else {
-      debugger;
       const payload = await response.json();
       return {
-        errors: payload.message,
+        card: undefined,
+        errors:
+          payload.message ||
+          "Failed to add card. Make sure card doesn't already exist.",
       };
     }
   } catch (errors) {
     return {
-      errors: errors,
+      card: undefined,
+      errors: errors || "Network error.",
     };
   }
 }

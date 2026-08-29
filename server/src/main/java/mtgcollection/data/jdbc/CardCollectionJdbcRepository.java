@@ -17,6 +17,19 @@ public class CardCollectionJdbcRepository implements CardCollectionRepository {
     }
 
     @Override
+    public CardCollection fetchCard(int cardId, int collectionId) {
+        final String sql = """
+                select cd.card_id, cd.collection_id, cd.quantity from collection_card cd
+                where cd.card_id = :cardId and cd.collection_id = :collectionId
+                """;
+        return jdbcClient.sql(sql)
+                .param("cardId", cardId)
+                .param("collectionId", collectionId)
+                .query(CardCollection.class)
+                .single();
+    }
+
+    @Override
     public CardCollection addCardToCollection(int cardId, int collectionId) {
         final String sql = """
                 insert into collection_card(collection_id,card_id,quantity)

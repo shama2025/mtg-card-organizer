@@ -20,24 +20,24 @@ export default function AddCardModal({
 
   async function handleSubmit(event) {
     event.preventDefault();
-    // Display Spinner
     setIsSpinnerHidden(false);
     const { card, errors } = await addCardToCollection(
       cardName,
       collectionId,
       loggedInUser,
     );
+    setIsSpinnerHidden(true);
     if (errors) {
-      // Hide Spinner
-      setIsSpinnerHidden(true);
       setErrors([errors]);
       return;
     }
-    // Hide Spinner
-    setIsSpinnerHidden(true);
-    setCollection([...collection, card]);
-    setCardName("");
-    setAddCardModalVisible(false);
+    if (card && card.id) {
+      setCollection((prevCollection) => [...prevCollection, card]);
+      setCardName("");
+      setAddCardModalVisible(false);
+    } else {
+      setErrors(["Received invalid card data from server."]);
+    }
   }
 
   return (

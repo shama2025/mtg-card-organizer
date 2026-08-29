@@ -68,6 +68,12 @@ public class CollectionService {
             card = cardRepository.addCard(card);
         }
 
+
+        if(isCardInCollection(card.getId(),collectionId)){
+            result.addErrorMessage("Card already exists in collection.",ResultType.INVALID);
+            return result;
+        }
+
         CardCollection cardCollection = cardCollectionRepository.addCardToCollection(card.getId(), collectionId);
 
         if (cardCollection == null || cardCollection.collectionId() != collectionId || cardCollection.cardId() != card.getId()) {
@@ -171,6 +177,16 @@ public class CollectionService {
 
     private Card fetchCardHttpRepo(String cardName) throws InterruptedException {
         return parseCardResponse(scryFallApiHttpRepository.fetchCardFromScryfallByName(cardName));
+    }
+
+    private boolean isCardInCollection(int cardId, int collectionId){
+
+        try {
+            cardCollectionRepository.fetchCard(cardId,collectionId);
+            return true;
+        }catch(EmptyResultDataAccessException ex){
+            return false;
+        }
     }
 
 }

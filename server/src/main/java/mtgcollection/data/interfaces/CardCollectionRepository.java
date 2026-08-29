@@ -6,6 +6,8 @@ import mtgcollection.model.Collection;
 
 public interface CardCollectionRepository {
 
+    CardCollection fetchCard(int cardId, int collectionId);
+
     CardCollection addCardToCollection(int cardToAddId, int collectionId);
 
     boolean updateCardInCollection(int cardId, int collectionId,int quantity);
