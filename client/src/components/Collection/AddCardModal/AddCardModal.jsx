@@ -3,7 +3,7 @@ import { CircleX, Forward } from "lucide-react";
 import { CollectionId } from "../../../contexts/CollectionId";
 import { LoggedInUser } from "../../../contexts/LoggedInUser";
 import { addCardToCollection } from "./http";
-import ErrorList from "../ErrorList/ErrorList";
+import ErrorList from "../../ErrorList/ErrorList";
 import { Bars } from "react-loader-spinner";
 
 export default function AddCardModal({

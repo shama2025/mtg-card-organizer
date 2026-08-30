@@ -1,14 +1,18 @@
 import { React, useState } from "react";
 import { createUser } from "../util/http";
 import { useNavigate } from "react-router-dom";
+import { useCollectionId } from "../../../contexts/CollectionId";
+import ErrorList from "../../ErrorList/ErrorList";
 
 export default function SignUpForm({ setLoggedInUser }) {
+  const { setCollectionId } = useCollectionId();
+
   const [user, setUser] = useState({
     userId: 0,
     email: "",
     password: "",
   });
-  const [error, setError] = useState({});
+  const [errors, setError] = useState({});
 
   const navigator = useNavigate();
 
@@ -21,47 +25,59 @@ export default function SignUpForm({ setLoggedInUser }) {
     const response = await createUser(user);
 
     if (response.user) {
-      // navigate to layout
       setLoggedInUser(response.user);
       localStorage.setItem("user", JSON.stringify(response.user));
-      navigator("/");
+      localStorage.setItem("collection_id", response.user.collectionId);
+      setCollectionId(response.user.collectionId);
+      navigator("/collection");
     } else {
-      // Handle error
-      // set errors
       setError(response.errors);
     }
   }
 
   return (
-    <div>
-      <form onSubmit={(event) => handleSubmit(event)}>
-        <h3>Create an account</h3>
-        <div>
-          <label>
-            Email:{" "}
+    <div className="flex items-center justify-center min-h-screen">
+      <div className="text-jeskai-white-surface border-jeskai-white-border border rounded-2xl bg-jeskai-dark p-6 w-full max-w-md shadow-lg">
+        <h3 className="text-2xl font-bold mb-6 text-center">
+          Create an account
+        </h3>
+
+        <form onSubmit={(event) => handleSubmit(event)} className="space-y-4">
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-medium">Email</label>
             <input
-              type="text"
+              type="email"
+              placeholder="email@example.com"
               value={user.email}
               name="email"
               onChange={handleUserInput}
               required
+              className="border border-jeskai-white-border bg-transparent rounded-2xl p-3 focus:outline-none focus:ring-2 focus:ring-jeskai-white-surface"
             />
-          </label>
-        </div>
-        <div>
-          <label>
-            Password:{" "}
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-medium">Password</label>
             <input
               type="password"
+              placeholder="••••••••"
               value={user.password}
               name="password"
               onChange={handleUserInput}
               required
+              className="border border-jeskai-white-border bg-transparent rounded-2xl p-3 focus:outline-none focus:ring-2 focus:ring-jeskai-white-surface"
             />
-          </label>
-        </div>
-        <button type="submit">Sign Up</button>
-      </form>
+          </div>
+
+          <button
+            type="submit"
+            className="w-full mt-4 bg-jeskai-white-surface text-jeskai-dark font-semibold py-3 rounded-2xl hover:scale-105 hover:cursor-pointer transition-transform"
+          >
+            Sign Up
+          </button>
+          <ErrorList errors={errors} />
+        </form>
+      </div>
     </div>
   );
 }
