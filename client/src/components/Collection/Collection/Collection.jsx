@@ -12,7 +12,7 @@ import { LoggedInUser } from "../../../contexts/LoggedInUser";
 import { CollectionId } from "../../../contexts/CollectionId";
 import { Plus, Minus } from "lucide-react";
 import ErrorList from "../../ErrorList/ErrorList";
-import Binder from "../Binder/Binder";
+import BinderNameCard from "../BinderCard/BinderNameCard";
 
 export default function Collection() {
   const [collection, setCollection] = useState(undefined);
@@ -203,7 +203,7 @@ export default function Collection() {
                   className="hover:border-b-2 hover:scale-105 hover:border-jeskai-red-dark"
                 >
                   <div>
-                    <Binder binder={binder} />
+                    <BinderNameCard binder={binder} />
                   </div>
                 </div>
               );

@@ -6,6 +6,7 @@ import LoginForm from "./UserForms/LoginForm/LoginForm";
 import Collection from "./Collection/Collection/Collection";
 import { CollectionId } from "../contexts/CollectionId";
 import PageNotFound from "./404Page/PageNotFound";
+import BinderLandingPage from "./BinderPage/BinderLandingPage/BinderLandingPage";
 
 export default function AppRouter() {
   const [loggedInUser, setLoggedInUser] = useState(
@@ -39,6 +40,14 @@ export default function AppRouter() {
           path: "collection",
           element: loggedInUser ? (
             <Collection />
+          ) : (
+            <LoginForm setLoggedInUser={setLoggedInUser} />
+          ),
+        },
+        {
+          path: "/collection/binder/:binderId",
+          element: loggedInUser ? (
+            <BinderLandingPage />
           ) : (
             <LoginForm setLoggedInUser={setLoggedInUser} />
           ),

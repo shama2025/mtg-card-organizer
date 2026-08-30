@@ -1,5 +1,5 @@
-import binderUrl from "../binderUrl";
-import collectionUrl from "../collectionUrl";
+import binderUrl from "../../url/binderUrl";
+import collectionUrl from "../../url/collectionUrl";
 
 export async function fetchCollection(collectionId, loggedInUser) {
   try {
