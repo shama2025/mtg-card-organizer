@@ -1,4 +1,4 @@
-import collectionUrl from "../collectionUrl";
+import collectionUrl from "../../url/collectionUrl";
 
 export async function addCardToCollection(name, collectionId, loggedInUser) {
   try {
