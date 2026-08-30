@@ -2,6 +2,7 @@ import { React, useState } from "react";
 import { createUser } from "../util/http";
 import { useNavigate } from "react-router-dom";
 import { useCollectionId } from "../../../contexts/CollectionId";
+import ErrorList from "../../ErrorList/ErrorList";
 
 export default function SignUpForm({ setLoggedInUser }) {
   const { setCollectionId } = useCollectionId();
@@ -11,7 +12,7 @@ export default function SignUpForm({ setLoggedInUser }) {
     email: "",
     password: "",
   });
-  const [error, setError] = useState({});
+  const [errors, setError] = useState({});
 
   const navigator = useNavigate();
 
@@ -74,6 +75,7 @@ export default function SignUpForm({ setLoggedInUser }) {
           >
             Sign Up
           </button>
+          <ErrorList errors={errors} />
         </form>
       </div>
     </div>

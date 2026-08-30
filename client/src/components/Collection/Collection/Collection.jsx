@@ -6,7 +6,7 @@ import AddCardModal from "../AddCardModal/AddCardModal";
 import { LoggedInUser } from "../../../contexts/LoggedInUser";
 import { CollectionId } from "../../../contexts/CollectionId";
 import { Minus, Plus } from "lucide-react";
-import ErrorList from "../ErrorList/ErrorList";
+import ErrorList from "../../ErrorList/ErrorList";
 
 export default function Collection() {
   const [collection, setCollection] = useState(undefined);

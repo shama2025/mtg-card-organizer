@@ -1,8 +1,8 @@
 import { React, useState } from "react";
 import { loginUser } from "../util/http";
 import { useNavigate } from "react-router-dom";
-import { LoggedInUser } from "../../../contexts/LoggedInUser";
 import { useCollectionId } from "../../../contexts/CollectionId";
+import ErrorList from "../../ErrorList/ErrorList";
 
 export default function LoginForm({ setLoggedInUser }) {
   const { setCollectionId } = useCollectionId();
@@ -74,6 +74,7 @@ export default function LoginForm({ setLoggedInUser }) {
           >
             Sign Up
           </button>
+          <ErrorList errors={error} />
         </form>
       </div>
     </div>

@@ -5,6 +5,7 @@ import SignUpForm from "./UserForms/SignUpForm/SignUpForm";
 import LoginForm from "./UserForms/LoginForm/LoginForm";
 import Collection from "./Collection/Collection/Collection";
 import { CollectionId } from "../contexts/CollectionId";
+import PageNotFound from "./404Page/PageNotFound";
 
 export default function AppRouter() {
   const [loggedInUser, setLoggedInUser] = useState(
@@ -18,7 +19,8 @@ export default function AppRouter() {
   const routes = createBrowserRouter([
     {
       path: "/",
-      element: <Layout />,
+      element: <Layout setLoggedInUser={setLoggedInUser} />,
+      errorElement: <PageNotFound />,
       children: [
         {
           path: "users",
