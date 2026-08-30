@@ -1,3 +1,4 @@
+import binderUrl from "../binderUrl";
 import collectionUrl from "../collectionUrl";
 
 export async function fetchCollection(collectionId, loggedInUser) {
@@ -98,6 +99,35 @@ export async function deleteCard(cardId, collectionId, loggedInUser) {
     return {
       cardId: cardId,
       errors: errors,
+    };
+  }
+}
+
+export async function fetchBinders(collectionId, loggedInUser) {
+  try {
+    const response = await fetch(`${binderUrl}/decks/${collectionId}`, {
+      method: "GET",
+      headers: {
+        Authorization: JSON.stringify(loggedInUser),
+      },
+    });
+    if (response.ok) {
+      const payload = await response.json();
+      return {
+        binders: payload,
+        errors: null,
+      };
+    } else {
+      const payload = await response.json();
+      return {
+        binders: null,
+        errors: payload.message,
+      };
+    }
+  } catch (errors) {
+    return {
+      binders: null,
+      errors,
     };
   }
 }

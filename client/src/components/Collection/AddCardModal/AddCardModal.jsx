@@ -23,7 +23,7 @@ export default function AddCardModal({
     setIsSpinnerHidden(false);
     const { card, errors } = await addCardToCollection(
       cardName,
-      collectionId,
+      collectionId.collectionId,
       loggedInUser,
     );
     setIsSpinnerHidden(true);

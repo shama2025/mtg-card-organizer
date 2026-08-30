@@ -3,13 +3,13 @@
 ### Happy Pay
 POST {{base_url}}/collection/1/deck/1 HTTP/1.1
 Content-Type: application/json
-authorization: {"id": "1", "email": "a@a.com"}
+authorization: {"id": "1", "email": "c@c.com"}
 
 {
   "deckId": "0",
   "name": "Goblins Standard",
-  "dateCreated": "2026-08-28",
-  "dateUpdated": "2026-08-28"
+  "dateCreated": "2026-08-30",
+  "dateUpdated": "2026-08-30"
 }
 
 ### Bad Path

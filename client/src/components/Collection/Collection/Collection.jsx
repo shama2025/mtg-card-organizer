@@ -1,71 +1,78 @@
 import { React, useContext, useEffect, useState } from "react";
-import { deleteCard, editCardCount, fetchCollection } from "./http";
+import {
+  deleteCard,
+  editCardCount,
+  fetchBinders,
+  fetchCollection,
+} from "./http";
 import CardInfo from "../CardInfoContainer/CardInfo";
 import AddCard from "../AddCard/AddCard";
 import AddCardModal from "../AddCardModal/AddCardModal";
 import { LoggedInUser } from "../../../contexts/LoggedInUser";
 import { CollectionId } from "../../../contexts/CollectionId";
-import { Minus, Plus } from "lucide-react";
+import { Plus, Minus } from "lucide-react";
 import ErrorList from "../../ErrorList/ErrorList";
+import Binder from "../Binder/Binder";
 
 export default function Collection() {
   const [collection, setCollection] = useState(undefined);
   const [card, setCard] = useState(undefined);
-  const [errors, setErrors] = useState([]);
+  const [collectionErrors, setCollectionErrors] = useState([]);
   const [isAddCardModalVisible, setAddCardModalVisible] = useState(false);
   const [collectionQuantity, setCollectionQuantity] = useState(0);
+  const [binders, setBinders] = useState([]);
+  const [binderErrors, setBinderErrors] = useState([]);
 
   const loggedInUser = useContext(LoggedInUser);
   const collectionId = useContext(CollectionId).collectionId;
 
-  function handleCardCount(card, isQuantityIncreased) {
-    card.quantity = card.quantity + (isQuantityIncreased ? 1 : -1);
-    if (card.quantity > 0) {
-      // edit card
+  function handleCardCount(cardToUpdate, isQuantityIncreased) {
+    const updatedCard = {
+      ...cardToUpdate,
+      quantity: cardToUpdate.quantity + (isQuantityIncreased ? 1 : -1),
+    };
+
+    if (updatedCard.quantity > 0) {
+      // Edit existing card count
       const { cardId, errors } = editCardCount(
-        card.quantity,
-        card.id,
+        updatedCard.quantity,
+        updatedCard.id,
         collectionId,
         loggedInUser,
       );
       if (errors) {
-        setErrors(errors);
+        setCollectionErrors(errors);
         return;
       }
-      if (cardId) {
-        // update state of collection
-        let index = collection.indexOf(card);
-        let collectionCopy = [...collection];
-        collectionCopy[index] = card;
-        setCollection(collectionCopy);
-        calculateCollectionQuantity();
-      }
-    } else if (card.quantity === 0) {
-      // delete card
+
+      const updatedCollection = collection.map((c) =>
+        c.id === updatedCard.id ? updatedCard : c,
+      );
+      setCollection(updatedCollection);
+      calculateCollectionQuantity(updatedCollection);
+    } else if (updatedCard.quantity === 0) {
+      // Delete card completely
       const { cardId, errors } = deleteCard(
-        card.id,
+        updatedCard.id,
         collectionId,
         loggedInUser,
       );
       if (errors) {
-        setErrors(errors);
+        setCollectionErrors(errors);
         return;
       }
-      if (cardId) {
-        // update state of collection
-        debugger;
-        let index = collection.indexOf(card);
-        let collectionCopy = [...collection];
-        collectionCopy.splice(index, 1);
-        setCollection(collectionCopy);
-        calculateCollectionQuantity();
-      }
+
+      const updatedCollection = collection.filter(
+        (c) => c.id !== updatedCard.id,
+      );
+      setCollection(updatedCollection);
+      calculateCollectionQuantity(updatedCollection);
     }
   }
 
-  function calculateCollectionQuantity() {
+  function calculateCollectionQuantity(currentCollection) {
     let sum = 0;
-    collection.forEach((card) => {
+    currentCollection.forEach((card) => {
       sum += card.quantity;
     });
     setCollectionQuantity(sum);
@@ -77,14 +84,32 @@ export default function Collection() {
         const response = await fetchCollection(collectionId, loggedInUser);
         if (response.collection) {
           setCollection(response.collection);
-          calculateCollectionQuantity();
+          calculateCollectionQuantity(response.collection);
         } else {
-          setErrors(response.errors);
+          setCollectionErrors(response.errors);
         }
       }
       handleFecthCollection();
     },
-    [collection],
+    [collectionId, loggedInUser],
+  );
+
+  useEffect(
+    function () {
+      async function handleFetchBinders() {
+        const { binders, errors } = await fetchBinders(
+          collectionId,
+          loggedInUser,
+        );
+        if (errors) {
+          setBinderErrors(errors);
+        } else if (binders) {
+          setBinders(binders);
+        }
+      }
+      handleFetchBinders();
+    },
+    [collectionId, loggedInUser],
   );
 
   if (!collection) {
@@ -98,6 +123,16 @@ export default function Collection() {
             <p className="text-sm text-slate-300">
               Total Cards: <span className="font-semibold text-white">{0}</span>
             </p>
+            <div
+              className="lg:col-span-3 bg-jeskai-card
+         text-jeskai-white-pure p-4 rounded-xl border
+          border-slate-700 shadow-lg
+          mt-4
+          "
+            >
+              <p className="text-jeskai-white-pure text-lg">Binders</p>
+              <p>No binders in your collection. Would you like to add one?</p>
+            </div>
           </div>
           <div className="relative lg:col-span-6 bg-jeskai-white-border p-4 rounded-xl border border-slate-300 shadow-md">
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
@@ -105,9 +140,9 @@ export default function Collection() {
                 No cards in your collection. Would you like to add one?
               </p>
               <AddCard setAddCardModalVisible={setAddCardModalVisible} />
-              {errors.length > 0 ? (
+              {collectionErrors.length > 0 ? (
                 <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-                  <ErrorList errors={errors} />
+                  <ErrorList errors={collectionErrors} />
                 </div>
               ) : (
                 <></>
@@ -146,12 +181,39 @@ export default function Collection() {
               {collectionQuantity}
             </span>
           </p>
+          <div
+            className="lg:col-span-3 bg-jeskai-card
+         text-jeskai-white-pure p-4 rounded-xl border
+          border-slate-700 shadow-lg
+          mt-4
+          "
+          >
+            <p className="text-jeskai-white-pure text-lg">Binders</p>
+            {binderErrors.length > 0 ? (
+              <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+                <ErrorList errors={binderErrors} />
+              </div>
+            ) : (
+              <></>
+            )}
+            {binders.map((binder, elementId) => {
+              return (
+                <div
+                  key={elementId}
+                  className="hover:border-b-2 hover:scale-105 hover:border-jeskai-red-dark"
+                >
+                  <div>
+                    <Binder binder={binder} />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
-
         <div className="relative lg:col-span-6 bg-jeskai-white-border p-4 rounded-xl border border-slate-300 shadow-md">
-          {errors.length > 0 ? (
+          {collectionErrors.length > 0 ? (
             <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-              <ErrorList errors={errors} />
+              <ErrorList errors={collectionErrors} />
             </div>
           ) : (
             <></>
