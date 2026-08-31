@@ -3,6 +3,7 @@ import React from "react";
 export default function ErrorList({ errors }) {
   return (
     <div>
+      {console.log('errors: ', errors)}
       {errors.length > 0 && (
         <div className="bg-jeskai-red text-jeskai-white-pure p-1 rounded-md">
           <div className="alert alert-danger">
