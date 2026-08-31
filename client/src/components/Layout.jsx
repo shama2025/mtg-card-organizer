@@ -8,15 +8,16 @@ export default function Layout() {
   const loggedInUser = useContext(LoggedInUser)
   const navigator = useNavigate()
 
-  useEffect(() => {
-    if(loggedInUser){
-      navigator("/collection");
-    }
-},[])
+//   useEffect(() => {
+//     if(loggedInUser){
+//       navigator("/collection");
+//     }
+// },[])
 
   return (
     <div className="bg-jeskai-dark h-full">
       <Nav />
+      {/* TODO: When a user is not logged in display a branding page */}
       <Outlet />
     </div>
   );
