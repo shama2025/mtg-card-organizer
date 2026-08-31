@@ -16,6 +16,7 @@ import BinderNameCard from "../../Binder/BinderCard/BinderNameCard";
 import BinderModal from "../../Binder/BinderModal/BinderModal";
 import AddBinder from "../../Binder/AddBinder/AddBinder";
 import AddBinderModal from "../../Binder/AddBinderModal/AddBinderModal";
+import SearchBar from "../../UtilityComponents/SearchForCard/SearchBar";
 
 export default function Collection() {
   const [collection, setCollection] = useState(undefined);
@@ -247,7 +248,7 @@ export default function Collection() {
               binders={binders}
             />
           </div>
-          {/* <div>Search Bar + filter</div> */}
+          <SearchBar cardList={collection} setCardList={setCollection} />
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             <AddCard setAddCardModalVisible={setAddCardModalVisible} />
             {collection.map((card) => (
