@@ -78,6 +78,7 @@ export default function FilterCards({ cardList, setCardList }) {
           setSortBy(property);
           handleSort(property, sortOrder);
         }}
+        className="border m-1 h-7"
       >
         <option value="">Select a value</option>
         <option value="setName">Set</option>
@@ -92,6 +93,7 @@ export default function FilterCards({ cardList, setCardList }) {
           setSortOrder(newOrder);
           handleSort(sortBy, newOrder);
         }}
+         className="border m-1 h-7"
       >
         <option value="asc">Ascending</option>
         <option value="desc">Descending</option>
