@@ -1,9 +1,9 @@
 import React, { use, useContext, useEffect, useState } from "react";
 import { CircleX } from "lucide-react";
 import { Bars } from "react-loader-spinner";
-import ErrorList from "../../../ErrorList/ErrorList";
+import ErrorList from "../../ErrorList/ErrorList";
 import { deleteBinder } from "./http";
-import { LoggedInUser } from "../../../../contexts/LoggedInUser";
+import { LoggedInUser } from "../../../contexts/LoggedInUser";
 import { useNavigate } from "react-router-dom";
 
 export default function BinderModal({

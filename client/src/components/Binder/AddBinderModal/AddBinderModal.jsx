@@ -1,10 +1,10 @@
 import React, { useContext, useState } from "react";
 import { Bars } from "react-loader-spinner";
 import { CircleX, Forward } from "lucide-react";
-import ErrorList from "../../../ErrorList/ErrorList";
+import ErrorList from "../../ErrorList/ErrorList";
 import { addBinder } from "./http";
-import { CollectionId } from "../../../../contexts/CollectionId";
-import { LoggedInUser } from "../../../../contexts/LoggedInUser";
+import { CollectionId } from "../../../contexts/CollectionId";
+import { LoggedInUser } from "../../../contexts/LoggedInUser";
 
 export default function AddBinderModal({
   setDisplayBinderCardModal,

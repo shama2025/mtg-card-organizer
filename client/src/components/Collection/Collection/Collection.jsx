@@ -12,10 +12,12 @@ import { LoggedInUser } from "../../../contexts/LoggedInUser";
 import { CollectionId } from "../../../contexts/CollectionId";
 import { Plus, Minus, SquarePlus } from "lucide-react";
 import ErrorList from "../../ErrorList/ErrorList";
-import BinderNameCard from "../BinderCollection/BinderCard/BinderNameCard";
-import BinderModal from "../BinderCollection/BinderModal/BinderModal";
-import AddBinder from "../BinderCollection/AddBinder/AddBinder";
-import AddBinderModal from "../BinderCollection/AddBinderModal/AddBinderModal";
+import BinderNameCard from "../../Binder/BinderCard/BinderNameCard";
+import BinderModal from "../../Binder/BinderModal/BinderModal";
+import AddBinder from "../../Binder/AddBinder/AddBinder";
+import AddBinderModal from "../../Binder/AddBinderModal/AddBinderModal";
+import SearchBar from "../../UtilityComponents/SearchForCard/SearchBar";
+import FilterCards from "../../UtilityComponents/FilterCards/FilterCards";
 
 export default function Collection() {
   const [collection, setCollection] = useState(undefined);
@@ -29,9 +31,13 @@ export default function Collection() {
   const [isEdit, setIsEdit] = useState(false);
   const [binderToEdit, setBinderToEdit] = useState({});
   const [displayBinderCardModal, setDisplayBinderCardModal] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const loggedInUser = useContext(LoggedInUser);
   const collectionId = useContext(CollectionId).collectionId;
+  const displayedCards = collection?.filter((card) =>
+    card?.name?.toLowerCase().includes(searchQuery.toLowerCase()),
+  );
 
   function handleCardCount(cardToUpdate, isQuantityIncreased) {
     const updatedCard = {
@@ -247,9 +253,17 @@ export default function Collection() {
               binders={binders}
             />
           </div>
+          <div className="flex flex-row">
+            <SearchBar
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+            />
+            <FilterCards cardList={collection} setCardList={setCollection} />
+          </div>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             <AddCard setAddCardModalVisible={setAddCardModalVisible} />
-            {collection.map((card) => (
+            {displayedCards.map((card) => (
               <div
                 key={card.id}
                 onMouseOver={() => setCard(card)}

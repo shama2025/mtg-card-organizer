@@ -37,7 +37,6 @@ export default function AddCardModal({
         return;
       }
       if (card && card.id) {
-        debugger;
         setBinderCardList((prevCardList) => [...prevCardList, card]);
         setCardName("");
         setAddCardModalVisible(false);

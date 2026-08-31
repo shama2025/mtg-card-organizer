@@ -7,6 +7,8 @@ import AddCard from "../../Collection/AddCard/AddCard";
 import AddCardModal from "../../Collection/AddCardModal/AddCardModal";
 import ErrorList from "../../ErrorList/ErrorList";
 import { Plus, Minus, ScissorsSquareDashedBottomIcon } from "lucide-react";
+import SearchBar from "../../UtilityComponents/SearchForCard/SearchBar";
+import FilterCards from "../../UtilityComponents/FilterCards/FilterCards";
 
 export default function BinderLandingPage() {
   const { binderId } = useParams("binderId");
@@ -16,8 +18,12 @@ export default function BinderLandingPage() {
   const [binder, setBinder] = useState({});
   const [binderCardList, setBinderCardList] = useState([]);
   const [binderErrors, setBinderErrors] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const loggedInUser = useContext(LoggedInUser);
+  const displayedCards = binderCardList.filter((card) =>
+    card?.name?.toLowerCase().includes(searchQuery.toLowerCase()),
+  );
 
   function handleCardCount(cardToUpdate, isQuantityIncreased) {
     const updatedCard = {
@@ -83,7 +89,7 @@ export default function BinderLandingPage() {
       }
       handleFetchBinder();
     },
-    [binderCardList],
+    [binderId, loggedInUser],
   );
 
   if (!binder) {
@@ -170,10 +176,20 @@ export default function BinderLandingPage() {
           ) : (
             <></>
           )}
+          <div className="flex flex-row">
+            <SearchBar
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+            />
+            <FilterCards
+              cardList={binderCardList}
+              setCardList={setBinderCardList}
+            />
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             <AddCard setAddCardModalVisible={setAddCardModalVisible} />
-            {binderCardList.length > 0 ? (
-              binderCardList.map((card) => (
+            {displayedCards.length > 0 ? (
+              displayedCards.map((card) => (
                 <div
                   key={card.id}
                   onMouseOver={() => setCard(card)}

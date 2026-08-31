@@ -1,4 +1,4 @@
-import binderUrl from "../../../url/binderUrl";
+import binderUrl from "../../url/binderUrl";
 
 export async function deleteBinder(binderId, loggedInUser) {
   try {
