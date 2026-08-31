@@ -11,7 +11,7 @@ export default function AddCardModal({
   collection,
   setCollection,
   setBinderCardList,
-  binder
+  binder,
 }) {
   const collectionId = useContext(CollectionId);
   const loggedInUser = useContext(LoggedInUser);
@@ -24,48 +24,47 @@ export default function AddCardModal({
     event.preventDefault();
     setIsSpinnerHidden(false);
 
-    if(binder){
+    if (binder) {
       const { card, errors } = await addCardToBinder(
-      cardName,
-      binder,
-      binder.deckId,
-      loggedInUser,
-    );
+        cardName,
+        binder,
+        binder.deckId,
+        loggedInUser,
+      );
       setIsSpinnerHidden(true);
-    if (errors) {
-      setErrors([errors]);
-      return;
+      if (errors) {
+        setErrors([errors]);
+        return;
+      }
+      if (card && card.id) {
+        debugger;
+        setBinderCardList((prevCardList) => [...prevCardList, card]);
+        setCardName("");
+        setAddCardModalVisible(false);
+      } else {
+        setErrors(["Received invalid card data from server."]);
+      }
     }
-    if (card && card.id) {
-      debugger
-      setBinderCardList((prevCardList) => [...prevCardList, card]);
-      setCardName("");
-      setAddCardModalVisible(false);
-    } else {
-      setErrors(["Received invalid card data from server."]);
-    }
-    }
-    if(collection){
+    if (collection) {
       const { card, errors } = await addCardToCollection(
-      cardName,
-      collectionId.collectionId,
-      loggedInUser,
-    );
-    setIsSpinnerHidden(true);
-    if (errors) {
-      setErrors([errors]);
-      return;
+        cardName,
+        collectionId.collectionId,
+        loggedInUser,
+      );
+      setIsSpinnerHidden(true);
+      if (errors) {
+        setErrors([errors]);
+        return;
+      }
+      if (card && card.id) {
+        setCollection((prevCollection) => [...prevCollection, card]);
+        setCardName("");
+        setAddCardModalVisible(false);
+      } else {
+        setErrors(["Received invalid card data from server."]);
+      }
     }
-    if (card && card.id) {
-      setCollection((prevCollection) => [...prevCollection, card]);
-      setCardName("");
-      setAddCardModalVisible(false);
-    } else {
-      setErrors(["Received invalid card data from server."]);
-    }
-    }
-    }
-
+  }
 
   return (
     <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">

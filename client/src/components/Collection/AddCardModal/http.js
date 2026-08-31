@@ -34,8 +34,8 @@ export async function addCardToCollection(name, collectionId, loggedInUser) {
   }
 }
 
-export async function addCardToBinder(name, binder, binderId, loggedInUser){
-    try {
+export async function addCardToBinder(name, binder, binderId, loggedInUser) {
+  try {
     const response = await fetch(`${binderUrl}/deck/${binderId}/card/${name}`, {
       method: "POST",
       headers: {
@@ -54,9 +54,7 @@ export async function addCardToBinder(name, binder, binderId, loggedInUser){
       const payload = await response.json();
       return {
         card: undefined,
-        errors:
-          payload.message ||
-          payload,
+        errors: payload.message || payload,
       };
     }
   } catch (errors) {

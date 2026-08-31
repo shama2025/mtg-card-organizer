@@ -14,52 +14,52 @@ export default function BinderLandingPage() {
   const [binderQuantity, setBinderQuantity] = useState(0);
   const [card, setCard] = useState({});
   const [binder, setBinder] = useState({});
-  const [binderCardList, setBinderCardList] = useState([])
+  const [binderCardList, setBinderCardList] = useState([]);
   const [binderErrors, setBinderErrors] = useState([]);
 
   const loggedInUser = useContext(LoggedInUser);
 
-    function handleCardCount(cardToUpdate, isQuantityIncreased) {
-      const updatedCard = {
-        ...cardToUpdate,
-        quantity: cardToUpdate.quantity + (isQuantityIncreased ? 1 : -1),
-      };
-  
-      if (updatedCard.quantity > 0) {
-        // Edit existing card count
-        const { cardId, errors } = editCardCount(
-          updatedCard.quantity,
-          updatedCard.id,
-          binder.deckId,
-          loggedInUser,
-        );
-        if (errors) {
-          setBinderErrors(errors);
-          return;
-        }
-        const updatedCollection = binderCardList.map((c) =>
-          c.id === updatedCard.id ? updatedCard : c,
-        );
-        setBinder(updatedCollection);
-        calculateCollectionQuantity(updatedCollection);
-      } else if (updatedCard.quantity === 0) {
-        // Delete card completely
-        const { cardId, errors } = deleteCard(
-          updatedCard.id,
-          binder.deckId,
-          loggedInUser,
-        );
-        if (errors) {
-          setBinderErrors(errors);
-          return;
-        }
-        const updatedCollection = binderCardList.filter(
-          (c) => c.id !== updatedCard.id,
-        );
-        setBinder(updatedCollection);
-        calculateCollectionQuantity(updatedCollection);
+  function handleCardCount(cardToUpdate, isQuantityIncreased) {
+    const updatedCard = {
+      ...cardToUpdate,
+      quantity: cardToUpdate.quantity + (isQuantityIncreased ? 1 : -1),
+    };
+
+    if (updatedCard.quantity > 0) {
+      // Edit existing card count
+      const { cardId, errors } = editCardCount(
+        updatedCard.quantity,
+        updatedCard.id,
+        binder.deckId,
+        loggedInUser,
+      );
+      if (errors) {
+        setBinderErrors(errors);
+        return;
       }
+      const updatedCollection = binderCardList.map((c) =>
+        c.id === updatedCard.id ? updatedCard : c,
+      );
+      setBinder(updatedCollection);
+      calculateCollectionQuantity(updatedCollection);
+    } else if (updatedCard.quantity === 0) {
+      // Delete card completely
+      const { cardId, errors } = deleteCard(
+        updatedCard.id,
+        binder.deckId,
+        loggedInUser,
+      );
+      if (errors) {
+        setBinderErrors(errors);
+        return;
+      }
+      const updatedCollection = binderCardList.filter(
+        (c) => c.id !== updatedCard.id,
+      );
+      setBinder(updatedCollection);
+      calculateCollectionQuantity(updatedCollection);
     }
+  }
 
   function calculateCollectionQuantity(currentCollection) {
     let sum = 0;
@@ -69,19 +69,22 @@ export default function BinderLandingPage() {
     setBinderQuantity(sum);
   }
 
-  useEffect(function () {
-    async function handleFetchBinder() {
-      const { binder, errors } = await fetchBinder(binderId, loggedInUser);
-      if (errors) {
-        setBinderErrors([errors]);
-      } else if (binder) {
-        setBinder(binder);
-        setBinderCardList(binder?.cardList)
-        calculateCollectionQuantity(binderCardList)
+  useEffect(
+    function () {
+      async function handleFetchBinder() {
+        const { binder, errors } = await fetchBinder(binderId, loggedInUser);
+        if (errors) {
+          setBinderErrors([errors]);
+        } else if (binder) {
+          setBinder(binder);
+          setBinderCardList(binder?.cardList);
+          calculateCollectionQuantity(binderCardList);
+        }
       }
-    }
-    handleFetchBinder();
-  }, [binderCardList]);
+      handleFetchBinder();
+    },
+    [binderCardList],
+  );
 
   if (!binder) {
     return (
@@ -168,7 +171,7 @@ export default function BinderLandingPage() {
             <></>
           )}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-          <AddCard setAddCardModalVisible={setAddCardModalVisible} />
+            <AddCard setAddCardModalVisible={setAddCardModalVisible} />
             {binderCardList.length > 0 ? (
               binderCardList.map((card) => (
                 <div
@@ -195,7 +198,7 @@ export default function BinderLandingPage() {
                      "
                       onClick={() => handleCardCount(card, true)}
                     >
-                    <Plus />
+                      <Plus />
                     </div>
                     <div
                       className="absolute z-10
@@ -206,7 +209,7 @@ export default function BinderLandingPage() {
                      rounded-md shadow-md"
                       onClick={() => handleCardCount(card, false)}
                     >
-                    <Minus />
+                      <Minus />
                     </div>
                     <img
                       src={card?.imgPath?.[0]?.large || card?.imgPath}
@@ -217,18 +220,17 @@ export default function BinderLandingPage() {
                 </div>
               ))
             ) : (
-              <div>
-              </div>
+              <div></div>
             )}
           </div>
         </div>
-      {binderErrors.length > 0 ? (
-                <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-                  <ErrorList errors={binderErrors} />
-                </div>
-              ) : (
-                <></>
-              )}
+        {binderErrors.length > 0 ? (
+          <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+            <ErrorList errors={binderErrors} />
+          </div>
+        ) : (
+          <></>
+        )}
         <div className="lg:col-span-3 bg-jeskai-card text-jeskai-white-pure p-4 rounded-xl border border-slate-700 shadow-lg sticky top-20">
           <h3 className="text-md font-semibold text-jeskai-red-light mb-3 border-b border-slate-700 pb-2">
             Card Details

@@ -29,16 +29,9 @@ export async function fetchBinder(binderId, loggedInUser) {
   }
 }
 
-
-export async function editCardCount(
-  quantity,
-  cardId,
-  binderId,
-  loggedInUser,
-) {
+export async function editCardCount(quantity, cardId, binderId, loggedInUser) {
   try {
     const response = await fetch(
-      
       `${binderUrl}/deck/${binderId}/card/${cardId}`,
       {
         method: "PUT",
