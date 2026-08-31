@@ -17,7 +17,7 @@ export async function deleteBinder(binderId, loggedInUser) {
       const payload = await response.json();
       return {
         isDeleted: false,
-        errors: payload.message,
+        errors: payload,
       };
     }
   } catch (errors) {

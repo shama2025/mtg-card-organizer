@@ -51,9 +51,8 @@ public class DeckController {
         return ErrorResponse.build(result);
     }
 
-    @PostMapping("/collection/{collectionId}/deck/{deckId}")
+    @PostMapping("/collection/{collectionId}/deck")
     public ResponseEntity<?> createDeck(@RequestHeader Map<String, String> headers, @PathVariable int collectionId,
-                                        @PathVariable int deckId,
                                         @RequestBody Deck deck
     ) throws JsonProcessingException {
         if (headers.get("authorization") == null) {

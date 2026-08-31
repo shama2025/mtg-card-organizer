@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class Deck {
-    private int deckId;
+    private int id;
 
     @NotNull(message = "Name cannot be null.")
     @NotBlank(message = "Name cannot be blank.")
@@ -24,8 +24,8 @@ public class Deck {
     private LocalDate dateUpdated;
     private List<Card> cardList = new ArrayList<>();
 
-    public Deck(int deckId, String name, int cardCount, LocalDate dateCreated, LocalDate dateUpdated, List<Card> cardList) {
-        this.deckId = deckId;
+    public Deck(int id, String name, int cardCount, LocalDate dateCreated, LocalDate dateUpdated, List<Card> cardList) {
+        this.id = id;
         this.name = name;
         this.cardCount = cardCount;
         this.dateCreated = dateCreated;
@@ -42,11 +42,11 @@ public class Deck {
     }
 
     public int getDeckId() {
-        return deckId;
+        return id;
     }
 
-    public void setDeckId(int deckId) {
-        this.deckId = deckId;
+    public void setDeckId(int id) {
+        this.id = id;
     }
 
     public int getCardCount() {
@@ -85,11 +85,11 @@ public class Deck {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Deck deck = (Deck) o;
-        return deckId == deck.deckId && cardCount == deck.cardCount && Objects.equals(name, deck.name) && Objects.equals(dateCreated, deck.dateCreated) && Objects.equals(dateUpdated, deck.dateUpdated) && Objects.equals(cardList, deck.cardList);
+        return id == deck.id && cardCount == deck.cardCount && Objects.equals(name, deck.name) && Objects.equals(dateCreated, deck.dateCreated) && Objects.equals(dateUpdated, deck.dateUpdated) && Objects.equals(cardList, deck.cardList);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(deckId, name, cardCount, dateCreated, dateUpdated, cardList);
+        return Objects.hash(id, name, cardCount, dateCreated, dateUpdated, cardList);
     }
 }

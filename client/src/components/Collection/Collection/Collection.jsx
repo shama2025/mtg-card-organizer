@@ -10,10 +10,12 @@ import AddCard from "../AddCard/AddCard";
 import AddCardModal from "../AddCardModal/AddCardModal";
 import { LoggedInUser } from "../../../contexts/LoggedInUser";
 import { CollectionId } from "../../../contexts/CollectionId";
-import { Plus, Minus } from "lucide-react";
+import { Plus, Minus, SquarePlus } from "lucide-react";
 import ErrorList from "../../ErrorList/ErrorList";
 import BinderNameCard from "../BinderCollection/BinderCard/BinderNameCard";
 import BinderModal from "../BinderCollection/BinderModal/BinderModal";
+import AddBinder from "../BinderCollection/AddBinder/AddBinder";
+import AddBinderModal from "../BinderCollection/AddBinderModal/AddBinderModal";
 
 export default function Collection() {
   const [collection, setCollection] = useState(undefined);
@@ -26,6 +28,7 @@ export default function Collection() {
   const [displayBinderModal, setDisplayBinderModal] = useState(true);
   const [isEdit, setIsEdit] = useState(false);
   const [binderToEdit, setBinderToEdit] = useState({});
+  const [displayBinderCardModal, setDisplayBinderCardModal] = useState(true);
 
   const loggedInUser = useContext(LoggedInUser);
   const collectionId = useContext(CollectionId).collectionId;
@@ -192,7 +195,8 @@ export default function Collection() {
           mt-4
           "
           >
-            <p className="text-jeskai-white-pure text-lg">Binders</p>
+            <AddBinder setDisplayBinderCardModal={setDisplayBinderCardModal} />
+
             {binderErrors.length > 0 ? (
               <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
                 <ErrorList errors={binderErrors} />
@@ -232,6 +236,15 @@ export default function Collection() {
               isEdit={isEdit}
               binderToEdit={binderToEdit}
               setDisplayBinderModal={setDisplayBinderModal}
+              binders={binders}
+              setBinders={setBinders}
+            />
+          </div>
+          <div hidden={displayBinderCardModal}>
+            <AddBinderModal
+              setDisplayBinderCardModal={setDisplayBinderCardModal}
+              setBinders={setBinders}
+              binders={binders}
             />
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">

@@ -10,6 +10,8 @@ export default function BinderModal({
   isEdit,
   binderToEdit,
   setDisplayBinderModal,
+  binders,
+  setBinders,
 }) {
   const [errors, setErrors] = useState([]);
   const [isSpinnerHidden, setIsSpinnerHidden] = useState(true);
@@ -24,20 +26,25 @@ export default function BinderModal({
     }
   }, [binderToEdit]);
 
-  async function handleSubmit() {
+  async function handleSubmit(event) {
+    event.preventDefault();
     if (isEdit) {
       // Call edit function
     } else {
+      setIsSpinnerHidden(false);
       const { isDeleted, errors } = await deleteBinder(
         binder.deckId,
         loggedInUser,
       );
       if (isDeleted) {
-        // navigate to collection page
-        navigator("/collection");
-      } else {
+        const updatedBinders = binders.filter((c) => c.id !== binderToEdit.id);
+        setBinders(updatedBinders);
+        setIsSpinnerHidden(true);
+        setDisplayBinderModal(true);
+      } else if (errors) {
         // Display errors
-        setErrors(errors);
+        setIsSpinnerHidden(true);
+        setErrors([errors]);
       }
     }
   }

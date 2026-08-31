@@ -245,8 +245,9 @@ public class DeckService {
 
     public Result<Integer> removeDeck(int deckId){
         Result<Integer> result = new Result<>();
+        Deck deck;
         try{
-            Deck deck = deckRepository.fetchDeckByDeckId(deckId);
+            deck = deckRepository.fetchDeckByDeckId(deckId);
             if(deck == null){
                 result.addErrorMessage("Deck not found.", ResultType.NOT_FOUND);
                 return result;
@@ -256,7 +257,11 @@ public class DeckService {
             return result;
         }
 
-        boolean isCardDeckRemoved = cardDeckRepository.removeDeck(deckId);
+        boolean isCardDeckRemoved = true;
+        if(deck.getCardCount() != 0){
+            isCardDeckRemoved = cardDeckRepository.removeDeck(deckId);
+        }
+        
         boolean isCollectionDeckRemoved = collectionDeckRepository.removeDeck(deckId);
         boolean isDeckRemoved = deckRepository.removeDeck(deckId);
 
