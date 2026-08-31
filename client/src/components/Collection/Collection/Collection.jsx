@@ -30,15 +30,13 @@ export default function Collection() {
   const [isEdit, setIsEdit] = useState(false);
   const [binderToEdit, setBinderToEdit] = useState({});
   const [displayBinderCardModal, setDisplayBinderCardModal] = useState(true);
-  const [searchQuery, setSearchQuery] = useState('')
-  
+  const [searchQuery, setSearchQuery] = useState("");
 
   const loggedInUser = useContext(LoggedInUser);
   const collectionId = useContext(CollectionId).collectionId;
   const displayedCards = collection?.filter((card) =>
-    card?.name?.toLowerCase().includes(searchQuery.toLowerCase())
+    card?.name?.toLowerCase().includes(searchQuery.toLowerCase()),
   );
-
 
   function handleCardCount(cardToUpdate, isQuantityIncreased) {
     const updatedCard = {
@@ -254,7 +252,10 @@ export default function Collection() {
               binders={binders}
             />
           </div>
-          <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+          <SearchBar
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+          />
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             <AddCard setAddCardModalVisible={setAddCardModalVisible} />
             {displayedCards.map((card) => (

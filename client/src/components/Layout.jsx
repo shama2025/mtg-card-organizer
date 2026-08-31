@@ -4,15 +4,14 @@ import { useContext, useEffect } from "react";
 import { LoggedInUser } from "../contexts/LoggedInUser";
 
 export default function Layout() {
+  const loggedInUser = useContext(LoggedInUser);
+  const navigator = useNavigate();
 
-  const loggedInUser = useContext(LoggedInUser)
-  const navigator = useNavigate()
-
-//   useEffect(() => {
-//     if(loggedInUser){
-//       navigator("/collection");
-//     }
-// },[])
+  //   useEffect(() => {
+  //     if(loggedInUser){
+  //       navigator("/collection");
+  //     }
+  // },[])
 
   return (
     <div className="bg-jeskai-dark h-full">
