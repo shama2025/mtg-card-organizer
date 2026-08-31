@@ -9,6 +9,7 @@ import mtgcollection.dto.LoggedInUser;
 import mtgcollection.model.Collection;
 import mtgcollection.model.Deck;
 import mtgcollection.model.Result;
+import mtgcollection.model.card.Card;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -108,9 +109,9 @@ public class DeckController {
         ObjectMapper mapper = new ObjectMapper();
         LoggedInUser user = mapper.readValue(userAuthJson, LoggedInUser.class);
 
-        Result<Deck> result = deckService.addCardToDeck(deck,cardName);
+        Result<Card> result = deckService.addCardToDeck(deck,cardName);
         if(result.isSuccess()){
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(result.getpayload(),HttpStatus.CREATED);
         }
         return ErrorResponse.build(result);
     }

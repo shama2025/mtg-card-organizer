@@ -5,6 +5,8 @@ import { LoggedInUser } from "../../../contexts/LoggedInUser";
 import CardInfo from "../../Collection/CardInfoContainer/CardInfo";
 import AddCard from "../../Collection/AddCard/AddCard";
 import AddCardModal from "../../Collection/AddCardModal/AddCardModal";
+import ErrorList from "../../ErrorList/ErrorList";
+import { Plus, Minus } from "lucide-react";
 
 export default function BinderLandingPage() {
   const { binderId } = useParams("binderId");
@@ -12,6 +14,7 @@ export default function BinderLandingPage() {
   const [binderQuantity, setCollectionQuantity] = useState(0);
   const [card, setCard] = useState({});
   const [binder, setBinder] = useState({});
+  const [binderCardList, setBinderCardList] = useState([])
   const [binderErrors, setBinderErrors] = useState([]);
 
   const loggedInUser = useContext(LoggedInUser);
@@ -20,9 +23,10 @@ export default function BinderLandingPage() {
     async function handleFetchBinder() {
       const { binder, errors } = await fetchBinder(binderId, loggedInUser);
       if (errors) {
-        setBinderErrors(errors);
+        setBinderErrors([errors]);
       } else if (binder) {
         setBinder(binder);
+        setBinderCardList(binder.cardList)
       }
     }
     handleFetchBinder();
@@ -63,7 +67,9 @@ export default function BinderLandingPage() {
               <div hidden={!isAddCardModalVisible}>
                 <AddCardModal
                   setAddCardModalVisible={setAddCardModalVisible}
-                  setBinder={setBinder}
+                  collection={undefined}
+                  setCollection={undefined}
+                  setBinderCardList={setBinderCardList}
                   binder={binder}
                 />
               </div>
@@ -79,7 +85,7 @@ export default function BinderLandingPage() {
       <div hidden={!isAddCardModalVisible}>
         <AddCardModal
           setAddCardModalVisible={setAddCardModalVisible}
-          setBinder={setBinder}
+          setBinderCardList={setBinderCardList}
           binder={binder}
         />
       </div>
@@ -111,7 +117,8 @@ export default function BinderLandingPage() {
             <></>
           )}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-            {binder?.cardList?.length > 0 ? (
+          <AddCard setAddCardModalVisible={setAddCardModalVisible} />
+            {binderCardList.length > 0 ? (
               binder.cardList.map((card) => (
                 <div
                   key={card.id}
@@ -148,7 +155,7 @@ export default function BinderLandingPage() {
                      rounded-md shadow-md"
                       onClick={() => handleCardCount(card, false)}
                     >
-                      <Minus />
+                    <Minus />
                     </div>
                     <img
                       src={card?.imgPath?.[0]?.large || card?.imgPath}
@@ -160,12 +167,17 @@ export default function BinderLandingPage() {
               ))
             ) : (
               <div>
-                <AddCard setAddCardModalVisible={setAddCardModalVisible} />
               </div>
             )}
           </div>
         </div>
-
+      {binderErrors.length > 0 ? (
+                <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+                  <ErrorList errors={binderErrors} />
+                </div>
+              ) : (
+                <></>
+              )}
         <div className="lg:col-span-3 bg-jeskai-card text-jeskai-white-pure p-4 rounded-xl border border-slate-700 shadow-lg sticky top-20">
           <h3 className="text-md font-semibold text-jeskai-red-light mb-3 border-b border-slate-700 pb-2">
             Card Details
