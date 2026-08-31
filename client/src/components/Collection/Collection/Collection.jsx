@@ -12,10 +12,10 @@ import { LoggedInUser } from "../../../contexts/LoggedInUser";
 import { CollectionId } from "../../../contexts/CollectionId";
 import { Plus, Minus, SquarePlus } from "lucide-react";
 import ErrorList from "../../ErrorList/ErrorList";
-import BinderNameCard from "../BinderCollection/BinderCard/BinderNameCard";
-import BinderModal from "../BinderCollection/BinderModal/BinderModal";
-import AddBinder from "../BinderCollection/AddBinder/AddBinder";
-import AddBinderModal from "../BinderCollection/AddBinderModal/AddBinderModal";
+import BinderNameCard from "../../Binder/BinderCard/BinderNameCard";
+import BinderModal from "../../Binder/BinderModal/BinderModal";
+import AddBinder from "../../Binder/AddBinder/AddBinder";
+import AddBinderModal from "../../Binder/AddBinderModal/AddBinderModal";
 
 export default function Collection() {
   const [collection, setCollection] = useState(undefined);
@@ -247,6 +247,7 @@ export default function Collection() {
               binders={binders}
             />
           </div>
+          {/* <div>Search Bar + filter</div> */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             <AddCard setAddCardModalVisible={setAddCardModalVisible} />
             {collection.map((card) => (
