@@ -24,7 +24,6 @@ export default function BinderLandingPage() {
       } else if (binder) {
         setBinder(binder);
       }
-      console.log(binder);
     }
     handleFetchBinder();
   }, []);

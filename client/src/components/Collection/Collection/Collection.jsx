@@ -12,7 +12,8 @@ import { LoggedInUser } from "../../../contexts/LoggedInUser";
 import { CollectionId } from "../../../contexts/CollectionId";
 import { Plus, Minus } from "lucide-react";
 import ErrorList from "../../ErrorList/ErrorList";
-import BinderNameCard from "../BinderCard/BinderNameCard";
+import BinderNameCard from "../BinderCollection/BinderCard/BinderNameCard";
+import BinderModal from "../BinderCollection/BinderModal/BinderModal";
 
 export default function Collection() {
   const [collection, setCollection] = useState(undefined);
@@ -22,6 +23,9 @@ export default function Collection() {
   const [collectionQuantity, setCollectionQuantity] = useState(0);
   const [binders, setBinders] = useState([]);
   const [binderErrors, setBinderErrors] = useState([]);
+  const [displayBinderModal, setDisplayBinderModal] = useState(true)
+  const [isEdit, setIsEdit] = useState(false)
+  const [binderToEdit, setBinderToEdit] = useState({})
 
   const loggedInUser = useContext(LoggedInUser);
   const collectionId = useContext(CollectionId).collectionId;
@@ -203,7 +207,8 @@ export default function Collection() {
                   className="hover:border-b-2 hover:scale-105 hover:border-jeskai-red-dark"
                 >
                   <div>
-                    <BinderNameCard binder={binder} />
+                    <BinderNameCard binder={binder} setBinderToEdit={setBinderToEdit} 
+                    setDisplayBinderModal={setDisplayBinderModal} setIsEdit={setIsEdit} />
                   </div>
                 </div>
               );
@@ -218,6 +223,10 @@ export default function Collection() {
           ) : (
             <></>
           )}
+          <div hidden={displayBinderModal}>
+            <BinderModal isEdit={isEdit} binderToEdit={binderToEdit} 
+            setDisplayBinderModal={setDisplayBinderModal}/>
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             <AddCard setAddCardModalVisible={setAddCardModalVisible} />
             {collection.map((card) => (

@@ -1,8 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import { EllipsisVertical } from "lucide-react";
 import { NavLink } from "react-router-dom";
+import BinderBurgerMenu from "../BinderBurgerMenu/BinderBurgerMenu";
 
-export default function BinderNameCard({ binder }) {
+export default function BinderNameCard({ binder, setBinderToEdit,setDisplayBinderModal, setIsEdit }) {
+
+  const [displayBinderBurgerMenu, setDisplayBinderBurgerMenu] = useState(true)
+
   return (
     <div>
       <div className="flex flex-row">
@@ -21,9 +25,13 @@ export default function BinderNameCard({ binder }) {
             className="w-5 h-5 hover:cursor-pointer hover:scale-110"
             onClick={(event) => {
               event.stopPropagation();
-              console.log("Clicked Ellipsis");
+              setDisplayBinderBurgerMenu(displayBinderBurgerMenu? false: true)
+              setBinderToEdit(binder)
             }}
           />
+          <div hidden={displayBinderBurgerMenu}>
+            <BinderBurgerMenu setDisplayBinderModal={setDisplayBinderModal} setIsEdit={setIsEdit} />
+          </div>
         </span>
       </div>
     </div>
