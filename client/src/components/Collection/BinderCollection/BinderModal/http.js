@@ -1,6 +1,6 @@
 import binderUrl from "../../../url/binderUrl";
 
-export async function deleteBinder(binderId,loggedInUser ){
+export async function deleteBinder(binderId, loggedInUser) {
   try {
     const response = await fetch(`${binderUrl}/deck/${binderId}`, {
       method: "DELETE",
@@ -15,15 +15,15 @@ export async function deleteBinder(binderId,loggedInUser ){
       };
     } else {
       const payload = await response.json();
-     return {
+      return {
         isDeleted: false,
         errors: payload.message,
       };
     }
   } catch (errors) {
     return {
-        isDeleted: true,
-        errors: errors,
-      };
+      isDeleted: true,
+      errors: errors,
+    };
   }
 }

@@ -23,9 +23,9 @@ export default function Collection() {
   const [collectionQuantity, setCollectionQuantity] = useState(0);
   const [binders, setBinders] = useState([]);
   const [binderErrors, setBinderErrors] = useState([]);
-  const [displayBinderModal, setDisplayBinderModal] = useState(true)
-  const [isEdit, setIsEdit] = useState(false)
-  const [binderToEdit, setBinderToEdit] = useState({})
+  const [displayBinderModal, setDisplayBinderModal] = useState(true);
+  const [isEdit, setIsEdit] = useState(false);
+  const [binderToEdit, setBinderToEdit] = useState({});
 
   const loggedInUser = useContext(LoggedInUser);
   const collectionId = useContext(CollectionId).collectionId;
@@ -207,8 +207,12 @@ export default function Collection() {
                   className="hover:border-b-2 hover:scale-105 hover:border-jeskai-red-dark"
                 >
                   <div>
-                    <BinderNameCard binder={binder} setBinderToEdit={setBinderToEdit} 
-                    setDisplayBinderModal={setDisplayBinderModal} setIsEdit={setIsEdit} />
+                    <BinderNameCard
+                      binder={binder}
+                      setBinderToEdit={setBinderToEdit}
+                      setDisplayBinderModal={setDisplayBinderModal}
+                      setIsEdit={setIsEdit}
+                    />
                   </div>
                 </div>
               );
@@ -224,8 +228,11 @@ export default function Collection() {
             <></>
           )}
           <div hidden={displayBinderModal}>
-            <BinderModal isEdit={isEdit} binderToEdit={binderToEdit} 
-            setDisplayBinderModal={setDisplayBinderModal}/>
+            <BinderModal
+              isEdit={isEdit}
+              binderToEdit={binderToEdit}
+              setDisplayBinderModal={setDisplayBinderModal}
+            />
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             <AddCard setAddCardModalVisible={setAddCardModalVisible} />

@@ -1,42 +1,48 @@
-import React, { use, useContext, useEffect, useState } from 'react'
-import { CircleX } from 'lucide-react'
-import { Bars } from 'react-loader-spinner'
-import ErrorList from '../../../ErrorList/ErrorList'
-import { deleteBinder } from './http'
-import { LoggedInUser }from '../../../../contexts/LoggedInUser'
-import { useNavigate } from 'react-router-dom'
+import React, { use, useContext, useEffect, useState } from "react";
+import { CircleX } from "lucide-react";
+import { Bars } from "react-loader-spinner";
+import ErrorList from "../../../ErrorList/ErrorList";
+import { deleteBinder } from "./http";
+import { LoggedInUser } from "../../../../contexts/LoggedInUser";
+import { useNavigate } from "react-router-dom";
 
-export default function BinderModal({isEdit, 
-    binderToEdit, setDisplayBinderModal}) {
-    const[errors, setErrors] = useState([])
-    const [isSpinnerHidden, setIsSpinnerHidden] = useState(true)
-    const [binder, setBinder] = useState(undefined)
+export default function BinderModal({
+  isEdit,
+  binderToEdit,
+  setDisplayBinderModal,
+}) {
+  const [errors, setErrors] = useState([]);
+  const [isSpinnerHidden, setIsSpinnerHidden] = useState(true);
+  const [binder, setBinder] = useState(undefined);
 
-    const navigator = useNavigate()
-    const loggedInUser = useContext(LoggedInUser)
+  const navigator = useNavigate();
+  const loggedInUser = useContext(LoggedInUser);
 
-    useEffect(() => {
-      if (binderToEdit?.name) {
-        setBinder(binderToEdit);
-      }
-    }, [binderToEdit]);
-
-    async function handleSubmit(){
-        if(isEdit){
-            // Call edit function
-        }else{
-            const {isDeleted, errors} = await deleteBinder(binder.deckId,loggedInUser )
-            if(isDeleted){
-                // navigate to collection page
-                navigator("/collection");
-            }else{
-                // Display errors
-                setErrors(errors);
-            }
-        }
+  useEffect(() => {
+    if (binderToEdit?.name) {
+      setBinder(binderToEdit);
     }
+  }, [binderToEdit]);
 
-   return (
+  async function handleSubmit() {
+    if (isEdit) {
+      // Call edit function
+    } else {
+      const { isDeleted, errors } = await deleteBinder(
+        binder.deckId,
+        loggedInUser,
+      );
+      if (isDeleted) {
+        // navigate to collection page
+        navigator("/collection");
+      } else {
+        // Display errors
+        setErrors(errors);
+      }
+    }
+  }
+
+  return (
     <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
       <div
         className="text-jeskai-white-surface border-jeskai-white-border
@@ -56,23 +62,25 @@ export default function BinderModal({isEdit,
             <CircleX />
           </div>
           <div className="pb-1">
-            <label>{isEdit? "Edit Deck Name":"Do you want to delete this deck?"}</label>
+            <label>
+              {isEdit ? "Edit Deck Name" : "Do you want to delete this deck?"}
+            </label>
           </div>
-          <div className='flex flex-col'>
+          <div className="flex flex-col">
             <input
               type="text"
               readOnly={!isEdit}
               className="border m-1 rounded-2xl p-2"
-              value={binder?.name || 'No name rendered'}
+              value={binder?.name || "No name rendered"}
               onChange={(e) => {
-                setBinder(e.target.value)
-                }}
+                setBinder(e.target.value);
+              }}
             />
             <button
               type="submit"
               className="hover:scale-105 hover:cursor-pointer"
             >
-            {isEdit? "Submit": "Delete"}
+              {isEdit ? "Submit" : "Delete"}
             </button>
           </div>
           <div></div>
@@ -80,5 +88,5 @@ export default function BinderModal({isEdit,
         </form>
       </div>
     </div>
-   )
+  );
 }

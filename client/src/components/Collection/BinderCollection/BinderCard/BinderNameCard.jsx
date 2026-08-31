@@ -3,9 +3,13 @@ import { EllipsisVertical } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import BinderBurgerMenu from "../BinderBurgerMenu/BinderBurgerMenu";
 
-export default function BinderNameCard({ binder, setBinderToEdit,setDisplayBinderModal, setIsEdit }) {
-
-  const [displayBinderBurgerMenu, setDisplayBinderBurgerMenu] = useState(true)
+export default function BinderNameCard({
+  binder,
+  setBinderToEdit,
+  setDisplayBinderModal,
+  setIsEdit,
+}) {
+  const [displayBinderBurgerMenu, setDisplayBinderBurgerMenu] = useState(true);
 
   return (
     <div>
@@ -25,12 +29,17 @@ export default function BinderNameCard({ binder, setBinderToEdit,setDisplayBinde
             className="w-5 h-5 hover:cursor-pointer hover:scale-110"
             onClick={(event) => {
               event.stopPropagation();
-              setDisplayBinderBurgerMenu(displayBinderBurgerMenu? false: true)
-              setBinderToEdit(binder)
+              setDisplayBinderBurgerMenu(
+                displayBinderBurgerMenu ? false : true,
+              );
+              setBinderToEdit(binder);
             }}
           />
           <div hidden={displayBinderBurgerMenu}>
-            <BinderBurgerMenu setDisplayBinderModal={setDisplayBinderModal} setIsEdit={setIsEdit} />
+            <BinderBurgerMenu
+              setDisplayBinderModal={setDisplayBinderModal}
+              setIsEdit={setIsEdit}
+            />
           </div>
         </span>
       </div>
