@@ -28,7 +28,7 @@ export default function Collection() {
   const [displayBinderModal, setDisplayBinderModal] = useState(true);
   const [isEdit, setIsEdit] = useState(false);
   const [binderToEdit, setBinderToEdit] = useState({});
-  const [displayBinderCardModal, setDisplayBinderCardModal] = useState(true)
+  const [displayBinderCardModal, setDisplayBinderCardModal] = useState(true);
 
   const loggedInUser = useContext(LoggedInUser);
   const collectionId = useContext(CollectionId).collectionId;
@@ -195,8 +195,8 @@ export default function Collection() {
           mt-4
           "
           >
-          <AddBinder setDisplayBinderCardModal={setDisplayBinderCardModal}/>
-           
+            <AddBinder setDisplayBinderCardModal={setDisplayBinderCardModal} />
+
             {binderErrors.length > 0 ? (
               <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
                 <ErrorList errors={binderErrors} />
@@ -241,7 +241,11 @@ export default function Collection() {
             />
           </div>
           <div hidden={displayBinderCardModal}>
-            <AddBinderModal setDisplayBinderCardModal={setDisplayBinderCardModal} setBinders={setBinders} binders={binders}/>
+            <AddBinderModal
+              setDisplayBinderCardModal={setDisplayBinderCardModal}
+              setBinders={setBinders}
+              binders={binders}
+            />
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             <AddCard setAddCardModalVisible={setAddCardModalVisible} />

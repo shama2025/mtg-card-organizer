@@ -1,49 +1,60 @@
-import React, { useContext, useState } from 'react'
-import { Bars } from 'react-loader-spinner';
-import { CircleX, Forward } from 'lucide-react';
-import ErrorList from '../../../ErrorList/ErrorList';
-import { addBinder } from './http';
-import { CollectionId } from '../../../../contexts/CollectionId';
-import { LoggedInUser } from '../../../../contexts/LoggedInUser';
+import React, { useContext, useState } from "react";
+import { Bars } from "react-loader-spinner";
+import { CircleX, Forward } from "lucide-react";
+import ErrorList from "../../../ErrorList/ErrorList";
+import { addBinder } from "./http";
+import { CollectionId } from "../../../../contexts/CollectionId";
+import { LoggedInUser } from "../../../../contexts/LoggedInUser";
 
-export default function AddBinderModal({setDisplayBinderCardModal, setBinders, binders}) {
+export default function AddBinderModal({
+  setDisplayBinderCardModal,
+  setBinders,
+  binders,
+}) {
+  const initBinder = {
+    id: 0,
+    name: "",
+    cardCount: 0,
+    dateCreated: new Date().toLocaleDateString("fr-CA"),
+    dateUpdated: new Date().toLocaleDateString("fr-CA"),
+    cardList: [],
+  };
 
-    const initBinder = {
-        id: 0,
-        name: '',
-        cardCount: 0,
-        dateCreated: new Date().toLocaleDateString('fr-CA'),
-        dateUpdated: new Date().toLocaleDateString('fr-CA'),
-        cardList: []
+  const [binder, setBinder] = useState(initBinder);
+
+  const [errors, setErrors] = useState([]);
+  const [isSpinnerHidden, setIsSpinnerHidden] = useState(true);
+
+  const collectionId = useContext(CollectionId);
+  const loggedInUser = useContext(LoggedInUser);
+
+  async function handleSubmit(event) {
+    event.preventDefault();
+    setIsSpinnerHidden(false);
+    const { newBinder, errors } = await addBinder(
+      binder,
+      collectionId,
+      loggedInUser,
+    );
+    if (newBinder) {
+      setIsSpinnerHidden(true);
+      window.open(
+        `/collection/binder/${newBinder.deckId}`,
+        "_blank",
+        "noopener,noreferrer",
+      );
+      setBinder(initBinder);
+      setDisplayBinderCardModal(true);
+      setBinders([...binders, newBinder]);
+    } else {
+      setIsSpinnerHidden(true);
+      setErrors([errors]);
+      return;
     }
-
-    const [binder, setBinder] = useState(initBinder)
-
-    const [errors, setErrors] = useState([]);
-    const [isSpinnerHidden, setIsSpinnerHidden] = useState(true);
-    
-    const  collectionId   = useContext(CollectionId)
-    const loggedInUser = useContext(LoggedInUser)
-
-    async function handleSubmit(event){
-        event.preventDefault()
-        setIsSpinnerHidden(false)
-        const {newBinder,errors} = await addBinder(binder,collectionId,loggedInUser)
-        if(newBinder){
-            setIsSpinnerHidden(true)
-            window.open(`/collection/binder/${newBinder.deckId}`, '_blank', 'noopener,noreferrer');
-            setBinder(initBinder)
-            setDisplayBinderCardModal(true)
-            setBinders([...binders,newBinder])
-        }else{
-            setIsSpinnerHidden(true)
-            setErrors([errors])
-            return
-        }
-    }
+  }
 
   return (
-   <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+    <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
       <div
         className="text-jeskai-white-surface border-jeskai-white-border
        border rounded-2xl bg-jeskai-dark p-3 w-auto h-auto"
@@ -69,10 +80,14 @@ export default function AddBinderModal({setDisplayBinderCardModal, setBinders, b
               type="text"
               placeholder="Budget All Stars"
               className="border m-1 rounded-2xl p-2"
-              name='name'
+              name="name"
               value={binder.name}
               onChange={(event) => {
-                setBinder({...binder,[event.target.name]: event.target.value})}}
+                setBinder({
+                  ...binder,
+                  [event.target.name]: event.target.value,
+                });
+              }}
               required
             />
             <button
@@ -87,5 +102,5 @@ export default function AddBinderModal({setDisplayBinderCardModal, setBinders, b
         </form>
       </div>
     </div>
-  )
+  );
 }
