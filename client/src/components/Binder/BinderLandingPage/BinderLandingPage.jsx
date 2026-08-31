@@ -8,6 +8,7 @@ import AddCardModal from "../../Collection/AddCardModal/AddCardModal";
 import ErrorList from "../../ErrorList/ErrorList";
 import { Plus, Minus, ScissorsSquareDashedBottomIcon } from "lucide-react";
 import SearchBar from "../../UtilityComponents/SearchForCard/SearchBar";
+import FilterCards from "../../UtilityComponents/FilterCards/FilterCards";
 
 export default function BinderLandingPage() {
   const { binderId } = useParams("binderId");
@@ -175,10 +176,13 @@ export default function BinderLandingPage() {
           ) : (
             <></>
           )}
-          <SearchBar
-            searchQuery={searchQuery}
-            setSearchQuery={setSearchQuery}
-          />
+           <div className="flex flex-row">
+                      <SearchBar
+                      searchQuery={searchQuery}
+                      setSearchQuery={setSearchQuery}
+                    />
+                    <FilterCards cardList={binderCardList} setCardList={setBinderCardList}/>
+                    </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             <AddCard setAddCardModalVisible={setAddCardModalVisible} />
             {displayedCards.length > 0 ? (

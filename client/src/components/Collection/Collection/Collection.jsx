@@ -17,6 +17,7 @@ import BinderModal from "../../Binder/BinderModal/BinderModal";
 import AddBinder from "../../Binder/AddBinder/AddBinder";
 import AddBinderModal from "../../Binder/AddBinderModal/AddBinderModal";
 import SearchBar from "../../UtilityComponents/SearchForCard/SearchBar";
+import FilterCards from "../../UtilityComponents/FilterCards/FilterCards";
 
 export default function Collection() {
   const [collection, setCollection] = useState(undefined);
@@ -252,10 +253,14 @@ export default function Collection() {
               binders={binders}
             />
           </div>
-          <SearchBar
+          <div className="flex flex-row">
+            <SearchBar
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
           />
+          <FilterCards cardList={collection} setCardList={setCollection}/>
+          </div>
+          
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             <AddCard setAddCardModalVisible={setAddCardModalVisible} />
             {displayedCards.map((card) => (
