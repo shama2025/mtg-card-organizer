@@ -17,6 +17,8 @@ export default function AppRouter() {
     return localStorage.getItem("collection_id") || null;
   });
 
+  localStorage.setItem("displayBrandingPage", true);
+
   const routes = createBrowserRouter([
     {
       path: "/",
