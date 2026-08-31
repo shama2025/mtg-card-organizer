@@ -116,7 +116,7 @@ export default function Collection() {
       }
       handleFetchBinders();
     },
-    [collectionId, loggedInUser],
+    [collectionId, loggedInUser,binders],
   );
 
   if (!collection) {

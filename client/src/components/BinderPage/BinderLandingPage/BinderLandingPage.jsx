@@ -1,23 +1,73 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { fetchBinder } from "./http";
+import { deleteCard, editCardCount, fetchBinder } from "./http";
 import { LoggedInUser } from "../../../contexts/LoggedInUser";
 import CardInfo from "../../Collection/CardInfoContainer/CardInfo";
 import AddCard from "../../Collection/AddCard/AddCard";
 import AddCardModal from "../../Collection/AddCardModal/AddCardModal";
 import ErrorList from "../../ErrorList/ErrorList";
-import { Plus, Minus } from "lucide-react";
+import { Plus, Minus, ScissorsSquareDashedBottomIcon } from "lucide-react";
 
 export default function BinderLandingPage() {
   const { binderId } = useParams("binderId");
   const [isAddCardModalVisible, setAddCardModalVisible] = useState(false);
-  const [binderQuantity, setCollectionQuantity] = useState(0);
+  const [binderQuantity, setBinderQuantity] = useState(0);
   const [card, setCard] = useState({});
   const [binder, setBinder] = useState({});
   const [binderCardList, setBinderCardList] = useState([])
   const [binderErrors, setBinderErrors] = useState([]);
 
   const loggedInUser = useContext(LoggedInUser);
+
+    function handleCardCount(cardToUpdate, isQuantityIncreased) {
+      const updatedCard = {
+        ...cardToUpdate,
+        quantity: cardToUpdate.quantity + (isQuantityIncreased ? 1 : -1),
+      };
+  
+      if (updatedCard.quantity > 0) {
+        // Edit existing card count
+        const { cardId, errors } = editCardCount(
+          updatedCard.quantity,
+          updatedCard.id,
+          binder.deckId,
+          loggedInUser,
+        );
+        if (errors) {
+          setBinderErrors(errors);
+          return;
+        }
+        const updatedCollection = binderCardList.map((c) =>
+          c.id === updatedCard.id ? updatedCard : c,
+        );
+        setBinder(updatedCollection);
+        calculateCollectionQuantity(updatedCollection);
+      } else if (updatedCard.quantity === 0) {
+        // Delete card completely
+        const { cardId, errors } = deleteCard(
+          updatedCard.id,
+          binder.deckId,
+          loggedInUser,
+        );
+        if (errors) {
+          setBinderErrors(errors);
+          return;
+        }
+        const updatedCollection = binderCardList.filter(
+          (c) => c.id !== updatedCard.id,
+        );
+        setBinder(updatedCollection);
+        calculateCollectionQuantity(updatedCollection);
+      }
+    }
+
+  function calculateCollectionQuantity(currentCollection) {
+    let sum = 0;
+    currentCollection.forEach((card) => {
+      sum += card.quantity;
+    });
+    setBinderQuantity(sum);
+  }
 
   useEffect(function () {
     async function handleFetchBinder() {
@@ -26,11 +76,12 @@ export default function BinderLandingPage() {
         setBinderErrors([errors]);
       } else if (binder) {
         setBinder(binder);
-        setBinderCardList(binder.cardList)
+        setBinderCardList(binder?.cardList)
+        calculateCollectionQuantity(binderCardList)
       }
     }
     handleFetchBinder();
-  }, []);
+  }, [binderCardList]);
 
   if (!binder) {
     return (
@@ -119,7 +170,7 @@ export default function BinderLandingPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           <AddCard setAddCardModalVisible={setAddCardModalVisible} />
             {binderCardList.length > 0 ? (
-              binder.cardList.map((card) => (
+              binderCardList.map((card) => (
                 <div
                   key={card.id}
                   onMouseOver={() => setCard(card)}
@@ -144,7 +195,7 @@ export default function BinderLandingPage() {
                      "
                       onClick={() => handleCardCount(card, true)}
                     >
-                      <Plus />
+                    <Plus />
                     </div>
                     <div
                       className="absolute z-10
