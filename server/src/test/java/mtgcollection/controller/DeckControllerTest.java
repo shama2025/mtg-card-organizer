@@ -10,6 +10,7 @@ import mtgcollection.dto.CardEditRequest;
 import mtgcollection.model.Deck;
 import mtgcollection.model.Result;
 import mtgcollection.model.ResultType;
+import mtgcollection.model.card.Card;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -340,8 +341,8 @@ class DeckControllerTest {
             ObjectMapper mapper = new ObjectMapper();
             mapper.registerModule(new JavaTimeModule());
             String deckToEditString = mapper.writeValueAsString(deckToEdit);
-            Result<Deck> result = new Result<>();
-            result.setpayload(deckToEdit);
+            Result<Card> result = new Result<>();
+            result.setpayload(TestHelper.blackLotus());
             when(deckService.addCardToDeck(deckToEdit,cardNameReal)).thenReturn(result);
             MockHttpServletRequestBuilder request =
                     MockMvcRequestBuilders.post("/api/deck/{deckId}/card/{cardName}",deckToEdit.getDeckId(),cardNameReal)
@@ -375,7 +376,7 @@ class DeckControllerTest {
             ObjectMapper mapper = new ObjectMapper();
             mapper.registerModule(new JavaTimeModule());
             String deckToEditString = mapper.writeValueAsString(deckToEdit);
-            Result<Deck> result = new Result<>();
+            Result<Card> result = new Result<>();
             result.addErrorMessage("Card not found",ResultType.NOT_FOUND);
             when(deckService.addCardToDeck(deckToEdit,cardNameNotReal)).thenReturn(result);
             MockHttpServletRequestBuilder request =
@@ -394,7 +395,7 @@ class DeckControllerTest {
             ObjectMapper mapper = new ObjectMapper();
             mapper.registerModule(new JavaTimeModule());
             String deckToEditString = mapper.writeValueAsString(deckToEdit);
-            Result<Deck> result = new Result<>();
+            Result<Card> result = new Result<>();
             result.addErrorMessage("Deck not found",ResultType.NOT_FOUND);
             when(deckService.addCardToDeck(deckToEdit,cardName)).thenReturn(result);
             MockHttpServletRequestBuilder request =
@@ -414,7 +415,7 @@ class DeckControllerTest {
             ObjectMapper mapper = new ObjectMapper();
             mapper.registerModule(new JavaTimeModule());
             String deckToEditString = mapper.writeValueAsString(deckToEdit);
-            Result<Deck> result = new Result<>();
+            Result<Card> result = new Result<>();
             result.addErrorMessage("Error adding card to deck.",ResultType.INVALID);
             when(deckService.addCardToDeck(deckToEdit,cardName)).thenReturn(result);
             MockHttpServletRequestBuilder request =
@@ -433,7 +434,7 @@ class DeckControllerTest {
             ObjectMapper mapper = new ObjectMapper();
             mapper.registerModule(new JavaTimeModule());
             String deckToEditString = mapper.writeValueAsString(deckToEdit);
-            Result<Deck> result = new Result<>();
+            Result<Card> result = new Result<>();
             result.addErrorMessage("Error updating deck",ResultType.INVALID);
             when(deckService.addCardToDeck(deckToEdit,cardName)).thenReturn(result);
             MockHttpServletRequestBuilder request =

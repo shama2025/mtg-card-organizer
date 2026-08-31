@@ -16,6 +16,19 @@ public class CollectionDeckJdbcRepository implements CollectionDeckRepository {
     }
 
     @Override
+    public CollectionDeck fetchCollectionDeckByDeckId(int deckId) {
+        final String sql = """
+                select cd.collection_id, cd.deck_id
+                from collection_deck cd
+                where cd.deck_id = :deckId
+                """;
+        return jdbcClient.sql(sql)
+                .param("deckId", deckId)
+                .query(CollectionDeck.class)
+                .single();
+    }
+
+    @Override
     public CollectionDeck createCollectionDeck(int deckId, int collectionId) {
         final String sql = """
                 insert into collection_deck (collection_id, deck_id)

@@ -2,14 +2,16 @@ import React, { useContext, useState } from "react";
 import { CircleX, Forward } from "lucide-react";
 import { CollectionId } from "../../../contexts/CollectionId";
 import { LoggedInUser } from "../../../contexts/LoggedInUser";
-import { addCardToCollection } from "./http";
+import { addCardToBinder, addCardToCollection } from "./http";
 import ErrorList from "../../ErrorList/ErrorList";
 import { Bars } from "react-loader-spinner";
 
 export default function AddCardModal({
   setAddCardModalVisible,
-  setCollection,
   collection,
+  setCollection,
+  setBinderCardList,
+  binder,
 }) {
   const collectionId = useContext(CollectionId);
   const loggedInUser = useContext(LoggedInUser);
@@ -21,22 +23,46 @@ export default function AddCardModal({
   async function handleSubmit(event) {
     event.preventDefault();
     setIsSpinnerHidden(false);
-    const { card, errors } = await addCardToCollection(
-      cardName,
-      collectionId.collectionId,
-      loggedInUser,
-    );
-    setIsSpinnerHidden(true);
-    if (errors) {
-      setErrors([errors]);
-      return;
+
+    if (binder) {
+      const { card, errors } = await addCardToBinder(
+        cardName,
+        binder,
+        binder.deckId,
+        loggedInUser,
+      );
+      setIsSpinnerHidden(true);
+      if (errors) {
+        setErrors([errors]);
+        return;
+      }
+      if (card && card.id) {
+        debugger;
+        setBinderCardList((prevCardList) => [...prevCardList, card]);
+        setCardName("");
+        setAddCardModalVisible(false);
+      } else {
+        setErrors(["Received invalid card data from server."]);
+      }
     }
-    if (card && card.id) {
-      setCollection((prevCollection) => [...prevCollection, card]);
-      setCardName("");
-      setAddCardModalVisible(false);
-    } else {
-      setErrors(["Received invalid card data from server."]);
+    if (collection) {
+      const { card, errors } = await addCardToCollection(
+        cardName,
+        collectionId.collectionId,
+        loggedInUser,
+      );
+      setIsSpinnerHidden(true);
+      if (errors) {
+        setErrors([errors]);
+        return;
+      }
+      if (card && card.id) {
+        setCollection((prevCollection) => [...prevCollection, card]);
+        setCardName("");
+        setAddCardModalVisible(false);
+      } else {
+        setErrors(["Received invalid card data from server."]);
+      }
     }
   }
 

@@ -1,32 +1,90 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { fetchBinder } from "./http";
+import { deleteCard, editCardCount, fetchBinder } from "./http";
 import { LoggedInUser } from "../../../contexts/LoggedInUser";
 import CardInfo from "../../Collection/CardInfoContainer/CardInfo";
 import AddCard from "../../Collection/AddCard/AddCard";
 import AddCardModal from "../../Collection/AddCardModal/AddCardModal";
+import ErrorList from "../../ErrorList/ErrorList";
+import { Plus, Minus, ScissorsSquareDashedBottomIcon } from "lucide-react";
 
 export default function BinderLandingPage() {
   const { binderId } = useParams("binderId");
   const [isAddCardModalVisible, setAddCardModalVisible] = useState(false);
-  const [binderQuantity, setCollectionQuantity] = useState(0);
+  const [binderQuantity, setBinderQuantity] = useState(0);
   const [card, setCard] = useState({});
   const [binder, setBinder] = useState({});
+  const [binderCardList, setBinderCardList] = useState([]);
   const [binderErrors, setBinderErrors] = useState([]);
 
   const loggedInUser = useContext(LoggedInUser);
 
-  useEffect(function () {
-    async function handleFetchBinder() {
-      const { binder, errors } = await fetchBinder(binderId, loggedInUser);
+  function handleCardCount(cardToUpdate, isQuantityIncreased) {
+    const updatedCard = {
+      ...cardToUpdate,
+      quantity: cardToUpdate.quantity + (isQuantityIncreased ? 1 : -1),
+    };
+
+    if (updatedCard.quantity > 0) {
+      // Edit existing card count
+      const { cardId, errors } = editCardCount(
+        updatedCard.quantity,
+        updatedCard.id,
+        binder.deckId,
+        loggedInUser,
+      );
       if (errors) {
         setBinderErrors(errors);
-      } else if (binder) {
-        setBinder(binder);
+        return;
       }
+      const updatedCollection = binderCardList.map((c) =>
+        c.id === updatedCard.id ? updatedCard : c,
+      );
+      setBinder(updatedCollection);
+      calculateCollectionQuantity(updatedCollection);
+    } else if (updatedCard.quantity === 0) {
+      // Delete card completely
+      const { cardId, errors } = deleteCard(
+        updatedCard.id,
+        binder.deckId,
+        loggedInUser,
+      );
+      if (errors) {
+        setBinderErrors(errors);
+        return;
+      }
+      const updatedCollection = binderCardList.filter(
+        (c) => c.id !== updatedCard.id,
+      );
+      setBinder(updatedCollection);
+      calculateCollectionQuantity(updatedCollection);
     }
-    handleFetchBinder();
-  }, []);
+  }
+
+  function calculateCollectionQuantity(currentCollection) {
+    let sum = 0;
+    currentCollection.forEach((card) => {
+      sum += card.quantity;
+    });
+    setBinderQuantity(sum);
+  }
+
+  useEffect(
+    function () {
+      async function handleFetchBinder() {
+        const { binder, errors } = await fetchBinder(binderId, loggedInUser);
+        if (errors) {
+          setBinderErrors([errors]);
+        } else if (binder) {
+          setBinder(binder);
+          setBinderCardList(binder?.cardList);
+          calculateCollectionQuantity(binderCardList);
+        }
+      }
+      handleFetchBinder();
+    },
+    [binderCardList],
+  );
 
   if (!binder) {
     return (
@@ -63,7 +121,9 @@ export default function BinderLandingPage() {
               <div hidden={!isAddCardModalVisible}>
                 <AddCardModal
                   setAddCardModalVisible={setAddCardModalVisible}
-                  setBinder={setBinder}
+                  collection={undefined}
+                  setCollection={undefined}
+                  setBinderCardList={setBinderCardList}
                   binder={binder}
                 />
               </div>
@@ -79,7 +139,7 @@ export default function BinderLandingPage() {
       <div hidden={!isAddCardModalVisible}>
         <AddCardModal
           setAddCardModalVisible={setAddCardModalVisible}
-          setBinder={setBinder}
+          setBinderCardList={setBinderCardList}
           binder={binder}
         />
       </div>
@@ -111,8 +171,9 @@ export default function BinderLandingPage() {
             <></>
           )}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-            {binder?.cardList?.length > 0 ? (
-              binder.cardList.map((card) => (
+            <AddCard setAddCardModalVisible={setAddCardModalVisible} />
+            {binderCardList.length > 0 ? (
+              binderCardList.map((card) => (
                 <div
                   key={card.id}
                   onMouseOver={() => setCard(card)}
@@ -159,13 +220,17 @@ export default function BinderLandingPage() {
                 </div>
               ))
             ) : (
-              <div>
-                <AddCard setAddCardModalVisible={setAddCardModalVisible} />
-              </div>
+              <div></div>
             )}
           </div>
         </div>
-
+        {binderErrors.length > 0 ? (
+          <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+            <ErrorList errors={binderErrors} />
+          </div>
+        ) : (
+          <></>
+        )}
         <div className="lg:col-span-3 bg-jeskai-card text-jeskai-white-pure p-4 rounded-xl border border-slate-700 shadow-lg sticky top-20">
           <h3 className="text-md font-semibold text-jeskai-red-light mb-3 border-b border-slate-700 pb-2">
             Card Details

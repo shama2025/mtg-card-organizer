@@ -8,6 +8,7 @@ import jakarta.validation.ValidatorFactory;
 import mtgcollection.data.http.ScryFallApiHttpRepository;
 import mtgcollection.data.http.response.model.CardResponse;
 import mtgcollection.data.interfaces.*;
+import mtgcollection.data.jdbc.CardCollectionJdbcRepository;
 import mtgcollection.model.*;
 import mtgcollection.model.card.Card;
 import mtgcollection.model.card.ManaColor;
@@ -35,17 +36,21 @@ public class DeckService {
 
     private final ScryFallApiHttpRepository scryFallApiHttpRepository;
 
+    private final CardCollectionRepository cardCollectionRepository;
+
 
     public DeckService(DeckRepository deckRepository,CardDeckRepository cardDeckRepository,
                        CardRepository cardRepository, CollectionRepository collectionRepository,
                        CollectionDeckRepository collectionDeckRepository,
-                       ScryFallApiHttpRepository scryFallApiHttpRepository) {
+                       ScryFallApiHttpRepository scryFallApiHttpRepository,
+                       CardCollectionRepository cardCollectionRepository) {
         this.deckRepository = deckRepository;
         this.cardDeckRepository = cardDeckRepository;
         this.cardRepository = cardRepository;
         this.collectionRepository = collectionRepository;
         this.collectionDeckRepository = collectionDeckRepository;
         this.scryFallApiHttpRepository = scryFallApiHttpRepository;
+        this.cardCollectionRepository = cardCollectionRepository;
     }
 
     public List<Deck> fetchAllDecksByCollectionId(int collectionId){return deckRepository.fetchAllDecksInACollection(collectionId);}
@@ -68,6 +73,7 @@ public class DeckService {
         List<CardDeck> cardDeckList = cardDeckRepository.fetchAllCardDecksFromDeckId(deckId);
         for(CardDeck cardDeck : cardDeckList){
             Card card = cardRepository.fetchCardById(cardDeck.cardId());
+            card.setQuantity(cardDeck.quantity());
             cardList.add(card);
         }
         deck.setCardList(cardList);
@@ -130,12 +136,13 @@ public class DeckService {
         return result;
     }
 
-    public Result<Deck> addCardToDeck(Deck deck, String cardName) throws InterruptedException, JsonProcessingException {
-        Result<Deck> result = new Result<>();
+    public Result<Card> addCardToDeck(Deck deck, String cardName) throws InterruptedException, JsonProcessingException {
+        Result<Card> result = new Result<>();
         validate(result,deck);
         if(!result.isSuccess()){
             return result;
         }
+
         try{
             deckRepository.fetchDeckByDeckId(deck.getDeckId());
         }catch(EmptyResultDataAccessException ex){
@@ -143,7 +150,12 @@ public class DeckService {
             return result;
         }
 
-        Card card;
+        // Get collection ID
+        CollectionDeck collectionDeck = collectionDeckRepository.fetchCollectionDeckByDeckId(deck.getDeckId());
+
+        // Take collection ID and card if and confirm the card is in collection
+
+        Card card = null;
         try {
             card = fetchCardJdbcRepo(cardName);
             if (card == null) {
@@ -151,14 +163,23 @@ public class DeckService {
                 return result;
             }
             } catch (EmptyResultDataAccessException ex) {
-            card = fetchCardHttpRepo(cardName);
-            if (card == null) {
-                result.addErrorMessage("Card not found.", ResultType.NOT_FOUND);
-                return result;
-            }
+           // card = fetchCardHttpRepo(cardName);
+//            if (card == null) {
+//                result.addErrorMessage("Card not found.", ResultType.NOT_FOUND);
+//                return result;
+//            }
 
-            card = cardRepository.addCard(card);
+           // card = cardRepository.addCard(card);
         }
+
+        try{
+            cardCollectionRepository.fetchCard(card.getId(),collectionDeck.collectionId());
+        }catch (EmptyResultDataAccessException ex){
+            result.addErrorMessage("Card not found in collection.", ResultType.NOT_FOUND);
+            return result;
+        }
+
+
         // Add card to card_deck table
         CardDeck cardDeck = cardDeckRepository.addCardDeck(card.getId(),deck.getDeckId());
         if(cardDeck == null){
@@ -169,7 +190,7 @@ public class DeckService {
         boolean isDeckUpdated = deckRepository.updateDeck(deck);
         if(isDeckUpdated){
 
-            result.setpayload(deck);
+            result.setpayload(card);
         }else{
             result.addErrorMessage("Error updating deck.",ResultType.INVALID);
         }
@@ -273,7 +294,7 @@ public class DeckService {
         return result;
     }
 
-    private void validate(Result<Deck> result, Deck deck){
+    private void validate(Result<?> result, Deck deck){
         // Validate using validators first
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         Validator validator = factory.getValidator();
