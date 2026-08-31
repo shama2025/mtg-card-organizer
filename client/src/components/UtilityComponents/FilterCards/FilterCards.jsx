@@ -31,35 +31,40 @@ export default function FilterCards({ cardList, setCardList }) {
         }
         return valA - valB;
       } else if (property === "manaColor") {
-        const valA = getManaColorWeights(a)
-        const valB = getManaColorWeights(b)
-        if(order === "desc"){
-            return valB - valA
+        const valA = getManaColorWeights(a);
+        const valB = getManaColorWeights(b);
+        if (order === "desc") {
+          return valB - valA;
         }
-            return valA - valB
+        return valA - valB;
       }
     });
 
-    function getManaColorWeights(card){
-        const color = card?.manaColor?.colors
-        let weight = 0;
-            if(color?.length == 0){
-                // colorless cards
-                return weight = 6
-            }else if(color?.length > 1){
-                // multi-color cards
-                return weight = 7
-            }
-        else{
+    function getManaColorWeights(card) {
+      const color = card?.manaColor?.colors;
+      let weight = 0;
+      if (color?.length == 0) {
+        // colorless cards
+        return (weight = 6);
+      } else if (color?.length > 1) {
+        // multi-color cards
+        return (weight = 7);
+      } else {
         switch (color[0]) {
-        case "W": return 1; // White
-        case "U": return 2; // Blue
-        case "B": return 3; // Black
-        case "R": return 4; // Red
-        case "G": return 5; // Green
-        default: return 6; // Fall back
+          case "W":
+            return 1; // White
+          case "U":
+            return 2; // Blue
+          case "B":
+            return 3; // Black
+          case "R":
+            return 4; // Red
+          case "G":
+            return 5; // Green
+          default:
+            return 6; // Fall back
         }
-    }
+      }
     }
 
     setCardList(sorted);
@@ -74,11 +79,11 @@ export default function FilterCards({ cardList, setCardList }) {
           handleSort(property, sortOrder);
         }}
       >
-        <option value=''>Select a value</option>
-        <option value='setName'>Set</option>
-        <option value='artistName'>Artist</option>
-        <option value='manaColor'>Color</option>
-        <option value='manaCost'>Converted Mana Cost</option>
+        <option value="">Select a value</option>
+        <option value="setName">Set</option>
+        <option value="artistName">Artist</option>
+        <option value="manaColor">Color</option>
+        <option value="manaCost">Converted Mana Cost</option>
       </select>
 
       <select
@@ -88,8 +93,8 @@ export default function FilterCards({ cardList, setCardList }) {
           handleSort(sortBy, newOrder);
         }}
       >
-        <option value='asc'>Ascending</option>
-        <option value='desc'>Descending</option>
+        <option value="asc">Ascending</option>
+        <option value="desc">Descending</option>
       </select>
     </div>
   );

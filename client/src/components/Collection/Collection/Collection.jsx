@@ -255,12 +255,12 @@ export default function Collection() {
           </div>
           <div className="flex flex-row">
             <SearchBar
-            searchQuery={searchQuery}
-            setSearchQuery={setSearchQuery}
-          />
-          <FilterCards cardList={collection} setCardList={setCollection}/>
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+            />
+            <FilterCards cardList={collection} setCardList={setCollection} />
           </div>
-          
+
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             <AddCard setAddCardModalVisible={setAddCardModalVisible} />
             {displayedCards.map((card) => (

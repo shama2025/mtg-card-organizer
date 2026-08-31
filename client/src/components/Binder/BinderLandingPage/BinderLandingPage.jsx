@@ -176,13 +176,16 @@ export default function BinderLandingPage() {
           ) : (
             <></>
           )}
-           <div className="flex flex-row">
-                      <SearchBar
-                      searchQuery={searchQuery}
-                      setSearchQuery={setSearchQuery}
-                    />
-                    <FilterCards cardList={binderCardList} setCardList={setBinderCardList}/>
-                    </div>
+          <div className="flex flex-row">
+            <SearchBar
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+            />
+            <FilterCards
+              cardList={binderCardList}
+              setCardList={setBinderCardList}
+            />
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             <AddCard setAddCardModalVisible={setAddCardModalVisible} />
             {displayedCards.length > 0 ? (
