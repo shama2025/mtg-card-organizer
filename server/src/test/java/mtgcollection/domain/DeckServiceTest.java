@@ -226,7 +226,7 @@ public class DeckServiceTest {
             when(cardDeckRepository.addCardDeck(blackLotus.getId(), decKToUpdate.getDeckId()))
                     .thenReturn(cardDeck);
             when(deckRepository.updateDeck(decKToUpdate)).thenReturn(true);
-            Result<Deck> result = deckService.addCardToDeck(decKToUpdate, cardDoesExist);
+            Result<Card> result = deckService.addCardToDeck(decKToUpdate, cardDoesExist);
             assertTrue(result.isSuccess());
         }
 
@@ -242,7 +242,7 @@ public class DeckServiceTest {
             when(cardDeckRepository.addCardDeck(blackLotus.getId(), decKToUpdate.getDeckId()))
                     .thenReturn(cardDeck);
             when(deckRepository.updateDeck(decKToUpdate)).thenReturn(false);
-            Result<Deck> result = deckService.addCardToDeck(decKToUpdate, cardDoesExist);
+            Result<Card> result = deckService.addCardToDeck(decKToUpdate, cardDoesExist);
             assertFalse(result.isSuccess());
             assertTrue(result.getErrorMessages().contains("Error updating deck."));
             assertEquals(ResultType.INVALID, result.getResultType());
@@ -258,7 +258,7 @@ public class DeckServiceTest {
             when(cardRepository.fetchCardByName(cardDoesExist.toUpperCase())).thenReturn(blackLotus);
             when(cardDeckRepository.addCardDeck(blackLotus.getId(), decKToUpdate.getDeckId()))
                     .thenReturn(null);
-            Result<Deck> result = deckService.addCardToDeck(decKToUpdate, cardDoesExist);
+            Result<Card> result = deckService.addCardToDeck(decKToUpdate, cardDoesExist);
             assertFalse(result.isSuccess());
             assertTrue(result.getErrorMessages().contains("Error adding card to deck."));
             assertEquals(ResultType.INVALID, result.getResultType());
@@ -271,7 +271,7 @@ public class DeckServiceTest {
             when(deckRepository.fetchDeckByDeckId(decKToUpdate.getDeckId())).thenReturn(decKToUpdate);
             when(cardRepository.fetchCardByName(cardDoesNotExist)).thenThrow(EmptyResultDataAccessException.class);
             when(scryFallApiHttpRepository.fetchCardFromScryfallByName(cardDoesNotExist)).thenReturn(Optional.empty());
-            Result<Deck> result = deckService.addCardToDeck(decKToUpdate,cardDoesNotExist);
+            Result<Card> result = deckService.addCardToDeck(decKToUpdate,cardDoesNotExist);
             assertFalse(result.isSuccess());
             assertTrue(result.getErrorMessages().contains("Card not found."));
             assertEquals(ResultType.NOT_FOUND, result.getResultType());
@@ -282,7 +282,7 @@ public class DeckServiceTest {
             Deck deckToUpdate = TestHelper.deckToEdit();
             deckToUpdate.setDeckId(Integer.MAX_VALUE);
             when(deckRepository.fetchDeckByDeckId(deckToUpdate.getDeckId())).thenThrow(EmptyResultDataAccessException.class);
-            Result<Deck> result = deckService.addCardToDeck(deckToUpdate,"");
+            Result<Card> result = deckService.addCardToDeck(deckToUpdate,"");
             assertFalse(result.isSuccess());
             assertSame(ResultType.NOT_FOUND, result.getResultType());
             assertTrue(result.getErrorMessages().contains("Deck does not exist."));
@@ -292,7 +292,7 @@ public class DeckServiceTest {
         void shouldNotAddCardToDeckDeckWithBlankName() throws InterruptedException, JsonProcessingException {
             Deck deckToUpdate = TestHelper.deckToEdit();
             deckToUpdate.setName("");
-            Result<Deck> result = deckService.addCardToDeck(deckToUpdate,"");
+            Result<Card> result = deckService.addCardToDeck(deckToUpdate,"");
             assertFalse(result.isSuccess());
             assertSame(ResultType.INVALID, result.getResultType());
             assertTrue(result.getErrorMessages().contains("Name cannot be blank."));
@@ -301,7 +301,7 @@ public class DeckServiceTest {
         void shouldNotAddCardToDeckDeckWithNullName() throws InterruptedException, JsonProcessingException {
             Deck deckToUpdate = TestHelper.deckToEdit();
             deckToUpdate.setName(null);
-            Result<Deck> result = deckService.addCardToDeck(deckToUpdate,"");
+            Result<Card> result = deckService.addCardToDeck(deckToUpdate,"");
             assertFalse(result.isSuccess());
             assertSame(ResultType.INVALID, result.getResultType());
             assertTrue(result.getErrorMessages().contains("Name cannot be null."));
