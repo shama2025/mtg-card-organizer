@@ -18,6 +18,8 @@ import AddBinder from "../../Binder/AddBinder/AddBinder";
 import AddBinderModal from "../../Binder/AddBinderModal/AddBinderModal";
 import SearchBar from "../../UtilityComponents/SearchForCard/SearchBar";
 import FilterCards from "../../UtilityComponents/FilterCards/FilterCards";
+import ChatBot from "../../UtilityComponents/ChatBot/ChatBot";
+import ChatBotContainer from "../../UtilityComponents/ChatBotChat/ChatBotChatContainer";
 
 export default function Collection() {
   const [collection, setCollection] = useState(undefined);
@@ -32,6 +34,7 @@ export default function Collection() {
   const [binderToEdit, setBinderToEdit] = useState({});
   const [displayBinderCardModal, setDisplayBinderCardModal] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const [showChat, setShowChat] = useState(false)
 
   const loggedInUser = useContext(LoggedInUser);
   const collectionId = useContext(CollectionId).collectionId;
@@ -228,8 +231,12 @@ export default function Collection() {
               );
             })}
           </div>
+            
+        </div> 
+        <div hidden={!showChat} className="fixed top-95">
+              <ChatBotContainer/>
         </div>
-        <div className="relative lg:col-span-6 bg-jeskai-white-border p-4 rounded-xl border border-slate-300 shadow-md">
+        <div className="relative lg:col-span-6  bg-jeskai-white-border p-4 rounded-xl border border-slate-300 shadow-md">
           {collectionErrors.length > 0 ? (
             <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
               <ErrorList errors={collectionErrors} />
@@ -260,7 +267,7 @@ export default function Collection() {
             />
             <FilterCards cardList={collection} setCardList={setCollection} />
           </div>
-
+          <div className="flex flex-row">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             <AddCard setAddCardModalVisible={setAddCardModalVisible} />
             {displayedCards.map((card) => (
@@ -311,7 +318,12 @@ export default function Collection() {
             ))}
           </div>
         </div>
-
+        <div>
+        <div className="absolute">
+            <ChatBot setShowChat={setShowChat} showChat={showChat}/>
+        </div>
+        </div>
+        </div>
         <div className="lg:col-span-3 bg-jeskai-card text-jeskai-white-pure p-4 rounded-xl border border-slate-700 shadow-lg sticky top-20">
           <h3 className="text-md font-semibold text-jeskai-red-light mb-3 border-b border-slate-700 pb-2">
             Card Details
