@@ -9,6 +9,8 @@ import ErrorList from "../../ErrorList/ErrorList";
 import { Plus, Minus, ScissorsSquareDashedBottomIcon } from "lucide-react";
 import SearchBar from "../../UtilityComponents/SearchForCard/SearchBar";
 import FilterCards from "../../UtilityComponents/FilterCards/FilterCards";
+import ChatBotIcon from "../../UtilityComponents/ChatBot/ChatBotIcon/ChatBot";
+import ChatBotChatContainer from "../../UtilityComponents/ChatBot/ChatBotChat/ChatBotChatContainer";
 
 export default function BinderLandingPage() {
   const { binderId } = useParams("binderId");
@@ -19,6 +21,7 @@ export default function BinderLandingPage() {
   const [binderCardList, setBinderCardList] = useState([]);
   const [binderErrors, setBinderErrors] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [showChat, setShowChat] = useState(false);
 
   const loggedInUser = useContext(LoggedInUser);
   const displayedCards = binderCardList.filter((card) =>
@@ -167,6 +170,9 @@ export default function BinderLandingPage() {
               <></>
             )}
           </div>
+          <div hidden={!showChat} className="fixed top-95">
+            <ChatBotChatContainer />
+          </div>
         </div>
         <div className="relative lg:col-span-6 bg-jeskai-white-border p-4 rounded-xl border border-slate-300 shadow-md">
           {binderErrors.length > 0 ? (
@@ -238,6 +244,9 @@ export default function BinderLandingPage() {
             ) : (
               <div></div>
             )}
+          </div>
+          <div className="absolute">
+            <ChatBotIcon setShowChat={setShowChat} showChat={showChat} />
           </div>
         </div>
         {binderErrors.length > 0 ? (
