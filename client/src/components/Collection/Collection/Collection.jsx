@@ -34,7 +34,7 @@ export default function Collection() {
   const [binderToEdit, setBinderToEdit] = useState({});
   const [displayBinderCardModal, setDisplayBinderCardModal] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
-  const [showChat, setShowChat] = useState(false)
+  const [showChat, setShowChat] = useState(false);
 
   const loggedInUser = useContext(LoggedInUser);
   const collectionId = useContext(CollectionId).collectionId;
@@ -231,10 +231,9 @@ export default function Collection() {
               );
             })}
           </div>
-            
-        </div> 
+        </div>
         <div hidden={!showChat} className="fixed top-95">
-              <ChatBotContainer/>
+          <ChatBotContainer />
         </div>
         <div className="relative lg:col-span-6  bg-jeskai-white-border p-4 rounded-xl border border-slate-300 shadow-md">
           {collectionErrors.length > 0 ? (
@@ -268,20 +267,20 @@ export default function Collection() {
             <FilterCards cardList={collection} setCardList={setCollection} />
           </div>
           <div className="flex flex-row">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-            <AddCard setAddCardModalVisible={setAddCardModalVisible} />
-            {displayedCards.map((card) => (
-              <div
-                key={card.id}
-                onMouseOver={() => setCard(card)}
-                className="transition-transform hover:-translate-y-1 cursor-pointer"
-              >
-                <div className="relative inline-block overflow-hidden rounded-lg transition-transform duration-200 hover:scale-105 hover:-translate-y-1 cursor-pointer">
-                  <div className="absolute z-10 bg-jeskai-blue-light text-jeskai-dark font-bold text-xs px-2 py-0.5 rounded-full shadow-md">
-                    {card?.quantity}
-                  </div>
-                  <div
-                    className="absolute z-10
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+              <AddCard setAddCardModalVisible={setAddCardModalVisible} />
+              {displayedCards.map((card) => (
+                <div
+                  key={card.id}
+                  onMouseOver={() => setCard(card)}
+                  className="transition-transform hover:-translate-y-1 cursor-pointer"
+                >
+                  <div className="relative inline-block overflow-hidden rounded-lg transition-transform duration-200 hover:scale-105 hover:-translate-y-1 cursor-pointer">
+                    <div className="absolute z-10 bg-jeskai-blue-light text-jeskai-dark font-bold text-xs px-2 py-0.5 rounded-full shadow-md">
+                      {card?.quantity}
+                    </div>
+                    <div
+                      className="absolute z-10
                    hover:bg-gray-500
                     hover:scale-115 
                     border-jeskai-blue 
@@ -293,36 +292,36 @@ export default function Collection() {
                      rounded-md 
                      shadow-md
                      "
-                    onClick={() => handleCardCount(card, true)}
-                  >
-                    <Plus />
-                  </div>
-                  <div
-                    className="absolute z-10
+                      onClick={() => handleCardCount(card, true)}
+                    >
+                      <Plus />
+                    </div>
+                    <div
+                      className="absolute z-10
                    hover:bg-gray-500 hover:scale-115
                     border-jeskai-blue top-15 right-1.5
                      bg-gray-500/50 text-jeskai-dark 
                      font-bold text-xs px-1 py-0.5 
                      rounded-md shadow-md"
-                    onClick={() => handleCardCount(card, false)}
-                  >
-                    <Minus />
+                      onClick={() => handleCardCount(card, false)}
+                    >
+                      <Minus />
+                    </div>
+                    <img
+                      src={card?.imgPath?.[0]?.large || card?.imgPath}
+                      alt={card?.name}
+                      className="w-full h-auto block"
+                    />
                   </div>
-                  <img
-                    src={card?.imgPath?.[0]?.large || card?.imgPath}
-                    alt={card?.name}
-                    className="w-full h-auto block"
-                  />
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
-        <div>
-        <div className="absolute">
-            <ChatBot setShowChat={setShowChat} showChat={showChat}/>
-        </div>
-        </div>
+          <div>
+            <div className="absolute">
+              <ChatBot setShowChat={setShowChat} showChat={showChat} />
+            </div>
+          </div>
         </div>
         <div className="lg:col-span-3 bg-jeskai-card text-jeskai-white-pure p-4 rounded-xl border border-slate-700 shadow-lg sticky top-20">
           <h3 className="text-md font-semibold text-jeskai-red-light mb-3 border-b border-slate-700 pb-2">
