@@ -27,8 +27,8 @@ export default function AppRouter() {
       errorElement: <PageNotFound />,
       children: [
         {
-          path:"",
-          element: loggedInUser? <Collection/>:<BrandingPage/>
+          path: "",
+          element: loggedInUser ? <Collection /> : <BrandingPage />,
         },
         {
           path: "users",
