@@ -7,6 +7,7 @@ import Collection from "./Collection/Collection/Collection";
 import { CollectionId } from "../contexts/CollectionId";
 import PageNotFound from "./404Page/PageNotFound";
 import BinderLandingPage from "./Binder/BinderLandingPage/BinderLandingPage";
+import BrandingPage from "./BrandingPage/BrandingPage";
 
 export default function AppRouter() {
   const [loggedInUser, setLoggedInUser] = useState(
@@ -25,6 +26,10 @@ export default function AppRouter() {
       element: <Layout setLoggedInUser={setLoggedInUser} />,
       errorElement: <PageNotFound />,
       children: [
+        {
+          path: "",
+          element: loggedInUser ? <Collection /> : <BrandingPage />,
+        },
         {
           path: "users",
           children: [
