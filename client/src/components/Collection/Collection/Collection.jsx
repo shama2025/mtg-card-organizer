@@ -18,8 +18,8 @@ import AddBinder from "../../Binder/AddBinder/AddBinder";
 import AddBinderModal from "../../Binder/AddBinderModal/AddBinderModal";
 import SearchBar from "../../UtilityComponents/SearchForCard/SearchBar";
 import FilterCards from "../../UtilityComponents/FilterCards/FilterCards";
-import ChatBot from "../../UtilityComponents/ChatBot/ChatBot";
-import ChatBotContainer from "../../UtilityComponents/ChatBotChat/ChatBotChatContainer";
+import ChatBotIcon from "../../UtilityComponents/ChatBot/ChatBotIcon/ChatBot";
+import ChatBotContainer from "../../UtilityComponents/ChatBot/ChatBotChat/ChatBotChatContainer";
 
 export default function Collection() {
   const [collection, setCollection] = useState(undefined);
@@ -319,7 +319,7 @@ export default function Collection() {
           </div>
           <div>
             <div className="absolute">
-              <ChatBot setShowChat={setShowChat} showChat={showChat} />
+              <ChatBotIcon setShowChat={setShowChat} showChat={showChat} />
             </div>
           </div>
         </div>
