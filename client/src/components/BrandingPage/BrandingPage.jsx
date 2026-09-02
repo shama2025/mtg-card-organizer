@@ -22,7 +22,7 @@ export default function BrandingPage() {
       <div className="relative top-15 flex flex-col items-center justify-center">
         <div className="relative top-10">
           <div className="z-1000 text-6xl text-jeskai-white-surface relative top-17 flex items-center justify-center">
-            The Library
+            ManaVault
           </div>
           <img src={mtgLogo} className="w-113.5 h-87.5 p-10" alt="MTG Logo" />
         </div>
