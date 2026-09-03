@@ -27,7 +27,7 @@ export default function AddBinderModal({
 
   const collectionId = useContext(CollectionId);
   const loggedInUser = useContext(LoggedInUser);
-  const jwtToken = loggedInUser.token
+  const jwtToken = loggedInUser.token;
 
   async function handleSubmit(event) {
     event.preventDefault();

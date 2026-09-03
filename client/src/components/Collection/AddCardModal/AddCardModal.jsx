@@ -15,7 +15,7 @@ export default function AddCardModal({
 }) {
   const collectionId = useContext(CollectionId);
   const loggedInUser = useContext(LoggedInUser);
-  const jwtToken = loggedInUser.token
+  const jwtToken = loggedInUser.token;
 
   const [cardName, setCardName] = useState("");
   const [errors, setErrors] = useState([]);

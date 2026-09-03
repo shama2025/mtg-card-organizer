@@ -8,7 +8,7 @@ export async function loginUser(user) {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(user)
+      body: JSON.stringify(user),
     });
 
     // returns [user obj, errors]

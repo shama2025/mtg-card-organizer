@@ -1,7 +1,7 @@
 import binderUrl from "../../url/binderUrl";
 import collectionUrl from "../../url/collectionUrl";
 
-export async function fetchCollection(collectionId,jwtToken) {
+export async function fetchCollection(collectionId, jwtToken) {
   try {
     const response = await fetch(`${collectionUrl}/${collectionId}`, {
       method: "GET",
@@ -27,12 +27,7 @@ export async function fetchCollection(collectionId,jwtToken) {
   }
 }
 
-export async function editCardCount(
-  quantity,
-  cardId,
-  collectionId,
-  jwtToken,
-) {
+export async function editCardCount(quantity, cardId, collectionId, jwtToken) {
   try {
     const response = await fetch(
       `${collectionUrl}/${collectionId}/card/${cardId}`,
