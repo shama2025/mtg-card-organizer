@@ -97,7 +97,8 @@ export default function Collection() {
   useEffect(
     function () {
       async function handleFecthCollection() {
-        const response = await fetchCollection(collectionId, loggedInUser);
+        const jwtToken = loggedInUser.token
+        const response = await fetchCollection(collectionId,jwtToken);
         if (response.collection) {
           setCollection(response.collection);
           calculateCollectionQuantity(response.collection);
