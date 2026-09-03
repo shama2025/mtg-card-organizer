@@ -29,13 +29,19 @@ public class CollectionController {
 
     @GetMapping("/{collectionId}")
     public ResponseEntity<?> fetchAllCardsByUserId(@RequestHeader Map<String,String> headers,@PathVariable int collectionId) throws JsonProcessingException {
-        AuthHandler.auth(headers);
+        ResponseEntity<?> responseEntity = AuthHandler.auth(headers);
+        if(!(responseEntity == null)){
+            return responseEntity;
+        }
         return new ResponseEntity<>(collectionService.fetchAllCardsByCollection(collectionId),HttpStatus.OK);
     }
 
     @PostMapping("/{collectionId}")
     public ResponseEntity<?> addCardToCollection(@RequestHeader Map<String,String> headers, @RequestBody CardAddRequest request, @PathVariable int collectionId) throws JsonProcessingException, InterruptedException {
-        AuthHandler.auth(headers);
+        ResponseEntity<?> responseEntity = AuthHandler.auth(headers);
+        if(!(responseEntity == null)){
+            return responseEntity;
+        }
         String cardName = request.name();
         Result<Card> result = collectionService.addCardToCollection(cardName,collectionId);
         if(result.isSuccess()){
@@ -46,7 +52,10 @@ public class CollectionController {
 
     @PutMapping("/{collectionId}/card/{cardId}")
     public ResponseEntity<?> updateCardFromCollection(@RequestHeader Map<String,String> headers, @PathVariable int cardId, @RequestBody CardEditRequest request, @PathVariable int collectionId) throws JsonProcessingException {
-        AuthHandler.auth(headers);
+        ResponseEntity<?> responseEntity = AuthHandler.auth(headers);
+        if(!(responseEntity == null)){
+            return responseEntity;
+        }
         int quantity = request.quantity();
         Result<Integer> result = collectionService.updateCardInCollection(cardId,collectionId,quantity);
         if(result.isSuccess()){
@@ -57,7 +66,10 @@ public class CollectionController {
 
     @DeleteMapping("/{collectionId}/card/{cardId}")
     public ResponseEntity<?> removeCardFromCollection(@RequestHeader Map<String,String> headers, @PathVariable int cardId, @PathVariable int collectionId) throws JsonProcessingException {
-        AuthHandler.auth(headers);
+        ResponseEntity<?> responseEntity = AuthHandler.auth(headers);
+        if(!(responseEntity == null)){
+            return responseEntity;
+        }
         Result<Integer> result = collectionService.removeCardFromCollection(cardId,collectionId);
         if(result.isSuccess()){
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);

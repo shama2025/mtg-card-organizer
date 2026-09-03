@@ -1,12 +1,12 @@
 package mtgcollection.domain;
 
+import mtgcollection.controller.JwtHandler;
 import mtgcollection.data.interfaces.CollectionRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import mtgcollection.TestHelper;
@@ -15,6 +15,7 @@ import mtgcollection.dto.LoggedInUser;
 import mtgcollection.model.Result;
 import mtgcollection.model.ResultType;
 import mtgcollection.model.User;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
@@ -22,10 +23,10 @@ import static org.mockito.Mockito.when;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 class UserServiceTest {
 
-    @MockBean
+    @MockitoBean
     UserRepository repository;
 
-    @MockBean
+    @MockitoBean
     CollectionRepository collectionRepository;
 
     @Autowired
@@ -33,6 +34,9 @@ class UserServiceTest {
 
     @Autowired
     JdbcClient jdbcClient;
+
+    @Autowired
+    JwtHandler jwtHandler;
 
     @BeforeEach
     void runSetKnownGoodState(){
@@ -48,7 +52,7 @@ class UserServiceTest {
             User userLoggingIn = TestHelper.userToFind();
             userToFinder.hashPassword();
             Result<LoggedInUser> expected = new Result<>();
-            expected.setpayload(new LoggedInUser(userToFinder.getUserId(),userToFinder.getEmail(),1));
+            expected.setpayload(new LoggedInUser(userToFinder.getUserId(),userToFinder.getEmail(),1,JwtHandler.generateToken(userLoggingIn.getEmail())));
             when(collectionRepository.fetchUserCollection(userLoggingIn.getUserId())).thenReturn(TestHelper.collection());
             when(repository.findUserByEmail(userToFinder.getEmail())).thenReturn(userToFinder);
             Result<LoggedInUser> actual = service.findUserByEmail(userLoggingIn);
@@ -114,8 +118,8 @@ class UserServiceTest {
             User userToFind = TestHelper.userToFind();
             userToFind.setPassword(null);
             Result<LoggedInUser> expected = new Result<>();
-            expected.addErrorMessage("Password cannot be blank.", ResultType.INVALID);
             expected.addErrorMessage("Password cannot be null.", ResultType.INVALID);
+            expected.addErrorMessage("Password cannot be blank.", ResultType.INVALID);
             expected.addErrorMessage("User does not exist.", ResultType.NOT_FOUND);
             Result<LoggedInUser> actual = service.findUserByEmail(userToFind);
             assertFalse(actual.isSuccess());
@@ -160,7 +164,8 @@ class UserServiceTest {
         void shouldAddUser(){
             User toAdd = TestHelper.userToAdd();
             Result<LoggedInUser> expected = new Result<>();
-            expected.setpayload(new LoggedInUser(3,"c@c.com",3));
+            LoggedInUser loggedInUser = TestHelper.loggedInUser();
+            expected.setpayload(loggedInUser);
             when(collectionRepository.createCollection(toAdd.getUserId())).thenReturn(TestHelper.collection());
             when(repository.add(toAdd)).thenReturn(new User(3,"c@c.com","hashed"));
             Result<LoggedInUser> actual = service.add(toAdd);

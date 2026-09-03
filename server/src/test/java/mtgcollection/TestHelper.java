@@ -1,6 +1,7 @@
 package mtgcollection;
 
 
+import mtgcollection.controller.JwtHandler;
 import mtgcollection.data.http.response.model.CardResponse;
 import mtgcollection.dto.LoggedInUser;
 import mtgcollection.model.*;
@@ -26,7 +27,7 @@ public class TestHelper {
         return new Collection(1,userToFind().getUserId());
     }
 
-    public static LoggedInUser loggedInUser(){return new LoggedInUser(1,"a@a.com", collection().getCollectionId());}
+    public static LoggedInUser loggedInUser(){return new LoggedInUser(3,"c@c.com", collection().getCollectionId(), JwtHandler.generateToken("a@a.com"));}
 
     public static Card solRing() {
         return new Card(

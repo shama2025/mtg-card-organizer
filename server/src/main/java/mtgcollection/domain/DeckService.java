@@ -88,6 +88,12 @@ public class DeckService {
             return result;
         }
         validate(result,deck);
+
+        if(deck.getDateCreated().isBefore(LocalDate.now()) || deck.getDateCreated().isAfter(LocalDate.now())){
+            result.addErrorMessage("Creation date has to be today.",ResultType.INVALID);
+            return result;
+        }
+
         if(!result.isSuccess()){
             return result;
         }
