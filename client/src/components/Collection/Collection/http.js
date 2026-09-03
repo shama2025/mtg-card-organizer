@@ -1,12 +1,12 @@
 import binderUrl from "../../url/binderUrl";
 import collectionUrl from "../../url/collectionUrl";
 
-export async function fetchCollection(collectionId, loggedInUser) {
+export async function fetchCollection(collectionId,jwtToken) {
   try {
     const response = await fetch(`${collectionUrl}/${collectionId}`, {
       method: "GET",
       headers: {
-        Authorization: JSON.stringify(loggedInUser),
+        Authorization: JSON.stringify(jwtToken),
       },
     });
     if (response.ok) {

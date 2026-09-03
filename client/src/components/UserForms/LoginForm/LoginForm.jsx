@@ -1,4 +1,4 @@
-import { React, useState } from "react";
+import { React, useContext, useState } from "react";
 import { loginUser } from "../util/http";
 import { useNavigate } from "react-router-dom";
 import { useCollectionId } from "../../../contexts/CollectionId";
@@ -26,7 +26,9 @@ export default function LoginForm({ setLoggedInUser }) {
       setLoggedInUser(response.user);
       localStorage.setItem("user", JSON.stringify(response.user));
       localStorage.setItem("collection_id", response.user.collectionId);
+      localStorage.setItem("jwt_token",response.user.token);
       setCollectionId(response.user.collectionId);
+      debugger
       navigator("/collection");
     } else {
       setError(response.errors);

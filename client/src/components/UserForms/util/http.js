@@ -35,8 +35,9 @@ export async function loginUser(user) {
     const response = await fetch(`${userUrl}/login`, {
       method: "POST",
       headers: {
-        Authorization: JSON.stringify(user),
+        "Content-Type": "application/json",
       },
+      body: JSON.stringify(user)
     });
 
     // returns [user obj, errors]
