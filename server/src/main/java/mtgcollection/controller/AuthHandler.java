@@ -12,7 +12,7 @@ import java.util.Map;
 
 public class AuthHandler {
 
-    public static ResponseEntity<?> auth(Map<String,String> responseHeader) throws JsonProcessingException {
+    public static ResponseEntity<?> auth(Map<String,String> responseHeader){
         // Check if the auth headers are present
         if(responseHeader.get("authorization") == null){
             return new ResponseEntity<>(List.of("Missing required headers."), HttpStatus.BAD_REQUEST);

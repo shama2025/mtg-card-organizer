@@ -1,5 +1,5 @@
 import { React, useContext, useState } from "react";
-import { loginUser } from "../util/http";
+import { loginUser } from "./http";
 import { useNavigate } from "react-router-dom";
 import { useCollectionId } from "../../../contexts/CollectionId";
 import ErrorList from "../../ErrorList/ErrorList";
@@ -23,6 +23,7 @@ export default function LoginForm({ setLoggedInUser }) {
     event.preventDefault();
     const response = await loginUser(user);
     if (response.user) {
+      debugger
       setLoggedInUser(response.user);
       localStorage.setItem("user", JSON.stringify(response.user));
       localStorage.setItem("collection_id", response.user.collectionId);

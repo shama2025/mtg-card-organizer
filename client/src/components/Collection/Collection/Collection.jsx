@@ -38,6 +38,8 @@ export default function Collection() {
 
   const loggedInUser = useContext(LoggedInUser);
   const collectionId = useContext(CollectionId).collectionId;
+  const jwtToken = localStorage.getItem("jwt_token")
+
   const displayedCards = collection?.filter((card) =>
     card?.name?.toLowerCase().includes(searchQuery.toLowerCase()),
   );
@@ -54,7 +56,7 @@ export default function Collection() {
         updatedCard.quantity,
         updatedCard.id,
         collectionId,
-        loggedInUser,
+        jwtToken,
       );
       if (errors) {
         setCollectionErrors(errors);
@@ -67,11 +69,12 @@ export default function Collection() {
       setCollection(updatedCollection);
       calculateCollectionQuantity(updatedCollection);
     } else if (updatedCard.quantity === 0) {
+      debugger
       // Delete card completely
       const { cardId, errors } = deleteCard(
         updatedCard.id,
         collectionId,
-        loggedInUser,
+        jwtToken,
       );
       if (errors) {
         setCollectionErrors(errors);
@@ -97,7 +100,6 @@ export default function Collection() {
   useEffect(
     function () {
       async function handleFecthCollection() {
-        const jwtToken = loggedInUser.token
         const response = await fetchCollection(collectionId,jwtToken);
         if (response.collection) {
           setCollection(response.collection);
@@ -116,7 +118,7 @@ export default function Collection() {
       async function handleFetchBinders() {
         const { binders, errors } = await fetchBinders(
           collectionId,
-          loggedInUser,
+          jwtToken,
         );
         if (errors) {
           setBinderErrors(errors);

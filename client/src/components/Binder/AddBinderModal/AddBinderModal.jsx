@@ -27,6 +27,7 @@ export default function AddBinderModal({
 
   const collectionId = useContext(CollectionId);
   const loggedInUser = useContext(LoggedInUser);
+  const jwtToken = loggedInUser.token
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -34,7 +35,7 @@ export default function AddBinderModal({
     const { newBinder, errors } = await addBinder(
       binder,
       collectionId,
-      loggedInUser,
+      jwtToken,
     );
     if (newBinder) {
       setIsSpinnerHidden(true);

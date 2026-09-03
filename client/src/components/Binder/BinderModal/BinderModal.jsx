@@ -19,6 +19,7 @@ export default function BinderModal({
 
   const navigator = useNavigate();
   const loggedInUser = useContext(LoggedInUser);
+  const jwtToken = loggedInUser.token
 
   useEffect(() => {
     if (binderToEdit?.name) {
@@ -34,7 +35,7 @@ export default function BinderModal({
       setIsSpinnerHidden(false);
       const { isDeleted, errors } = await deleteBinder(
         binder.deckId,
-        loggedInUser,
+        jwtToken,
       );
       if (isDeleted) {
         const updatedBinders = binders.filter((c) => c.id !== binderToEdit.id);

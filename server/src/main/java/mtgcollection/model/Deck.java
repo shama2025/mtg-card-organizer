@@ -17,8 +17,6 @@ public class Deck {
     private int cardCount;
 
     @NotNull(message = "Creation date cannot be null.")
-    @PastOrPresent(message = "Creation date has to be today.")
-    @FutureOrPresent(message = "Creation date has to be today.")
     private LocalDate dateCreated;
 
     private LocalDate dateUpdated;
