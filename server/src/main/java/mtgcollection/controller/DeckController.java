@@ -30,21 +30,13 @@ public class DeckController {
 
     @GetMapping("/decks/{collectionId}")
     public ResponseEntity<?> fetchAllDecksByCollectionId(@RequestHeader Map<String,String> headers, @PathVariable int collectionId) throws JsonProcessingException {
-        if(headers.get("authorization") == null){
-            // Missing auth header
-            return new ResponseEntity<>(List.of("Missing authorization header"), HttpStatus.BAD_REQUEST);
-        }
-
-        // Extract json from string
-        String userAuthJson = headers.get("authorization");
-
-        ObjectMapper mapper = new ObjectMapper();
-        LoggedInUser user = mapper.readValue(userAuthJson,LoggedInUser.class);
+        AuthHandler.auth(headers);
         return new ResponseEntity<>(deckService.fetchAllDecksByCollectionId(collectionId),HttpStatus.OK);
     }
 
     @GetMapping("/deck/{deckId}")
-    public ResponseEntity<?> fetchDeckByDeckId(@PathVariable int deckId){
+    public ResponseEntity<?> fetchDeckByDeckId(@RequestHeader Map<String,String> headers,@PathVariable int deckId) throws JsonProcessingException {
+        AuthHandler.auth(headers);
         Result<Deck> result = deckService.fetchDeckByDeckId(deckId);
         if(result.isSuccess()){
             return new ResponseEntity<>(result.getpayload(),HttpStatus.OK);
@@ -56,14 +48,7 @@ public class DeckController {
     public ResponseEntity<?> createDeck(@RequestHeader Map<String, String> headers, @PathVariable int collectionId,
                                         @RequestBody Deck deck
     ) throws JsonProcessingException {
-        if (headers.get("authorization") == null) {
-            return new ResponseEntity<>(List.of("Missing authorization header"), HttpStatus.BAD_REQUEST);
-        }
-
-        String userAuthJson = headers.get("authorization");
-        ObjectMapper mapper = new ObjectMapper();
-        LoggedInUser user = mapper.readValue(userAuthJson, LoggedInUser.class);
-
+        AuthHandler.auth(headers);
         Result<Deck> result = deckService.createDeckInCollection(deck, collectionId);
         if (result.isSuccess()) {
             return new ResponseEntity<>(result.getpayload(), HttpStatus.CREATED);
@@ -76,15 +61,7 @@ public class DeckController {
         if(deckId != deck.getDeckId()){
             return new ResponseEntity<>(List.of("Invalid deck id."), HttpStatus.BAD_REQUEST);
         }
-
-        if (headers.get("authorization") == null) {
-            return new ResponseEntity<>(List.of("Missing authorization header"), HttpStatus.BAD_REQUEST);
-        }
-
-        String userAuthJson = headers.get("authorization");
-        ObjectMapper mapper = new ObjectMapper();
-        LoggedInUser user = mapper.readValue(userAuthJson, LoggedInUser.class);
-
+        AuthHandler.auth(headers);
         Result<Deck> result = deckService.updateDeck(deck);
         if(result.isSuccess()){
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -100,15 +77,7 @@ public class DeckController {
         if(deckId != deck.getDeckId()){
             return new ResponseEntity<>(List.of("Invalid deck id."), HttpStatus.BAD_REQUEST);
         }
-
-        if (headers.get("authorization") == null) {
-            return new ResponseEntity<>(List.of("Missing authorization header"), HttpStatus.BAD_REQUEST);
-        }
-
-        String userAuthJson = headers.get("authorization");
-        ObjectMapper mapper = new ObjectMapper();
-        LoggedInUser user = mapper.readValue(userAuthJson, LoggedInUser.class);
-
+        AuthHandler.auth(headers);
         Result<Card> result = deckService.addCardToDeck(deck,cardName);
         if(result.isSuccess()){
             return new ResponseEntity<>(result.getpayload(),HttpStatus.CREATED);
@@ -123,14 +92,7 @@ public class DeckController {
                                                @PathVariable int cardId
                                                ) throws JsonProcessingException {
 
-        if (headers.get("authorization") == null) {
-            return new ResponseEntity<>(List.of("Missing authorization header"), HttpStatus.BAD_REQUEST);
-        }
-
-        String userAuthJson = headers.get("authorization");
-        ObjectMapper mapper = new ObjectMapper();
-        LoggedInUser user = mapper.readValue(userAuthJson, LoggedInUser.class);
-
+        AuthHandler.auth(headers);
         Result<Integer> result = deckService.updateCardInADeck(cardId,deckId,request.quantity());
         if(result.isSuccess()){
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -143,15 +105,7 @@ public class DeckController {
                                                @PathVariable int deckId,
                                                @PathVariable int cardId
     ) throws JsonProcessingException {
-
-        if (headers.get("authorization") == null) {
-            return new ResponseEntity<>(List.of("Missing authorization header"), HttpStatus.BAD_REQUEST);
-        }
-
-        String userAuthJson = headers.get("authorization");
-        ObjectMapper mapper = new ObjectMapper();
-        LoggedInUser user = mapper.readValue(userAuthJson, LoggedInUser.class);
-
+        AuthHandler.auth(headers);
         Result<Integer> result = deckService.removeCardFromDeck(cardId,deckId);
         if(result.isSuccess()){
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -161,14 +115,7 @@ public class DeckController {
 
     @DeleteMapping("/deck/{deckId}")
     public ResponseEntity<?> deleteDeck(@RequestHeader Map<String,String> headers, @PathVariable int deckId) throws JsonProcessingException {
-        if (headers.get("authorization") == null) {
-            return new ResponseEntity<>(List.of("Missing authorization header"), HttpStatus.BAD_REQUEST);
-        }
-
-        String userAuthJson = headers.get("authorization");
-        ObjectMapper mapper = new ObjectMapper();
-        LoggedInUser user = mapper.readValue(userAuthJson, LoggedInUser.class);
-
+        AuthHandler.auth(headers);
         Result<Integer> result = deckService.removeDeck(deckId);
         if(result.isSuccess()){
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);

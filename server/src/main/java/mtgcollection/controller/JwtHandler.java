@@ -12,13 +12,13 @@ import java.util.Date;
 @Component
 public class JwtHandler {
 
-    private final String SECRET = System.getenv("SECRET");
-    private final Key key = Keys.hmacShaKeyFor(SECRET.getBytes());
-    private final int EXPIRATION_MS = 86400000; // 1 day
+    private static final String SECRET = System.getenv("SECRET");
+    private static final Key key = Keys.hmacShaKeyFor(SECRET.getBytes());
+    private static final int EXPIRATION_MS = 86400000; // 1 day
 
 
     // Upon Sign up
-    public String generateToken(String username) {
+    public static String generateToken(String username) {
         return Jwts.builder()
                 .setSubject(username)
                 .setIssuedAt(new Date())
@@ -28,7 +28,7 @@ public class JwtHandler {
     }
 
     // For authentication
-    public String getUsernameFromToken(String token) {
+    public static String getUsernameFromToken(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()
@@ -38,7 +38,7 @@ public class JwtHandler {
     }
 
     // Shield to make sure token is a Jwt token
-    public boolean validateToken(String token) {
+    public static boolean validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
