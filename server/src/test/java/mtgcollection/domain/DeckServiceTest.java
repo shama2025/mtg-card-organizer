@@ -3,24 +3,15 @@ package mtgcollection.domain;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import mtgcollection.TestHelper;
 import mtgcollection.data.http.ScryFallApiHttpRepository;
-import mtgcollection.data.interfaces.CollectionDeckRepository;
-import mtgcollection.data.interfaces.CollectionRepository;
-import mtgcollection.data.interfaces.DeckRepository;
-import mtgcollection.model.CollectionDeck;
-import mtgcollection.data.interfaces.CardDeckRepository;
-import mtgcollection.data.interfaces.CardRepository;
-import mtgcollection.data.interfaces.DeckRepository;
-import mtgcollection.model.CardDeck;
-import mtgcollection.model.Deck;
-import mtgcollection.model.Result;
-import mtgcollection.model.ResultType;
+import mtgcollection.data.interfaces.*;
+import mtgcollection.model.*;
 import mtgcollection.model.card.Card;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.dao.EmptyResultDataAccessException;
 
 import java.time.LocalDate;
@@ -32,26 +23,31 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 public class DeckServiceTest {
-    @MockBean
+    @MockitoBean
     DeckRepository deckRepository;
 
-    @MockBean
+    @MockitoBean
     CollectionDeckRepository collectionDeckRepository;
 
-    @MockBean
+    @MockitoBean
     CollectionRepository collectionRepository;
 
-    @MockBean
+    @MockitoBean
     CardRepository cardRepository;
 
-    @MockBean
+    @MockitoBean
     CardDeckRepository cardDeckRepository;
 
-    @MockBean
+    @MockitoBean
     ScryFallApiHttpRepository scryFallApiHttpRepository;
+
+    @MockitoBean
+    CardCollectionRepository cardCollectionRepository;
 
     @Autowired
     DeckService deckService;
+
+
 
     @Nested
     class FetchAllDecksByCollectionId{
@@ -220,14 +216,39 @@ public class DeckServiceTest {
             String cardDoesExist = "black lotus";
             Card blackLotus = TestHelper.blackLotus();
             CardDeck cardDeck = new CardDeck(blackLotus.getId(),decKToUpdate.getDeckId(),1);
+            int validCollectionId = TestHelper.collection().getCollectionId();
+            CollectionDeck collectionDeck = new CollectionDeck(decKToUpdate.getDeckId(),validCollectionId);
             blackLotus.setId(5);
             when(deckRepository.fetchDeckByDeckId(decKToUpdate.getDeckId())).thenReturn(decKToUpdate);
             when(cardRepository.fetchCardByName(cardDoesExist.toUpperCase())).thenReturn(blackLotus);
             when(cardDeckRepository.addCardDeck(blackLotus.getId(), decKToUpdate.getDeckId()))
                     .thenReturn(cardDeck);
             when(deckRepository.updateDeck(decKToUpdate)).thenReturn(true);
+            when(collectionDeckRepository.fetchCollectionDeckByDeckId(decKToUpdate.getDeckId())).thenReturn(collectionDeck);
             Result<Card> result = deckService.addCardToDeck(decKToUpdate, cardDoesExist);
             assertTrue(result.isSuccess());
+        }
+
+        @Test
+        void shouldNotAddCardToDeckWhereCardDoesNotExistInCollection() throws InterruptedException, JsonProcessingException {
+            Deck decKToUpdate = TestHelper.deckToEdit();
+            String cardDoesExist = "black lotus";
+            Card blackLotus = TestHelper.blackLotus();
+            int validCollectionId = TestHelper.collection().getCollectionId();
+            CardDeck cardDeck = new CardDeck(blackLotus.getId(),decKToUpdate.getDeckId(),1);
+            CollectionDeck collectionDeck = new CollectionDeck(decKToUpdate.getDeckId(),validCollectionId);
+            blackLotus.setId(5);
+            when(deckRepository.fetchDeckByDeckId(decKToUpdate.getDeckId())).thenReturn(decKToUpdate);
+            when(cardRepository.fetchCardByName(cardDoesExist.toUpperCase())).thenReturn(blackLotus);
+            when(cardDeckRepository.addCardDeck(blackLotus.getId(), decKToUpdate.getDeckId()))
+                    .thenReturn(cardDeck);
+            when(deckRepository.updateDeck(decKToUpdate)).thenReturn(false);
+            when(collectionDeckRepository.fetchCollectionDeckByDeckId(decKToUpdate.getDeckId())).thenReturn(collectionDeck);
+            when(cardCollectionRepository.fetchCard(blackLotus.getId(),validCollectionId)).thenThrow(EmptyResultDataAccessException.class);
+            Result<Card> result = deckService.addCardToDeck(decKToUpdate, cardDoesExist);
+            assertFalse(result.isSuccess());
+            assertTrue(result.getErrorMessages().contains("Card not found in collection."));
+            assertEquals(ResultType.NOT_FOUND, result.getResultType());
         }
 
         @Test
@@ -235,13 +256,16 @@ public class DeckServiceTest {
             Deck decKToUpdate = TestHelper.deckToEdit();
             String cardDoesExist = "black lotus";
             Card blackLotus = TestHelper.blackLotus();
+            int validCollectionId = TestHelper.collection().getCollectionId();
             CardDeck cardDeck = new CardDeck(blackLotus.getId(),decKToUpdate.getDeckId(),1);
+            CollectionDeck collectionDeck = new CollectionDeck(decKToUpdate.getDeckId(),validCollectionId);
             blackLotus.setId(5);
             when(deckRepository.fetchDeckByDeckId(decKToUpdate.getDeckId())).thenReturn(decKToUpdate);
             when(cardRepository.fetchCardByName(cardDoesExist.toUpperCase())).thenReturn(blackLotus);
             when(cardDeckRepository.addCardDeck(blackLotus.getId(), decKToUpdate.getDeckId()))
                     .thenReturn(cardDeck);
             when(deckRepository.updateDeck(decKToUpdate)).thenReturn(false);
+            when(collectionDeckRepository.fetchCollectionDeckByDeckId(decKToUpdate.getDeckId())).thenReturn(collectionDeck);
             Result<Card> result = deckService.addCardToDeck(decKToUpdate, cardDoesExist);
             assertFalse(result.isSuccess());
             assertTrue(result.getErrorMessages().contains("Error updating deck."));
@@ -253,11 +277,15 @@ public class DeckServiceTest {
             Deck decKToUpdate = TestHelper.deckToEdit();
             String cardDoesExist = "black lotus";
             Card blackLotus = TestHelper.blackLotus();
+            int validCollectionId = TestHelper.collection().getCollectionId();
+            CollectionDeck collectionDeck = new CollectionDeck(decKToUpdate.getDeckId(),validCollectionId);
             blackLotus.setId(5);
             when(deckRepository.fetchDeckByDeckId(decKToUpdate.getDeckId())).thenReturn(decKToUpdate);
             when(cardRepository.fetchCardByName(cardDoesExist.toUpperCase())).thenReturn(blackLotus);
             when(cardDeckRepository.addCardDeck(blackLotus.getId(), decKToUpdate.getDeckId()))
                     .thenReturn(null);
+            when(collectionDeckRepository.fetchCollectionDeckByDeckId(decKToUpdate.getDeckId())).thenReturn(collectionDeck);
+            when(cardCollectionRepository.fetchCard(blackLotus.getId(),validCollectionId)).thenReturn(new CardCollection(blackLotus.getId(),validCollectionId,1));
             Result<Card> result = deckService.addCardToDeck(decKToUpdate, cardDoesExist);
             assertFalse(result.isSuccess());
             assertTrue(result.getErrorMessages().contains("Error adding card to deck."));
