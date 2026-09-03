@@ -35,7 +35,6 @@ export default function BrandingPage() {
       rounded-md
       "
             to="/users/signup"
-            onClick={() => localStorage.setItem("displayBrandingPage", true)}
           >
             Sign Up
           </NavLink>
