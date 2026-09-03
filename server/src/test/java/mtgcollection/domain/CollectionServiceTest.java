@@ -1,5 +1,6 @@
 package mtgcollection.domain;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import mtgcollection.TestHelper;
 import mtgcollection.data.http.ScryFallApiHttpRepository;
 import mtgcollection.data.interfaces.CardCollectionRepository;
@@ -13,8 +14,8 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,16 +28,16 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 class CollectionServiceTest {
 
-    @MockBean
+    @MockitoBean
     CardRepository cardRepository;
 
-    @MockBean
+    @MockitoBean
     ScryFallApiHttpRepository scryFallApiHttpRepository;
 
-    @MockBean
+    @MockitoBean
     CardCollectionRepository cardCollectionRepository;
 
-    @MockBean
+    @MockitoBean
     CollectionRepository collectionRepository;
 
     @Autowired
@@ -71,7 +72,7 @@ class CollectionServiceTest {
                     .thenReturn(expected);
             when(cardCollectionRepository.addCardToCollection(expected.getId(), validCollectionId))
                     .thenReturn(new CardCollection(expected.getId(), validCollectionId, 1));
-
+            when(cardCollectionRepository.fetchCard(expected.getId(),validCollectionId)).thenThrow(EmptyResultDataAccessException.class);
             Result<Card> result = collectionService.addCardToCollection(cardNotInCardTable.getName(), validCollectionId);
 
             assertTrue(result.isSuccess());
@@ -89,11 +90,33 @@ class CollectionServiceTest {
                     .thenReturn(cardPresentInCardTable);
             when(cardCollectionRepository.addCardToCollection(cardPresentInCardTable.getId(), validCollectionId))
                     .thenReturn(new CardCollection(cardPresentInCardTable.getId(), validCollectionId, 1));
+            when(cardCollectionRepository.fetchCard(cardPresentInCardTable.getId(),validCollectionId)).thenThrow(EmptyResultDataAccessException.class);
 
             Result<Card> result = collectionService.addCardToCollection(cardPresentInCardTable.getName(), validCollectionId);
 
             assertTrue(result.isSuccess());
             assertEquals(cardPresentInCardTable, result.getpayload());
+        }
+
+        // Should not add card that already exists in collection
+        @Test
+        void shouldNotAddCardThatAlreadyExists() throws InterruptedException, JsonProcessingException {
+            Card cardInCollection = TestHelper.solRing();
+            int validCollectionId = TestHelper.collection().getCollectionId();
+            CardCollection cardInCollectionCollection = new CardCollection(cardInCollection.getId(),validCollectionId,1);
+
+            when(collectionRepository.fetchCollectionByCollectionId(validCollectionId)).thenReturn(TestHelper.collection());
+            when(cardRepository.fetchCardByName(cardInCollection.getName().toUpperCase()))
+                    .thenReturn(cardInCollection);
+            when(cardCollectionRepository.addCardToCollection(cardInCollection.getId(), validCollectionId))
+                    .thenReturn(new CardCollection(cardInCollection.getId(), validCollectionId, 1));
+            when(cardCollectionRepository.fetchCard(cardInCollection.getId(),validCollectionId)).thenReturn(cardInCollectionCollection);
+
+            Result<Card> result = collectionService.addCardToCollection(cardInCollection.getName(), validCollectionId);
+
+            assertFalse(result.isSuccess());
+            assertTrue(result.getErrorMessages().contains("Card already exists in collection."));
+            assertEquals(result.getResultType(), ResultType.INVALID);
         }
 
         // Should not add card if name card does not exist
