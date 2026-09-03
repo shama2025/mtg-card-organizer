@@ -2,7 +2,6 @@ import React from "react";
 import mtgLogo from "../assets/mtg-logo.png";
 import parse from "html-react-parser";
 import { NavLink } from "react-router-dom";
-import { DisplayBrandingPage } from "../../contexts/DisplayBrandingPage";
 import { useContext } from "react";
 
 export default function BrandingPage() {
