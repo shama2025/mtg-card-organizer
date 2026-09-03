@@ -30,13 +30,19 @@ public class DeckController {
 
     @GetMapping("/decks/{collectionId}")
     public ResponseEntity<?> fetchAllDecksByCollectionId(@RequestHeader Map<String,String> headers, @PathVariable int collectionId) throws JsonProcessingException {
-        AuthHandler.auth(headers);
+        ResponseEntity<?> responseEntity = AuthHandler.auth(headers);
+        if(!(responseEntity == null)){
+            return responseEntity;
+        }
         return new ResponseEntity<>(deckService.fetchAllDecksByCollectionId(collectionId),HttpStatus.OK);
     }
 
     @GetMapping("/deck/{deckId}")
     public ResponseEntity<?> fetchDeckByDeckId(@RequestHeader Map<String,String> headers,@PathVariable int deckId) throws JsonProcessingException {
-        AuthHandler.auth(headers);
+        ResponseEntity<?> responseEntity = AuthHandler.auth(headers);
+        if(!(responseEntity == null)){
+            return responseEntity;
+        }
         Result<Deck> result = deckService.fetchDeckByDeckId(deckId);
         if(result.isSuccess()){
             return new ResponseEntity<>(result.getpayload(),HttpStatus.OK);
@@ -46,9 +52,11 @@ public class DeckController {
 
     @PostMapping("/collection/{collectionId}/deck")
     public ResponseEntity<?> createDeck(@RequestHeader Map<String, String> headers, @PathVariable int collectionId,
-                                        @RequestBody Deck deck
-    ) throws JsonProcessingException {
-        AuthHandler.auth(headers);
+                                        @RequestBody Deck deck) throws JsonProcessingException {
+        ResponseEntity<?> responseEntity = AuthHandler.auth(headers);
+        if(!(responseEntity == null)){
+            return responseEntity;
+        }
         Result<Deck> result = deckService.createDeckInCollection(deck, collectionId);
         if (result.isSuccess()) {
             return new ResponseEntity<>(result.getpayload(), HttpStatus.CREATED);
@@ -61,7 +69,10 @@ public class DeckController {
         if(deckId != deck.getDeckId()){
             return new ResponseEntity<>(List.of("Invalid deck id."), HttpStatus.BAD_REQUEST);
         }
-        AuthHandler.auth(headers);
+        ResponseEntity<?> responseEntity = AuthHandler.auth(headers);
+        if(!(responseEntity == null)){
+            return responseEntity;
+        }
         Result<Deck> result = deckService.updateDeck(deck);
         if(result.isSuccess()){
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -77,7 +88,10 @@ public class DeckController {
         if(deckId != deck.getDeckId()){
             return new ResponseEntity<>(List.of("Invalid deck id."), HttpStatus.BAD_REQUEST);
         }
-        AuthHandler.auth(headers);
+        ResponseEntity<?> responseEntity = AuthHandler.auth(headers);
+        if(!(responseEntity == null)){
+            return responseEntity;
+        }
         Result<Card> result = deckService.addCardToDeck(deck,cardName);
         if(result.isSuccess()){
             return new ResponseEntity<>(result.getpayload(),HttpStatus.CREATED);
@@ -92,7 +106,10 @@ public class DeckController {
                                                @PathVariable int cardId
                                                ) throws JsonProcessingException {
 
-        AuthHandler.auth(headers);
+        ResponseEntity<?> responseEntity = AuthHandler.auth(headers);
+        if(!(responseEntity == null)){
+            return responseEntity;
+        }
         Result<Integer> result = deckService.updateCardInADeck(cardId,deckId,request.quantity());
         if(result.isSuccess()){
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -105,7 +122,10 @@ public class DeckController {
                                                @PathVariable int deckId,
                                                @PathVariable int cardId
     ) throws JsonProcessingException {
-        AuthHandler.auth(headers);
+        ResponseEntity<?> responseEntity = AuthHandler.auth(headers);
+        if(!(responseEntity == null)){
+            return responseEntity;
+        }
         Result<Integer> result = deckService.removeCardFromDeck(cardId,deckId);
         if(result.isSuccess()){
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -115,7 +135,10 @@ public class DeckController {
 
     @DeleteMapping("/deck/{deckId}")
     public ResponseEntity<?> deleteDeck(@RequestHeader Map<String,String> headers, @PathVariable int deckId) throws JsonProcessingException {
-        AuthHandler.auth(headers);
+        ResponseEntity<?> responseEntity = AuthHandler.auth(headers);
+        if(!(responseEntity == null)){
+            return responseEntity;
+        }
         Result<Integer> result = deckService.removeDeck(deckId);
         if(result.isSuccess()){
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
