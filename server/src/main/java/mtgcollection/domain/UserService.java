@@ -4,6 +4,7 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
+import mtgcollection.controller.JwtHandler;
 import mtgcollection.data.interfaces.CollectionRepository;
 import mtgcollection.model.Collection;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -24,9 +25,12 @@ public class UserService {
 
     private final CollectionRepository collectionRepository;
 
-    public UserService(UserRepository repository, CollectionRepository collectionRepository){
+    private final JwtHandler jwtHandler;
+
+    public UserService(UserRepository repository, CollectionRepository collectionRepository ,JwtHandler jwtHandler){
         this.repository = repository;
         this.collectionRepository = collectionRepository;
+        this.jwtHandler = jwtHandler;
     }
 
     public Result<LoggedInUser> findUserByEmail(User user){
@@ -58,7 +62,8 @@ public class UserService {
             result.addErrorMessage("No collection associated with user.",ResultType.NOT_FOUND);
             return  result;
         }
-        result.setpayload(new LoggedInUser(fetchedUser.getUserId(),fetchedUser.getEmail(),collection.getCollectionId()));
+        String token = jwtHandler.generateToken(fetchedUser.getEmail());
+        result.setpayload(new LoggedInUser(fetchedUser.getUserId(),fetchedUser.getEmail(),collection.getCollectionId(),token));
         return result;
     }
 
@@ -75,7 +80,8 @@ public class UserService {
             user.hashPassword();
             User createdUser = repository.add(user);
             Collection collection = collectionRepository.createCollection(user.getUserId());
-            result.setpayload(new LoggedInUser(createdUser.getUserId(), createdUser.getEmail(), collection.getCollectionId()));
+            String token = jwtHandler.generateToken(createdUser.getEmail());
+            result.setpayload(new LoggedInUser(createdUser.getUserId(), createdUser.getEmail(), collection.getCollectionId(),token));
             return result;
         }catch(DataIntegrityViolationException ex){
             result.addErrorMessage("Email already exists.", ResultType.INVALID);
