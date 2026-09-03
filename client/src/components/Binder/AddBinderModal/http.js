@@ -1,13 +1,13 @@
 import binderUrl from "../../url/binderUrl";
 
-export async function addBinder(binder, collectionId, loggedInUser) {
+export async function addBinder(binder, collectionId, jwtToken) {
   try {
     const response = await fetch(
       `${binderUrl}/collection/${collectionId.collectionId}/deck`,
       {
         method: "POST",
         headers: {
-          Authorization: JSON.stringify(loggedInUser),
+          Authorization: JSON.stringify(jwtToken),
           "content-type": "application/json",
         },
         body: JSON.stringify(binder),

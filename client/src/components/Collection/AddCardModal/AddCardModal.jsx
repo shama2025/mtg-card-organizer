@@ -15,6 +15,7 @@ export default function AddCardModal({
 }) {
   const collectionId = useContext(CollectionId);
   const loggedInUser = useContext(LoggedInUser);
+  const jwtToken = loggedInUser.token;
 
   const [cardName, setCardName] = useState("");
   const [errors, setErrors] = useState([]);
@@ -29,7 +30,7 @@ export default function AddCardModal({
         cardName,
         binder,
         binder.deckId,
-        loggedInUser,
+        jwtToken,
       );
       setIsSpinnerHidden(true);
       if (errors) {
@@ -48,7 +49,7 @@ export default function AddCardModal({
       const { card, errors } = await addCardToCollection(
         cardName,
         collectionId.collectionId,
-        loggedInUser,
+        jwtToken,
       );
       setIsSpinnerHidden(true);
       if (errors) {

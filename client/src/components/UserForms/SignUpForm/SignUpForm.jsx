@@ -1,5 +1,5 @@
 import { React, useState } from "react";
-import { createUser } from "../util/http";
+import { createUser } from "./http";
 import { useNavigate } from "react-router-dom";
 import { useCollectionId } from "../../../contexts/CollectionId";
 import ErrorList from "../../ErrorList/ErrorList";
@@ -28,7 +28,7 @@ export default function SignUpForm({ setLoggedInUser }) {
       setLoggedInUser(response.user);
       localStorage.setItem("user", JSON.stringify(response.user));
       localStorage.setItem("collection_id", response.user.collectionId);
-      localStorage.setItem("jwt_token", response.user.token)
+      localStorage.setItem("jwt_token", response.user.token);
       setCollectionId(response.user.collectionId);
       navigator("/collection");
     } else {

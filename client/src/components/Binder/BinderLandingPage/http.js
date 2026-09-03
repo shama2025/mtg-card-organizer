@@ -1,11 +1,11 @@
 import binderUrl from "../../url/binderUrl";
 
-export async function fetchBinder(binderId, loggedInUser) {
+export async function fetchBinder(binderId, jwtToken) {
   try {
     const response = await fetch(`${binderUrl}/deck/${binderId}`, {
       method: "GET",
       headers: {
-        Authorization: JSON.stringify(loggedInUser),
+        Authorization: JSON.stringify(jwtToken),
       },
     });
     if (response.ok) {
@@ -29,14 +29,15 @@ export async function fetchBinder(binderId, loggedInUser) {
   }
 }
 
-export async function editCardCount(quantity, cardId, binderId, loggedInUser) {
+export async function editCardCount(quantity, cardId, binderId, jwtToken) {
   try {
+    debugger;
     const response = await fetch(
       `${binderUrl}/deck/${binderId}/card/${cardId}`,
       {
         method: "PUT",
         headers: {
-          Authorization: JSON.stringify(loggedInUser),
+          Authorization: JSON.stringify(jwtToken),
           "content-type": "application/json",
         },
         body: JSON.stringify({ quantity }),
@@ -65,14 +66,14 @@ export async function editCardCount(quantity, cardId, binderId, loggedInUser) {
   }
 }
 
-export async function deleteCard(cardId, binderId, loggedInUser) {
+export async function deleteCard(cardId, binderId, jwtToken) {
   try {
     const response = await fetch(
       `${binderUrl}/deck/${binderId}/card/${cardId}`,
       {
         method: "DELETE",
         headers: {
-          Authorization: JSON.stringify(loggedInUser),
+          Authorization: JSON.stringify(jwtToken),
           "content-type": "application/json",
         },
       },

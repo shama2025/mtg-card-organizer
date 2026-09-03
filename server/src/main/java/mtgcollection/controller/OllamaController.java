@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/ollama")
 @CrossOrigin
@@ -22,7 +24,8 @@ public class OllamaController {
     }
 
     @GetMapping("/{message}")
-    public ResponseEntity<String> getModelResponse(@PathVariable String message){
+    public ResponseEntity<String> getModelResponse(@RequestHeader Map<String,String> headers, @PathVariable String message){
+        AuthHandler.auth(headers);
         return new ResponseEntity<>(ollamaService.getModelResponse(message),HttpStatus.OK);
     }
 

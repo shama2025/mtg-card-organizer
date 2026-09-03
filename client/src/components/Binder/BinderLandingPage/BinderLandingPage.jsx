@@ -24,6 +24,7 @@ export default function BinderLandingPage() {
   const [showChat, setShowChat] = useState(false);
 
   const loggedInUser = useContext(LoggedInUser);
+  const jwtToken = localStorage.getItem("jwt_token");
   const displayedCards = binderCardList.filter((card) =>
     card?.name?.toLowerCase().includes(searchQuery.toLowerCase()),
   );
@@ -40,7 +41,7 @@ export default function BinderLandingPage() {
         updatedCard.quantity,
         updatedCard.id,
         binder.deckId,
-        loggedInUser,
+        jwtToken,
       );
       if (errors) {
         setBinderErrors(errors);
@@ -56,7 +57,7 @@ export default function BinderLandingPage() {
       const { cardId, errors } = deleteCard(
         updatedCard.id,
         binder.deckId,
-        loggedInUser,
+        jwtToken,
       );
       if (errors) {
         setBinderErrors(errors);
@@ -157,6 +158,10 @@ export default function BinderLandingPage() {
           <h2 className="text-lg font-bold text-jeskai-blue-light border-b border-slate-700 pb-2 mb-3">
             {binder?.name || "Unamed Binder"}
           </h2>
+          <div className="flex flex-col">
+            <p>Date Created: {binder?.dateCreated || "Error getting date"}</p>
+            <p>Date Updated: {binder?.dateUpdated || "Error getting date"}</p>
+          </div>
           <p className="text-sm text-slate-300">
             Total Cards:{" "}
             <span className="font-semibold text-white">{binderQuantity}</span>
