@@ -26,7 +26,7 @@ public class TestHelper {
         return new Collection(1,userToFind().getUserId());
     }
 
-    public static LoggedInUser loggedInUser(){return new LoggedInUser(1,"a@a.com", collection().getCollectionId());}
+    public static LoggedInUser loggedInUser(){return new LoggedInUser(1,"a@a.com", collection().getCollectionId(),"token_token_token");}
 
     public static Card solRing() {
         return new Card(
