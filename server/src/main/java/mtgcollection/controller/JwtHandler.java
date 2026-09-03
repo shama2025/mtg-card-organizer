@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import java.security.Key;
 import java.util.Date;
 
+@Component
 public class JwtHandler {
 
     private final String SECRET = System.getenv("SECRET");
@@ -16,6 +17,7 @@ public class JwtHandler {
     private final int EXPIRATION_MS = 86400000; // 1 day
 
 
+    // Upon Sign up
     public String generateToken(String username) {
         return Jwts.builder()
                 .setSubject(username)
@@ -25,6 +27,7 @@ public class JwtHandler {
                 .compact();
     }
 
+    // For authentication
     public String getUsernameFromToken(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(key)
@@ -34,6 +37,7 @@ public class JwtHandler {
                 .getSubject();
     }
 
+    // Shield to make sure token is a Jwt token
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
