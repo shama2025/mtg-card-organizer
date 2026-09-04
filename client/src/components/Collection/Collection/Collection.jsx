@@ -235,7 +235,7 @@ export default function Collection() {
         <div hidden={!showChat} className="fixed top-95">
           <ChatBotContainer />
         </div>
-        <div className="relative lg:col-span-6  bg-jeskai-white-border p-4 rounded-xl border border-slate-300 shadow-md">
+        <div className="relative lg:col-span-6 h-150 overflow-y-auto  bg-jeskai-white-border p-4 rounded-xl border border-slate-300 shadow-md">
           {collectionErrors.length > 0 ? (
             <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
               <ErrorList errors={collectionErrors} />
@@ -317,11 +317,10 @@ export default function Collection() {
               ))}
             </div>
           </div>
-          <div>
-            <div className="absolute">
-              <ChatBotIcon setShowChat={setShowChat} showChat={showChat} />
-            </div>
-          </div>
+          <div></div>
+        </div>
+        <div className="absolute bottom-4 left-85 z-30">
+          <ChatBotIcon setShowChat={setShowChat} showChat={showChat} />
         </div>
         <div className="lg:col-span-3 bg-jeskai-card text-jeskai-white-pure p-4 rounded-xl border border-slate-700 shadow-lg sticky top-20">
           <h3 className="text-md font-semibold text-jeskai-red-light mb-3 border-b border-slate-700 pb-2">

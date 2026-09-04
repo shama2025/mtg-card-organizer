@@ -18,8 +18,9 @@ public class AuthHandler {
             return new ResponseEntity<>(List.of("Missing required headers."), HttpStatus.BAD_REQUEST);
         }
         String token = responseHeader.get("authorization");
+        String cleanedToken = token.replace("\"", "");
         // Confirm the token is valid
-        if(!JwtHandler.validateToken(token)) {
+        if(!JwtHandler.validateToken(cleanedToken)) {
             return new ResponseEntity<>(List.of("Tampered tokens."), HttpStatus.UNAUTHORIZED);
         }
         // token is valid
