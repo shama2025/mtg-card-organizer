@@ -17,8 +17,8 @@ export default function BrandingPage() {
   const radius = 128; // Half of parent's width
 
   return (
-    <div className="flex items-center justify-center">
-      <div className="relative top-15 flex flex-col items-center justify-center">
+    <div className="flex items-center justify-center bg-jeskai-dark h-screen">
+      <div className="relative flex flex-col items-center justify-center">
         <div className="relative top-10">
           <div className="z-1000 text-6xl text-jeskai-white-surface relative top-17 flex items-center justify-center">
             ManaVault
