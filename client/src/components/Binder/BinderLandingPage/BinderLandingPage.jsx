@@ -73,11 +73,17 @@ export default function BinderLandingPage() {
 
   function calculateCollectionQuantity(currentCollection) {
     let sum = 0;
-    currentCollection.forEach((card) => {
+    currentCollection?.forEach((card) => {
       sum += card.quantity;
     });
     setBinderQuantity(sum);
   }
+
+  useEffect(
+    function (){
+      calculateCollectionQuantity(binderCardList)
+    }
+  ,[binderCardList])
 
   useEffect(
     function () {
