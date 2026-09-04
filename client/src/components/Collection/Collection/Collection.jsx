@@ -317,9 +317,9 @@ export default function Collection() {
               ))}
             </div>
           </div>
-          <div></div>
+         
         </div>
-        <div className="absolute bottom-4 left-85 z-30">
+         <div className="absolute top-163 left-118 z-30">
           <ChatBotIcon setShowChat={setShowChat} showChat={showChat} />
         </div>
         <div className="lg:col-span-3 bg-jeskai-card text-jeskai-white-pure p-4 rounded-xl border border-slate-700 shadow-lg sticky top-20">
