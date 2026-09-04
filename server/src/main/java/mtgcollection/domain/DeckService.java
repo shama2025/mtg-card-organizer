@@ -169,13 +169,10 @@ public class DeckService {
                 return result;
             }
             } catch (EmptyResultDataAccessException ex) {
-           // card = fetchCardHttpRepo(cardName);
-//            if (card == null) {
-//                result.addErrorMessage("Card not found.", ResultType.NOT_FOUND);
-//                return result;
-//            }
-
-           // card = cardRepository.addCard(card);
+            if (card == null) {
+                result.addErrorMessage("Card not found.", ResultType.NOT_FOUND);
+                return result;
+            }
         }
 
         try{
