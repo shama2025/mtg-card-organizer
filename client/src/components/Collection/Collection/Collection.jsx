@@ -91,11 +91,17 @@ export default function Collection() {
 
   function calculateCollectionQuantity(currentCollection) {
     let sum = 0;
-    currentCollection.forEach((card) => {
+    currentCollection?.forEach((card) => {
       sum += card.quantity;
     });
     setCollectionQuantity(sum);
   }
+
+  useEffect(
+    function (){
+      calculateCollectionQuantity(collection)
+    }
+  ,[collection])
 
   useEffect(
     function () {
