@@ -50,7 +50,7 @@ export default function BinderLandingPage() {
       const updatedCollection = binderCardList.map((c) =>
         c.id === updatedCard.id ? updatedCard : c,
       );
-      setBinder(updatedCollection);
+      setBinderCardList(updatedCollection);
       calculateCollectionQuantity(updatedCollection);
     } else if (updatedCard.quantity === 0) {
       // Delete card completely
@@ -66,7 +66,7 @@ export default function BinderLandingPage() {
       const updatedCollection = binderCardList.filter(
         (c) => c.id !== updatedCard.id,
       );
-      setBinder(updatedCollection);
+      setBinderCardList(updatedCollection);
       calculateCollectionQuantity(updatedCollection);
     }
   }

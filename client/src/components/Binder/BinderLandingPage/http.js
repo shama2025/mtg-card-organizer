@@ -31,7 +31,6 @@ export async function fetchBinder(binderId, jwtToken) {
 
 export async function editCardCount(quantity, cardId, binderId, jwtToken) {
   try {
-    debugger;
     const response = await fetch(
       `${binderUrl}/deck/${binderId}/card/${cardId}`,
       {
