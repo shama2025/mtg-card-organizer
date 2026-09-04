@@ -1,6 +1,7 @@
-import React, { useRef, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import Chat from "../Chat/Chat";
 import { fetchModelChat } from "./http";
+import { JwtToken } from "../../../../contexts/JwtToken";
 
 export default function ChatBotChatContainer() {
   const [chatList, setChatList] = useState([]);
@@ -15,7 +16,7 @@ export default function ChatBotChatContainer() {
     const query = message;
     setMessage("");
     setChatList([...chatList, initialChat]);
-    const jwtToken = localStorage.getItem("jwt_token");
+    const jwtToken = useContext(JwtToken);
     const { modelResponse, errors } = await fetchModelChat(message, jwtToken);
     const chat = {
       user: query,

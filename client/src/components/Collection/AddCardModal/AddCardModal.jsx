@@ -5,6 +5,7 @@ import { LoggedInUser } from "../../../contexts/LoggedInUser";
 import { addCardToBinder, addCardToCollection } from "./http";
 import ErrorList from "../../ErrorList/ErrorList";
 import { Bars } from "react-loader-spinner";
+import { JwtToken } from "../../../contexts/JwtToken";
 
 export default function AddCardModal({
   setAddCardModalVisible,
@@ -15,7 +16,7 @@ export default function AddCardModal({
 }) {
   const collectionId = useContext(CollectionId);
   const loggedInUser = useContext(LoggedInUser);
-  const jwtToken = loggedInUser.token;
+  const jwtToken = useContext(JwtToken);
 
   const [cardName, setCardName] = useState("");
   const [errors, setErrors] = useState([]);

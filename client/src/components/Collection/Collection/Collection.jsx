@@ -20,6 +20,7 @@ import SearchBar from "../../UtilityComponents/SearchForCard/SearchBar";
 import FilterCards from "../../UtilityComponents/FilterCards/FilterCards";
 import ChatBotIcon from "../../UtilityComponents/ChatBot/ChatBotIcon/ChatBot";
 import ChatBotContainer from "../../UtilityComponents/ChatBot/ChatBotChat/ChatBotChatContainer";
+import { JwtToken } from "../../../contexts/JwtToken";
 
 export default function Collection() {
   const [collection, setCollection] = useState(undefined);
@@ -38,7 +39,7 @@ export default function Collection() {
 
   const loggedInUser = useContext(LoggedInUser);
   const collectionId = useContext(CollectionId).collectionId;
-  const jwtToken = localStorage.getItem("jwt_token");
+  const jwtToken = useContext(JwtToken);
 
   const displayedCards = collection?.filter((card) =>
     card?.name?.toLowerCase().includes(searchQuery.toLowerCase()),
@@ -91,11 +92,18 @@ export default function Collection() {
 
   function calculateCollectionQuantity(currentCollection) {
     let sum = 0;
-    currentCollection.forEach((card) => {
+    currentCollection?.forEach((card) => {
       sum += card.quantity;
     });
     setCollectionQuantity(sum);
   }
+
+  useEffect(
+    function () {
+      calculateCollectionQuantity(collection);
+    },
+    [collection],
+  );
 
   useEffect(
     function () {
@@ -217,7 +225,7 @@ export default function Collection() {
               return (
                 <div
                   key={elementId}
-                  className="hover:border-b-2 hover:scale-105 hover:border-jeskai-red-dark"
+                  className="hover:border-b-2 overflow-y-auto max-h-150 hover:scale-105 hover:border-jeskai-red-dark"
                 >
                   <div>
                     <BinderNameCard
@@ -317,9 +325,8 @@ export default function Collection() {
               ))}
             </div>
           </div>
-          <div></div>
         </div>
-        <div className="absolute bottom-4 left-85 z-30">
+        <div className="absolute top-163 left-118 z-30">
           <ChatBotIcon setShowChat={setShowChat} showChat={showChat} />
         </div>
         <div className="lg:col-span-3 bg-jeskai-card text-jeskai-white-pure p-4 rounded-xl border border-slate-700 shadow-lg sticky top-20">

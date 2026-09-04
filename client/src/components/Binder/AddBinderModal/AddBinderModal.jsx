@@ -5,6 +5,7 @@ import ErrorList from "../../ErrorList/ErrorList";
 import { addBinder } from "./http";
 import { CollectionId } from "../../../contexts/CollectionId";
 import { LoggedInUser } from "../../../contexts/LoggedInUser";
+import { JwtToken } from "../../../contexts/JwtToken";
 
 export default function AddBinderModal({
   setDisplayBinderCardModal,
@@ -27,7 +28,7 @@ export default function AddBinderModal({
 
   const collectionId = useContext(CollectionId);
   const loggedInUser = useContext(LoggedInUser);
-  const jwtToken = loggedInUser.token;
+  const jwtToken = useContext(JwtToken);
 
   async function handleSubmit(event) {
     event.preventDefault();

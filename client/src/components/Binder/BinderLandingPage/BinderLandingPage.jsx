@@ -11,6 +11,7 @@ import SearchBar from "../../UtilityComponents/SearchForCard/SearchBar";
 import FilterCards from "../../UtilityComponents/FilterCards/FilterCards";
 import ChatBotIcon from "../../UtilityComponents/ChatBot/ChatBotIcon/ChatBot";
 import ChatBotChatContainer from "../../UtilityComponents/ChatBot/ChatBotChat/ChatBotChatContainer";
+import { JwtToken } from "../../../contexts/JwtToken";
 
 export default function BinderLandingPage() {
   const { binderId } = useParams("binderId");
@@ -24,7 +25,7 @@ export default function BinderLandingPage() {
   const [showChat, setShowChat] = useState(false);
 
   const loggedInUser = useContext(LoggedInUser);
-  const jwtToken = localStorage.getItem("jwt_token");
+  const jwtToken = useContext(JwtToken);
   const displayedCards = binderCardList.filter((card) =>
     card?.name?.toLowerCase().includes(searchQuery.toLowerCase()),
   );
@@ -50,7 +51,7 @@ export default function BinderLandingPage() {
       const updatedCollection = binderCardList.map((c) =>
         c.id === updatedCard.id ? updatedCard : c,
       );
-      setBinder(updatedCollection);
+      setBinderCardList(updatedCollection);
       calculateCollectionQuantity(updatedCollection);
     } else if (updatedCard.quantity === 0) {
       // Delete card completely
@@ -66,14 +67,14 @@ export default function BinderLandingPage() {
       const updatedCollection = binderCardList.filter(
         (c) => c.id !== updatedCard.id,
       );
-      setBinder(updatedCollection);
+      setBinderCardList(updatedCollection);
       calculateCollectionQuantity(updatedCollection);
     }
   }
 
   function calculateCollectionQuantity(currentCollection) {
     let sum = 0;
-    currentCollection.forEach((card) => {
+    currentCollection?.forEach((card) => {
       sum += card.quantity;
     });
     setBinderQuantity(sum);
@@ -81,8 +82,15 @@ export default function BinderLandingPage() {
 
   useEffect(
     function () {
+      calculateCollectionQuantity(binderCardList);
+    },
+    [binderCardList],
+  );
+
+  useEffect(
+    function () {
       async function handleFetchBinder() {
-        const { binder, errors } = await fetchBinder(binderId, loggedInUser);
+        const { binder, errors } = await fetchBinder(binderId, jwtToken);
         if (errors) {
           setBinderErrors([errors]);
         } else if (binder) {
@@ -179,7 +187,7 @@ export default function BinderLandingPage() {
             <ChatBotChatContainer />
           </div>
         </div>
-        <div className="relative lg:col-span-6 bg-jeskai-white-border p-4 rounded-xl border border-slate-300 shadow-md">
+        <div className="relative overflow-y-auto h-150 lg:col-span-6 bg-jeskai-white-border p-4 rounded-xl border border-slate-300 shadow-md">
           {binderErrors.length > 0 ? (
             <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
               <ErrorList errors={binderErrors} />
