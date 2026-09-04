@@ -11,6 +11,7 @@ import SearchBar from "../../UtilityComponents/SearchForCard/SearchBar";
 import FilterCards from "../../UtilityComponents/FilterCards/FilterCards";
 import ChatBotIcon from "../../UtilityComponents/ChatBot/ChatBotIcon/ChatBot";
 import ChatBotChatContainer from "../../UtilityComponents/ChatBot/ChatBotChat/ChatBotChatContainer";
+import { JwtToken } from "../../../contexts/JwtToken";
 
 export default function BinderLandingPage() {
   const { binderId } = useParams("binderId");
@@ -24,7 +25,7 @@ export default function BinderLandingPage() {
   const [showChat, setShowChat] = useState(false);
 
   const loggedInUser = useContext(LoggedInUser);
-  const jwtToken = localStorage.getItem("jwt_token");
+  const jwtToken = useContext(JwtToken)
   const displayedCards = binderCardList.filter((card) =>
     card?.name?.toLowerCase().includes(searchQuery.toLowerCase()),
   );

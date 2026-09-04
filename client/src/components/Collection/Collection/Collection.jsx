@@ -20,6 +20,7 @@ import SearchBar from "../../UtilityComponents/SearchForCard/SearchBar";
 import FilterCards from "../../UtilityComponents/FilterCards/FilterCards";
 import ChatBotIcon from "../../UtilityComponents/ChatBot/ChatBotIcon/ChatBot";
 import ChatBotContainer from "../../UtilityComponents/ChatBot/ChatBotChat/ChatBotChatContainer";
+import { JwtToken } from "../../../contexts/JwtToken";
 
 export default function Collection() {
   const [collection, setCollection] = useState(undefined);
@@ -38,7 +39,7 @@ export default function Collection() {
 
   const loggedInUser = useContext(LoggedInUser);
   const collectionId = useContext(CollectionId).collectionId;
-  const jwtToken = localStorage.getItem("jwt_token");
+  const jwtToken = useContext(JwtToken);
 
   const displayedCards = collection?.filter((card) =>
     card?.name?.toLowerCase().includes(searchQuery.toLowerCase()),

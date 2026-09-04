@@ -5,6 +5,7 @@ import ErrorList from "../../ErrorList/ErrorList";
 import { deleteBinder } from "./http";
 import { LoggedInUser } from "../../../contexts/LoggedInUser";
 import { useNavigate } from "react-router-dom";
+import { JwtToken } from "../../../contexts/JwtToken";
 
 export default function BinderModal({
   isEdit,
@@ -19,7 +20,7 @@ export default function BinderModal({
 
   const navigator = useNavigate();
   const loggedInUser = useContext(LoggedInUser);
-  const jwtToken = loggedInUser.token;
+  const jwtToken = useContext(JwtToken)
 
   useEffect(() => {
     if (binderToEdit?.name) {
