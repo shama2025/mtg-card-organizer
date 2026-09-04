@@ -1,0 +1,40 @@
+@base_url = http://localhost:8080/api/collection
+
+### Happ Path Card Exists in DB
+POST {{base_url}}/1 HTTP/1.1
+Authorization: { "id": "1","email": "c@c.com"}
+Content-Type: application/json
+
+{
+    "name": "cultivate"
+}
+
+### Happ Path Card does not Exists in DB
+POST {{base_url}}/1 HTTP/1.1
+Authorization: { "id": "1","email": "c@c.com"}
+Content-Type: application/json
+
+{
+    "name": "black lotus"
+}
+
+### Bad Path Empty name
+POST {{base_url}}/1 HTTP/1.1
+Authorization: { "id": "1","email": "c@c.com"}
+Content-Type: application/json
+
+{
+    "name": ""
+}
+
+### Bad Path User does not correspond to collection
+POST {{base_url}}/1 HTTP/1.1
+Authorization: { "id": "999","email": "c@c.com"}
+Content-Type: application/json
+
+{
+    "name": ""
+}
+
+### Bad Request missing Auth Header
+POST {{base_url}}/1 HTTP/1.1
