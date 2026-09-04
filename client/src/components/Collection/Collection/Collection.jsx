@@ -225,7 +225,7 @@ export default function Collection() {
               return (
                 <div
                   key={elementId}
-                  className="hover:border-b-2 hover:scale-105 hover:border-jeskai-red-dark"
+                  className="hover:border-b-2 overflow-y-auto max-h-150 hover:scale-105 hover:border-jeskai-red-dark"
                 >
                   <div>
                     <BinderNameCard

@@ -187,7 +187,7 @@ export default function BinderLandingPage() {
             <ChatBotChatContainer />
           </div>
         </div>
-        <div className="relative lg:col-span-6 bg-jeskai-white-border p-4 rounded-xl border border-slate-300 shadow-md">
+        <div className="relative overflow-y-auto h-150 lg:col-span-6 bg-jeskai-white-border p-4 rounded-xl border border-slate-300 shadow-md">
           {binderErrors.length > 0 ? (
             <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
               <ErrorList errors={binderErrors} />
