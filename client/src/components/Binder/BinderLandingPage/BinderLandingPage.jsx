@@ -82,7 +82,7 @@ export default function BinderLandingPage() {
   useEffect(
     function () {
       async function handleFetchBinder() {
-        const { binder, errors } = await fetchBinder(binderId, loggedInUser);
+        const { binder, errors } = await fetchBinder(binderId, jwtToken);
         if (errors) {
           setBinderErrors([errors]);
         } else if (binder) {
