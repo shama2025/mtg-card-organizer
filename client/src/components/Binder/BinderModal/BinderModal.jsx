@@ -20,7 +20,7 @@ export default function BinderModal({
 
   const navigator = useNavigate();
   const loggedInUser = useContext(LoggedInUser);
-  const jwtToken = useContext(JwtToken)
+  const jwtToken = useContext(JwtToken);
 
   useEffect(() => {
     if (binderToEdit?.name) {

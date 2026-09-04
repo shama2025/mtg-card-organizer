@@ -16,7 +16,7 @@ export default function ChatBotChatContainer() {
     const query = message;
     setMessage("");
     setChatList([...chatList, initialChat]);
-    const jwtToken = useContext(JwtToken)
+    const jwtToken = useContext(JwtToken);
     const { modelResponse, errors } = await fetchModelChat(message, jwtToken);
     const chat = {
       user: query,

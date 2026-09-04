@@ -25,7 +25,7 @@ export default function BinderLandingPage() {
   const [showChat, setShowChat] = useState(false);
 
   const loggedInUser = useContext(LoggedInUser);
-  const jwtToken = useContext(JwtToken)
+  const jwtToken = useContext(JwtToken);
   const displayedCards = binderCardList.filter((card) =>
     card?.name?.toLowerCase().includes(searchQuery.toLowerCase()),
   );
@@ -81,10 +81,11 @@ export default function BinderLandingPage() {
   }
 
   useEffect(
-    function (){
-      calculateCollectionQuantity(binderCardList)
-    }
-  ,[binderCardList])
+    function () {
+      calculateCollectionQuantity(binderCardList);
+    },
+    [binderCardList],
+  );
 
   useEffect(
     function () {
