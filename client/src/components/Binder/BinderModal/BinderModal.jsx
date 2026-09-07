@@ -78,8 +78,8 @@ export default function BinderModal({
               readOnly={!isEdit}
               className="border m-1 rounded-2xl p-2"
               value={binder?.name || "No name rendered"}
-              onChange={(e) => {
-                setBinder(e.target.value);
+              onChange={(event) => {
+                setBinder({...binder, name:event.target.value})
               }}
             />
             <button
