@@ -1,8 +1,11 @@
 llama:
 	ollama run llama3.2
+
 start:
-        brew services start mysql
+	brew services start mysql
+
 stop:
-        brew services stop mysql
+	brew services stop mysql
+
 restart:
-        brew services restart mysql
+	brew services restart mysql
