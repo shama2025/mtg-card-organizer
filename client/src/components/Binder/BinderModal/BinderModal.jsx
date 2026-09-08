@@ -2,7 +2,7 @@ import React, { use, useContext, useEffect, useState } from "react";
 import { CircleX } from "lucide-react";
 import { Bars } from "react-loader-spinner";
 import ErrorList from "../../ErrorList/ErrorList";
-import { deleteBinder } from "./http";
+import { deleteBinder, editBinder } from "./http";
 import { LoggedInUser } from "../../../contexts/LoggedInUser";
 import { useNavigate } from "react-router-dom";
 import { JwtToken } from "../../../contexts/JwtToken";
@@ -32,6 +32,21 @@ export default function BinderModal({
     event.preventDefault();
     if (isEdit) {
       // Call edit function
+      setIsSpinnerHidden(false);
+      debugger
+      const { isUpdated, errors } = await editBinder(binder.deckId, jwtToken,binder);
+      if (isUpdated) {
+        const updatedBinders = binders.map((b) =>
+        b.id === binder.id ? binderToEdit : b,
+      );
+        setBinders(updatedBinders);
+        setIsSpinnerHidden(true);
+        setDisplayBinderModal(true);
+      } else if (errors) {
+        // Display errors
+        setIsSpinnerHidden(true);
+        setErrors([errors]);
+      }
     } else {
       setIsSpinnerHidden(false);
       const { isDeleted, errors } = await deleteBinder(binder.deckId, jwtToken);
