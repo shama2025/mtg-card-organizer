@@ -258,7 +258,7 @@ export default function BinderLandingPage() {
               <div></div>
             )}
           </div>
-          <div className="absolute">
+          <div className="absolute top-163 left-118 z-30">
             <ChatBotIcon setShowChat={setShowChat} showChat={showChat} />
           </div>
         </div>
