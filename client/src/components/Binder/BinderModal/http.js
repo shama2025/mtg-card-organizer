@@ -1,15 +1,15 @@
 import binderUrl from "../../url/binderUrl";
 
-export async function editBinder(binderId,jwtToken,binder){
-  debugger
+export async function editBinder(binderId, jwtToken, binder) {
+  debugger;
   try {
     const response = await fetch(`${binderUrl}/deck/${binderId}`, {
       method: "PUT",
       headers: {
         Authorization: JSON.stringify(jwtToken),
-        'content-type': 'application/json'
+        "content-type": "application/json",
       },
-      body: JSON.stringify(binder)
+      body: JSON.stringify(binder),
     });
     if (response.ok) {
       return {

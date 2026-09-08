@@ -33,12 +33,16 @@ export default function BinderModal({
     if (isEdit) {
       // Call edit function
       setIsSpinnerHidden(false);
-      debugger
-      const { isUpdated, errors } = await editBinder(binder.deckId, jwtToken,binder);
+      debugger;
+      const { isUpdated, errors } = await editBinder(
+        binder.deckId,
+        jwtToken,
+        binder,
+      );
       if (isUpdated) {
         const updatedBinders = binders.map((b) =>
-        b.id === binder.id ? binderToEdit : b,
-      );
+          b.id === binder.id ? binderToEdit : b,
+        );
         setBinders(updatedBinders);
         setIsSpinnerHidden(true);
         setDisplayBinderModal(true);
@@ -94,7 +98,7 @@ export default function BinderModal({
               className="border m-1 rounded-2xl p-2"
               value={binder?.name || "No name rendered"}
               onChange={(event) => {
-                setBinder({...binder, name:event.target.value})
+                setBinder({ ...binder, name: event.target.value });
               }}
             />
             <button
