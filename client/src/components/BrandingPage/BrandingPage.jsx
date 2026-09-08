@@ -6,11 +6,11 @@ import { useContext } from "react";
 
 export default function BrandingPage() {
   const items = [
-    '<i className="ms ms-b text-sm text-[#150b00]"></i>',
-    '<i className="ms ms-r text-sm text-jeskai-red"></i>',
-    '<i className="ms ms-g text-sm text-[#00733e]"></i>',
-    '<i className="ms ms-w text-sm text-jeskai-white-pure"></i>',
-    '<i className="ms ms-u text-sm text-jeskai-blue"></i>',
+    '<i className="ms ms-b ms-2x text-[#150b00]"></i>',
+    '<i className="ms ms-r ms-2x text-jeskai-red"></i>',
+    '<i className="ms ms-g ms-2x text-[#00733e]"></i>',
+    '<i className="ms ms-w ms-2x text-jeskai-white-pure"></i>',
+    '<i className="ms ms-u ms-2x text-jeskai-blue"></i>',
   ];
 
   const total = items.length;
