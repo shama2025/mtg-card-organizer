@@ -6,23 +6,27 @@ import { JwtToken } from "../../../../contexts/JwtToken";
 export default function ChatBotChatContainer() {
   const [chatList, setChatList] = useState([]);
   const [message, setMessage] = useState("");
-  const endRef = useRef(null);
+  const jwtToken = useContext(JwtToken);
   const initialChat = {
     user: message,
     ai: null,
   };
   async function handleChatBotResponse(event) {
     event.preventDefault();
-    const query = message;
-    setMessage("");
-    setChatList([...chatList, initialChat]);
-    const jwtToken = useContext(JwtToken);
-    const { modelResponse, errors } = await fetchModelChat(message, jwtToken);
-    const chat = {
-      user: query,
-      ai: modelResponse || errors,
-    };
-    setChatList([...chatList, chat]);
+    try {
+      const query = message;
+      setMessage("");
+      setChatList([...chatList, initialChat]);
+
+      const { modelResponse, errors } = await fetchModelChat(message, jwtToken);
+      const chat = {
+        user: query,
+        ai: modelResponse || errors,
+      };
+      setChatList([...chatList, chat]);
+    } catch (errors) {
+      console.log(errors);
+    }
   }
 
   return (
