@@ -72,9 +72,11 @@ public class DeckService {
 
         List<CardDeck> cardDeckList = cardDeckRepository.fetchAllCardDecksFromDeckId(deckId);
         for(CardDeck cardDeck : cardDeckList){
-            Card card = cardRepository.fetchCardById(cardDeck.cardId());
-            card.setQuantity(cardDeck.quantity());
-            cardList.add(card);
+            try{
+                Card card = cardRepository.fetchCardById(cardDeck.cardId());
+                card.setQuantity(cardDeck.quantity());
+                cardList.add(card);
+            }catch (EmptyResultDataAccessException ignored) {}
         }
         deck.setCardList(cardList);
         result.setpayload(deck);
@@ -189,6 +191,17 @@ public class DeckService {
             result.addErrorMessage("Error adding card to deck.",ResultType.INVALID);
             return result;
         }
+        List<Card> cardList = new ArrayList<>();
+        List<CardDeck> cardDeckList = cardDeckRepository.fetchAllCardDecksFromDeckId(deck.getDeckId());
+        for(CardDeck cd : cardDeckList){
+            try{
+                Card c = cardRepository.fetchCardById(cd.cardId());
+                c.setQuantity(1);
+                c.setQuantity(cardDeck.quantity());
+                cardList.add(c);
+            }catch (EmptyResultDataAccessException ignored) {}
+        }
+        deck.setCardList(cardList);
         // Update Deck
         boolean isDeckUpdated = deckRepository.updateDeck(deck);
         if(isDeckUpdated){

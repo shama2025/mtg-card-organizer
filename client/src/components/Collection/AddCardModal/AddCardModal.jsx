@@ -33,6 +33,7 @@ export default function AddCardModal({
         binder.deckId,
         jwtToken,
       );
+      card.quantity = 1
       setIsSpinnerHidden(true);
       if (errors) {
         setErrors([errors]);
