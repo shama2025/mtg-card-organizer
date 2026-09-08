@@ -1,7 +1,7 @@
 import React from "react";
 
 export default function CardInfo({ card }) {
-  if (!card) {
+  if (!card || Object.keys(card)?.length === 0) {
     return (
       <div className="bg-jeskai-card border border-slate-700 text-slate-400 rounded-xl p-5 text-center text-sm">
         Hover over a card to view details.
@@ -14,11 +14,10 @@ export default function CardInfo({ card }) {
       <div className="flex justify-center bg-slate-900/50 p-3 rounded-lg border border-slate-800">
         <img
           src={card?.imgPath?.[0]?.large || card?.imgPath}
-          className="h-70 object-contain  hover:scale-105 transition-transform"
+          className="h-70 object-contain  hover:scale-135 hover:p-1 transition-transform"
           alt={card?.name || "Card image"}
         />
       </div>
-
       <div className="flex flex-col gap-3 text-sm">
         <div className="flex justify-between items-center border-b border-slate-700/60 pb-2">
           <span className="text-slate-400 font-medium">Set</span>
